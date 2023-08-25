@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <title>Edit</title>
+</head>
+<body>
+    <section class="main">
+        <form id="myForm" method="post" action="/edited/<%= user._id %>"   enctype="multipart/form-data">
+          <h2>Edit</h2>
+            <div class="form-outline mb-4">
+              <label class="form-label" for="name">User name</label>
+              <input type="text" id="name" value="<%= user.username%>" class="form-control" name="newUserName" />
+            </div>
+            <div class="form-outline mb-4">
+              <label class="form-label" for="phone_num">Phone number</label>
+              <input type="number" id="phone_num" value="<%=user.phoneNumber%>" pattern="[0-9]{10}" class="form-control" name="newPhone" />
+            </div>
+            <div class="form-outline mb-4">
+              <label class="form-label" for="address">Address</label>
+              <textarea class="form-control" id="address"  name="newAddress" rows="3" ><%= user.address%></textarea>
+            </div>
+          
+            <div class="form-outline mb-4">
+              <label class="form-label" for="profile">Profile picture</label>
+              <input type="file" id="profile" class="form-control" name="profileImage"  />
+            </div>
+            <div class="row mb-4">
+              <div class="col d-flex justify-content-center">
+          
+            <button type="submit" class="btn btn-primary btn-block mb-4" onclick="return confirm('Save the changes ?');">Save changes</button>
+          
+          </form>
+    </section>
+    
+</body>
+</html> 
