@@ -10,30 +10,35 @@
 <body>
   <nav><div class="nav"><h2>GadgetEase</h2></div></nav>
     <section class="main">
-      <form id="myForm" method="post" action="/login">
-          <h2>Sign in to</h2><h1 style="color: #56B280;">GadgetEase</h1>
-            <div class="form-outline mb-4">
-              <input type="text" id="name" placeholder="User name" class="form-control" name="username" required/>
-            </div>
-          
-            <div class="form-outline mb-4">
-              <input type="password" placeholder="Password" id="pass" class="form-control" name="password" required />
-            </div>
-          
-            <div class="col d-flex justify-content-center">
-              <% if (errorMessage) { %>
-                <p style="color: red;"><%= errorMessage %></p>
-            <% } %>
-            </div>
-            <div class="row mb-4">
-              <div class="col d-flex flex-column justify-content-center">
-                <a href="/signup" class="create">Forgot password ?</a><br>
-                <a href="/signup" class="create">Register?</a>
+      <div class="col-6 col-md-3">
+        <h5>If you don’t have an account </h5><h5>you can <a href="/otpAuth">Register</a> </h5><h1 style="color: #56B280;">GadgetEase</h1>
+
+      </div>
+      <div class="col-6 col-md-3">
+
+        <form id="myForm" method="post" action="/login">
+              <div class="form-outline mb-4">
+                <input type="email" id="name" placeholder="Email" class="form-control" name="email" required/>
               </div>
-          
-            <button type="submit" class="btn btn-success shadow btn-block mb-4" >Sign in</button>
-          
-          </form>
+            
+              <div class="form-outline mb-4">
+                <input type="password" placeholder="Password" id="pass" class="form-control" name="password" required />
+              </div>
+            
+              <div class="col d-flex justify-content-center">
+                <% if (errorMessage) { %>
+                  <p style="color: rgb(255, 0, 0);"><%= errorMessage %></p>
+              <% } %>
+              </div>
+              <div class="row mb-4">
+                <div class="col d-flex flex-column justify-content-center">
+                  <a href="/signup" class="create">Forgot password ?</a><br>
+                </div>
+            
+              <button type="submit" class="btn btn-success shadow btn-block mb-4" >Sign in</button>
+            
+            </form>
+      </div>
     </section>
     
 </body>

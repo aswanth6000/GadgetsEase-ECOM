@@ -5,15 +5,16 @@ const userSchema = new mongoose.Schema({
     phoneNumber : String,
     address : {
         type : String,
-        phone : int,
+        phone : String,
         houseName : String,
-        name : string, 
+        name : String, 
         street: String,
         city: String,
         state: String,
         pinCode: String, 
     },
     email : String,
+    verified: Boolean,
     profileImage : String
 })
 module.exports = mongoose.model('User', userSchema)

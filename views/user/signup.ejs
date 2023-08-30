@@ -3,14 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/style1.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
     <title>Signup</title>
 </head>
 <body>
+  <nav><div class="nav"><h2>GadgetEase</h2></div></nav>
     <section class="main">
-        <form id="myForm" method="post" action="/signup"   enctype="multipart/form-data">
-          <h2>Signup</h2>
+      <div class="col-6 col-md-3">
+        <h5>Already have an account ? </h5><h5>you can <a href="/login">login</a> </h5><h1 style="color: #56B280;">GadgetEase</h1>
+
+      </div>
+      <div class="col-6 col-md-6" >
+
+        <form id="myForm" method="post" action="/signup" >
+          <h2>Sign up to</h2><h1 style="color: #56B280;">GadgetEase</h1>
             <div class="form-outline mb-4">
               <label class="form-label" for="name">User name</label>
               <input type="text" id="name" class="form-control" name="username" required/>
@@ -18,17 +25,13 @@
             </div>
             <div class="form-outline mb-4">
               <label class="form-label" for="phone_num">Phone number</label>
-              <input type="number" id="phone_num" pattern="[0-9]{10}" class="form-control" name="phone" required/>
+              <input type="number" id="phone_num" pattern="[0-9]{10}" class="form-control" value="<%= phone %>" name="phone" required/>
               <div style="color: red;" class="error-message" id="phone-error"></div>
             </div>
             <div class="form-outline mb-4">
-              <label class="form-label" for="address">Address</label>
-              <textarea class="form-control" id="address" name="address" rows="3" required></textarea>
-            </div>
-          
-            <div class="form-outline mb-4">
-              <label class="form-label" for="profile">Profile picture</label>
-              <input type="file" id="profile" class="form-control" name="profileImage" required />
+              <label class="form-label" for="email">Email</label>
+              <input type="email" id="email"  class="form-control" name="email" required/>
+              <div style="color: red;" class="error-message" id="email-error"></div>
             </div>
             <div class="form-outline mb-4">
               <label class="form-label" for="pass">Password</label>
@@ -47,9 +50,10 @@
                 <a href="/" class="create">Login ?</a>
               </div>
           
-            <button type="submit" class="btn btn-primary btn-block mb-4" >Sign Up</button>
+            <button type="submit" class="btn btn-success shadow btn-block mb-4" >Sign Up</button>
           
           </form>
+      </div>
     </section>
     
 </body>
