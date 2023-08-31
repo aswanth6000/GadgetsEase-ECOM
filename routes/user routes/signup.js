@@ -5,7 +5,8 @@ const twilio = require('twilio')
 const bcrypt = require('bcrypt')
 const authMiddleware = require('../../middleware/authMiddleware')
 const User = require('../../model/user')
-const twilioClient = twilio('AC4c38f326b01dcf9edef383bc94c1a3a1','2565a0b834b18ab1d8c9aa203970ce5c')
+require('dotenv').config();
+const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID,process.env.TWILIO_AUTH_TOKEN)
 
 function generateOtp(){
     const length = 6; 
@@ -42,9 +43,7 @@ router.post('/otpAuth', async (req, res) => {
     try {
         const user = await User.findOne({ phone });
 
-        if (user) {
-            return res.send({ errorMessage: "Phone number already taken" });
-        } else {
+        if (!user) {
             const otp = generateOtp();
             req.session.otp = otp;
             req.session.phone = phone;
@@ -62,6 +61,9 @@ router.post('/otpAuth', async (req, res) => {
             });
 
             res.redirect('/otpAuthentication');
+        } else {
+            
+            return res.send({ errorMessage: "Phone number already taken" });
         }
     } catch (error) {
         console.log(error);
