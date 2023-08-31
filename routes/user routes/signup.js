@@ -30,7 +30,9 @@ router.get('/signup',(req,res)=>{
 })
 
 router.get('/otpAuthentication',(req,res)=>{
-    res.render('./user/otp-confirm')
+    const phoneNumber = req.session.phone;
+    const lastDigits = phoneNumber ? phoneNumber.slice(-4) : '';
+    res.render('./user/otp-confirm',{phone : lastDigits})
 })
 
 router.get('/otpAuth', (req,res)=>{
@@ -40,35 +42,34 @@ router.get('/otpAuth', (req,res)=>{
 
 router.post('/otpAuth', async (req, res) => {
     const { phone } = req.body;
+    const stringPhone = phone.toString();
+    console.log(stringPhone);
     try {
-        const user = await User.findOne({ phone });
-
-        if (!user) {
+        const user = await User.findOne({ phoneNumber: stringPhone });
+        if (user) {
+            return res.send({ errorMessage: "Phone number already taken" });
+        } else {
             const otp = generateOtp();
             req.session.otp = otp;
             req.session.phone = phone;
-
-            twilioClient.messages.create({
-                body: `Your otp to sign up to GadgetEase is : ${otp}`,
-                from: `(618) 893-5202`,
-                to: '+91' + phone
-            })
-            .then(message => {
+            try {
+                const message = await twilioClient.messages.create({
+                    body: `Your otp to sign up to GadgetEase is : ${otp}`,
+                    from: `(618) 893-5202`,
+                    to: '+91' + phone
+                });
                 console.log('OTP sent successfully', message.sid);
-            })
-            .catch(error => {
-                console.log('error sending OTP', error);
-            });
-
-            res.redirect('/otpAuthentication');
-        } else {
-            
-            return res.send({ errorMessage: "Phone number already taken" });
+                res.redirect('/otpAuthentication');
+            } catch (error) {
+                console.log("Error sending OTP", error);
+                res.status(500).json({ error: 'Error sending OTP' });
+            }
         }
     } catch (error) {
         console.log(error);
     }
 });
+
 
 router.post('/resendOTP',async (req,res)=>{
     const phone = req.session.phone;

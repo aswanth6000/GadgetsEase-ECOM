@@ -17,7 +17,7 @@ app.use(require('./routes/user routes/login'))
 app.use(require('./routes/user routes/userhome'))
 app.use(require('./routes/user routes/product'))
 app.use(require('./routes/user routes/checkout'))
-app.use(require('./routes/admin routes/admin-home'))
+app.use(require('./routes/admin routes/admin-routes'))
 app.use(require('./routes/user routes/signup'))
 
 

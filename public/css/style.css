@@ -353,6 +353,7 @@ textarea.input {
   right: 0px;
 }
 
+
 /*----------------------------*\
 	Breadcrumb
 \*----------------------------*/
@@ -446,7 +447,7 @@ textarea.input {
 #header {
   padding-top: 15px;
   padding-bottom: 15px;
-  background-color: #15161D;
+  background-color: #120b0b;
 }
 
 .header-logo {
@@ -455,6 +456,8 @@ textarea.input {
 
 .header-logo .logo img {
   display: block;
+  height: 45px;
+  width: 90px;
 }
 
 /*----------------------------*\
@@ -494,7 +497,6 @@ textarea.input {
 \*----------------------------*/
 
 .header-ctn {
-  float: right;
   padding: 15px 0px;
 }
 

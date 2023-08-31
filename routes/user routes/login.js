@@ -14,8 +14,9 @@ router.post('/login', async (req,res)=>{
     if(!user || !bcrypt.compareSync(password, user.password)){
         return res.render('./user/login',{errorMessage : "Invalid username or password"});
     }
-    req.session.user = user; 
-    res.redirect('/dashboard')
+    req.session.user = user;
+
+    res.redirect('/userhome')
 })
 
 router.get('/login', (req, res)=>{
