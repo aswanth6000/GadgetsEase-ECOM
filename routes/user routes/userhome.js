@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const User = require('../../model/user')
 const multer = require('multer');
+const userHelper = require('../../helpers/userHelper')
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -37,24 +38,19 @@ router.get('/profile/:userId',async  (req, res)=>{
 router.post('/updateProfile/:userId', upload.single('profileImage'), async (req, res) => {
     const userId = req.params.userId;
     const updatedData = req.body;
-  
-    if (req.file) {
-      updatedData.profileImage = req.file.filename;
-    }
-  
-    try {
-      const user = await User.findByIdAndUpdate(userId, updatedData, { new: true });
-  
-      if (!user) {
-        return res.status(404).render('error', { errorMessage: 'User not found' });
-      }
-  
-      res.redirect(`/profile/${userId}`);
-    } catch (error) {
-      console.error('Error updating user:', error);
 
+    if (req.file) {
+        updatedData.profileImage = req.file.filename;
     }
-  });
+
+    const user = await userHelper.updateProfile(userId, updatedData);
+
+    if (!user) {
+        return res.status(404).render('error', { errorMessage: 'User not found' });
+    }
+
+    res.redirect(`/profile/${userId}`);
+});
 
   router.get('/manageaddress/:userId',async(req, res)=>{
     const userId = req.params.userId;
@@ -84,36 +80,15 @@ router.post('/updateProfile/:userId', upload.single('profileImage'), async (req,
 
   router.post('/addAddress/:userId', async (req, res) => {
     const userId = req.params.userId;
-    const type = req.body.type; 
-    const { phone, houseName, name, street, city, state, pinCode } = req.body;
+    const { type, phone, houseName, name, street, city, state, pinCode } = req.body;
 
-    try {
-        const user = await User.findById(userId);
-        if (!user) {
-            return res.status(404).json({ errorMessage: 'User not found' });
-        }
+    const addAddressResult = await userHelper.addAddress(userId, type, phone, houseName, name, street, city, state, pinCode);
 
-        if (user.addresses.length >= 5) {
-            return res.status(400).json({ errorMessage: 'Maximum address limit reached' });
-        }
-
-        user.addresses.push({
-            type,
-            phone,
-            houseName,
-            name,
-            street,
-            city,
-            state,
-            pinCode
-        });
-
-        await user.save();
-        res.redirect('/manageaddress/' + userId)
-    } catch (error) {
-        console.error('Error adding address:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+    if (!addAddressResult.success) {
+        return res.status(400).json({ errorMessage: addAddressResult.message });
     }
+
+    res.redirect('/manageaddress/' + userId);
 });
 
 
@@ -121,25 +96,54 @@ router.post('/removeAddress/:userId/:addressIndex', async (req, res) => {
     const userId = req.params.userId;
     const addressIndex = req.params.addressIndex;
 
-    try {
+    const removeAddressResult = await userHelper.removeAddress(userId, addressIndex);
+
+    if (!removeAddressResult.success) {
+        return res.status(400).json({ errorMessage: removeAddressResult.message });
+    }
+
+    res.redirect('/manageaddress/' + userId);
+});
+
+router.get('/error',(req,res)=>{
+    res.render('./user/error')
+})
+
+router.get('/editAddress/:userId/:addressIndex',async (req,res)=>{
+    const userId = req.params.userId;
+    const addressIndex = req.params.addressIndex;
+    try{
         const user = await User.findById(userId);
-        if (!user) {
-            return res.status(404).json({ errorMessage: 'User not found' });
+        if(!user){
+            console.log("No user Found");
         }
-
-        if (addressIndex < 0 || addressIndex >= user.addresses.length) {
-            return res.status(400).json({ errorMessage: 'Invalid address index' });
+        if(addressIndex < 0 || addressIndex.length > 5){
+            console.log("No address Found");
         }
+        const addressToEdit = user.addresses[addressIndex];
+        res.render('./user/addressEditForm',{user,addressToEdit});
+    }catch(error){
+        console.log("Error occoured ", errror);
+    }
+})
 
-        user.addresses.splice(addressIndex, 1);
-        await user.save();
-        res.redirect('/manageaddress/' + userId)
+
+router.post('/editAddress/:userId/:addressId', async (req, res) => {
+    const userId = req.params.userId;
+    const addressId = req.params.addressId;
+    const { type, phone, houseName, name, street, city, state, pinCode } = req.body;
+
+    try {
+        const result = await userHelper.editAddress(userId, addressId, type, phone, houseName, name, street, city, state, pinCode);
+        if (result.success) {
+            res.redirect('/manageaddress/' + userId);
+        } else {
+            res.send.json({message : 'Address edit failed'})
+        }
     } catch (error) {
-        console.error('Error removing address:', error);
+        console.error('Error editing address:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
-
-
 
 module.exports = router

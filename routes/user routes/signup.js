@@ -3,6 +3,7 @@ const { twiml } = require('twilio');
 const router = express.Router();
 const twilio = require('twilio')
 const bcrypt = require('bcrypt')
+const userHelper = require('../../helpers/userHelper')
 const authMiddleware = require('../../middleware/authMiddleware')
 const User = require('../../model/user')
 require('dotenv').config();
@@ -105,21 +106,16 @@ router.post('/otpAuthentication', authMiddleware.preventVerifiedUserAccess, (req
         res.status(400).json({error : 'Invalid OTP'})
 })
 
-router.post('/signup',async (req,res)=>{
-    const {username, password, confirmPassword, phone, email} = req.body;
-    if(password != confirmPassword){
-        const errorMessage = "Passwords do not match "
-        return res.render('./user/signup',{errorMessage})
+router.post('/signup', async (req, res) => {
+    const { username, password, confirmPassword, phone, email } = req.body;
+
+    const signupResult = await userHelper.signupUser(username, password, confirmPassword, phone, email);
+
+    if (!signupResult.success) {
+        return res.render('./user/signup', { errorMessage: signupResult.message });
     }
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({
-        username : username,
-        password : hashedPassword,
-        phoneNumber : phone,
-        email : email
-    })
-    await user.save();
-    res.redirect('/')
-})
+
+    res.redirect('/');
+});
 
 module.exports = router
