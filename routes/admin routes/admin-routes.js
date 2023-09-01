@@ -7,5 +7,8 @@ router.get('/adminhome',(req, res)=>{
 router.get('/viewuser',(req, res)=>{
     res.render('./admin/viewUser')
 })
+router.get('/viewproducts',(req,res)=>{
+    res.render('./admin/view-products')
+})
 
 module.exports = router

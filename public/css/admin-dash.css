@@ -177,6 +177,7 @@ a {
   align-items: center;
   flex-direction: row;
   margin-bottom: 6%;
+  margin-top: 9%;
   justify-content: center;
 
 }
@@ -200,4 +201,8 @@ a {
   align-items: center;
   flex-direction: column;
 
+}
+.utils{
+  display: flex;
+  justify-content: space-evenly;
 }

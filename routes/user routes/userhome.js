@@ -3,6 +3,11 @@ const router = express.Router()
 const User = require('../../model/user')
 const multer = require('multer');
 const userHelper = require('../../helpers/userHelper')
+const {isAuthenticated} = require('../../middleware/isUserAuth')
+const nocache = require('nocache')
+
+
+const disableCache = nocache;
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -15,13 +20,14 @@ const storage = multer.diskStorage({
   const upload = multer({ storage: storage });
 
 router.get('/', (req, res)=>{
-    res.render('./user/index')
-})
-router.get('/userhome', (req, res)=>{
     const user = req.session.user;
     res.render('./user/index',{user})
 })
-router.get('/profile/:userId',async  (req, res)=>{
+router.get('/userhome',isAuthenticated, (req, res)=>{
+    const user = req.session.user;
+    res.render('./user/index',{user})
+})
+router.get('/profile/:userId',isAuthenticated,async(req, res)=>{
     const userId = req.params.userId;
     try {
         const userFromDB = await User.findById(userId);

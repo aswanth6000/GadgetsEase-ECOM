@@ -1,16 +1,18 @@
 const express = require('express')
 const router = express.Router();
 const bcrypt = require('bcrypt');
-const User = require('../../model/user')
 const userHelper = require('../../helpers/userHelper')
 require('dotenv').config();
+const nocache = require('nocache')
 
+
+const disableCache = nocache;
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
-    
+
     if (email === process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASSWORD_HASH) {
         req.session.isAdminLoggedIn = true;
-        return res.redirect('/admindashboard');
+        return res.redirect('/adminhome');
     }
 
     const loginResult = await userHelper.loginUser(req, email, password);
@@ -18,7 +20,8 @@ router.post('/login', async (req, res) => {
     if (!loginResult.success) {
         return res.render('./user/login', { errorMessage: loginResult.message });
     }
-
+    
+    req.session.isAuthenticated = true; // Assuming this is used for regular user authentication
     res.redirect('/userhome');
 });
 
