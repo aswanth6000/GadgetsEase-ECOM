@@ -1,26 +1,13 @@
-const express = require('express');
-const { twiml } = require('twilio');
-const router = express.Router();
 const twilio = require('twilio')
-const bcrypt = require('bcrypt')
-const userHelper = require('../../helpers/userHelper')
-const authMiddleware = require('../../middleware/authMiddleware')
-const User = require('../../model/user')
+const userHelper = require('../helpers/userHelper')
+const User = require('../model/user')
 require('dotenv').config();
+const gotp = require('../helpers/functionHelper')
 const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID,process.env.TWILIO_AUTH_TOKEN)
+const express = require('express')
+require('dotenv').config();
 
-function generateOtp(){
-    const length = 6; 
-    const charset = '1234567890';
-    let otp = '';
-    for(let i = 0; i < length; i++){
-        const randomIndex = Math.floor(Math.random() * charset.length);
-        otp+= charset[randomIndex]
-    }
-    return otp; 
-}
-
-router.get('/signup',(req,res)=>{
+function getSignupPage(req,res){
     if(req.session.isVerified){
         const phone = req.session.phone;
         res.render('./user/signup', {phone})
@@ -28,20 +15,19 @@ router.get('/signup',(req,res)=>{
         res.status(400).json({error : 'not found'})
         return;
     }
-})
+}
 
-router.get('/otpAuthentication',(req,res)=>{
+function getOtpAuthentication(req,res){
     const phoneNumber = req.session.phone;
     const lastDigits = phoneNumber ? phoneNumber.slice(-4) : '';
     res.render('./user/otp-confirm',{phone : lastDigits})
-})
+}
 
-router.get('/otpAuth', (req,res)=>{
+function getOtpAuth(req,res){
     res.render('./user/otp-conformation');
-})
+}
 
-
-router.post('/otpAuth', async (req, res) => {
+async function postOtpAuth  (req, res){
     const { phone } = req.body;
     const stringPhone = phone.toString();
     console.log(stringPhone);
@@ -50,7 +36,7 @@ router.post('/otpAuth', async (req, res) => {
         if (user) {
             return res.send({ errorMessage: "Phone number already taken" });
         } else {
-            const otp = generateOtp();
+            const otp = gotp.generateOtp();
             req.session.otp = otp;
             req.session.phone = phone;
             try {
@@ -69,13 +55,12 @@ router.post('/otpAuth', async (req, res) => {
     } catch (error) {
         console.log(error);
     }
-});
+}
 
-
-router.post('/resendOTP',async (req,res)=>{
+async function resendOtp (req,res){
     const phone = req.session.phone;
     try{
-        const otp = generateOtp();
+        const otp = gotp.generateOtp();
          req.session.otp = otp;
          twilioClient.messages.create({
             body : `Your otp to sign up to GadgetEase is : ${otp}`,
@@ -94,19 +79,8 @@ router.post('/resendOTP',async (req,res)=>{
     console.error('Resend OTP error:', error);
     res.status(500).json({ error: 'Internal Server Error' });
     }
-})
-router.post('/otpAuthentication', authMiddleware.preventVerifiedUserAccess, (req,res)=>{
-    const {otp} = req.body;
-    const storedOtp = req.session.otp;
-    if(otp === storedOtp){
-        req.session.isVerified = true;
-        res.redirect('/signup')
-    }else{
-    }
-        res.status(400).json({error : 'Invalid OTP'})
-})
-
-router.post('/signup', async (req, res) => {
+}
+async function postSignup(req, res) {
     const { username, password, confirmPassword, phone, email } = req.body;
 
     const signupResult = await userHelper.signupUser(username, password, confirmPassword, phone, email);
@@ -116,6 +90,38 @@ router.post('/signup', async (req, res) => {
     }
 
     res.redirect('/');
-});
+}
 
-module.exports = router
+async function postLogin(req, res){
+        const { email, password } = req.body;
+    
+        if (email === process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASSWORD_HASH) {
+            req.session.isAdminLoggedIn = true;
+            return res.redirect('/adminhome');
+        }
+    
+        const loginResult = await userHelper.loginUser(req, email, password);
+    
+        if (!loginResult.success) {
+            return res.render('./user/login', { errorMessage: loginResult.message });
+        }
+        
+        req.session.isAuthenticated = true; // Assuming this is used for regular user authentication
+        res.redirect('/userhome');
+    
+}
+
+function getLogin(req, res){
+    res.render('./user/login',{errorMessage : ''})
+}
+
+module.exports = {
+    getSignupPage,
+    getOtpAuthentication,
+    getOtpAuth,
+    postOtpAuth,
+    resendOtp,
+    postSignup,
+    postLogin,
+    getLogin
+}
