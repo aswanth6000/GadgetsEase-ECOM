@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style1.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <title>Signup</title>
+</head>
+<body>
+  <nav><div class="nav"><h2>GadgetEase</h2></div></nav>
+    <section class="main">
+      <div class="col-6 col-md-3">
+        <h5>Enter OTP for continue to</h5><h1 style="color: #56B280;">GadgetEase</h1>
+
+      </div>
+      <div class="col-6 col-md-3">
+        <form id="myForm" method="post" action="/forgotPassAuthentication" >
+          <h5>We've sent an OTP to your Phone number ending <span style="color:rgb(34, 149, 51);">***<%=phone%></span><br> Please enter it to continue:</h5>
+          <div class="form-outline mb-4"  id="otp-section" >
+            <label class="form-label" for="otp"></label>
+            <input type="text" id="otp"  class="form-control" name="otp" placeholder="Enter the OTP" maxlength="6" required/>
+            <div style="color: red;" class="error-message" id="email-error"></div>
+          </div>
+          <button type="submit" class="btn btn-success shadow btn-block mb-4"id="submit-otp-button">Submit</button>
+          <button type="button" id="resend-otp-button" disabled class="btn btn-success shadow btn-block mb-4" >resend OTP</button>
+          <span id="countdown" ></span>
+          </form>
+      </div>
+    </section>
+    
+</body>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+      const resendOTPButton = document.getElementById("resend-otp-button");
+      const countdown = document.getElementById("countdown");
+      let countdownValue = 60;
+
+      const updateCountdown = () => {
+          countdown.textContent = ` (${countdownValue}s)`;
+          countdownValue--;
+
+          if (countdownValue < 0) {
+              clearInterval(countdownInterval);
+              countdown.textContent = "";
+              resendOTPButton.disabled = false;
+          }
+      };
+
+      let countdownInterval;
+
+      resendOTPButton.addEventListener("click", async () => {
+          // Disable the resend button and start the countdown
+          resendOTPButton.disabled = true;
+          countdownValue = 60;
+          updateCountdown();
+          countdownInterval = setInterval(updateCountdown, 1000);
+
+          // Display a success message (you can replace this with a modal)
+          alert("OTP sent successfully");
+      });
+
+      // Start the countdown immediately after the page loads
+      updateCountdown();
+      countdownInterval = setInterval(updateCountdown, 1000);
+  });
+</script>
+
+
+</html> 

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style1.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <title>Signup</title>
+</head>
+<body>
+  <nav><div class="nav"><h2>GadgetEase</h2></div></nav>
+    <section class="main">
+      <div class="col-6 col-md-3">
+        <h5>Enter phone number to continue </h5><h1 style="color: #56B280;">GadgetEase</h1>
+
+      </div>
+      <div class="col-6 col-md-3">
+        <form id="myForm" method="post" action="/otpvalidation" >
+          <h5>We need your phone number for verification<br> Please enter it to continue:</h5>
+          <div class="form-outline mb-4">
+            <div class="input-group"> 
+              <input type="phone" id="phone" class="form-control" name="phone" placeholder="Phone number" required/>
+              <button type="submit" id="send-otp-button" class="btn btn-primary">Get OTP</button>
+            </div>
+          </form>
+      </div>
+    </section>
+    
+</body>
+
+</html> 

@@ -2,9 +2,10 @@ const express = require('express')
 const app = express();
 const mongoose = require('mongoose')
 const session = require('express-session')
-
+const nocache = require('nocache')
 app.set('view engine', 'ejs')
 app.use(express.static(__dirname + "/public"))
+app.use(nocache())
 app.use(express.json())
 app.use(express.urlencoded({extended : true}))
 app.use(session({

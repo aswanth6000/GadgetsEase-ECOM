@@ -137,6 +137,37 @@ async function editAddress(userId, addressId, type, phone, houseName, name, stre
     }
 }
 
+async function resetPassword(phone, newPassword, confirmPassword) {
+    try {
+        // Check if passwords match
+        if (newPassword !== confirmPassword) {
+            return { success: false, message: "Passwords don't match" };
+        }
+
+        // Hash the new password
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        // Update the user's password in the database
+        const updatedUser = await User.findOneAndUpdate(
+            { phoneNumber: phone },
+            { password: hashedPassword },
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return { success: false, message: 'User not found' };
+        }
+
+        return { success: true, message: 'Password reset successfully' };
+    } catch (error) {
+        console.error("An error occurred during resetting the password:", error);
+        return { success: false, message: 'Internal Server Error' };
+    }
+}
+
+
+
+
 module.exports = {
     loginUser,
     signupUser,
@@ -144,5 +175,6 @@ module.exports = {
     updateProfile,
     addAddress,
     removeAddress,
-    editAddress
+    editAddress,
+    resetPassword
 };
