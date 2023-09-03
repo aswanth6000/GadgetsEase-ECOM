@@ -14,7 +14,22 @@ router.get('/error',userOp.getError)
 router.get('/editAddress/:userId/:addressIndex', userOp.getEditAddress)
 
 // POST Routes
-router.post('/updateProfile/:userId', userOp.updateProfile);
+router.post('/updateProfile/:userId', updateProfile = multerHelper.upload.single('profileImage'), async (req, res) => {
+    const userId = req.params.userId;
+    const updatedData = req.body;
+
+    if (req.file) {
+        updatedData.profileImage = req.file.filename;
+    }
+
+    const user = await userHelper.updateProfile(userId, updatedData);
+
+    if (!user) {
+        return res.status(404).render('error', { errorMessage: 'User not found' });
+    }
+
+    res.redirect(`/profile/${userId}`);
+});
 router.post('/addAddress/:userId', userOp.postAddAddress);
 router.post('/removeAddress/:userId/:addressIndex', );
 router.post('/editAddress/:userId/:addressId', userOp.postEditAddress);

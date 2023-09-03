@@ -114,7 +114,7 @@ async function postLogin(req, res){
             return res.render('./user/login', { errorMessage: loginResult.message });
         }
         
-        req.session.isAuthenticated = true; // Assuming this is used for regular user authentication
+        req.session.isAuthenticated = true;
         res.redirect('/userhome');
     
 }
@@ -193,10 +193,8 @@ async function postResetPass(req, res) {
     const result = await userHelper.resetPassword(phone, password, confirmPassword);
 
     if (result.success) {
-        // Redirect to a success page or login page
-        res.redirect('/login'); // Adjust the route as needed
+        res.redirect('/login');
     } else {
-        // Handle the error and display an error message to the user
         res.render('./user/resetPassword', { errorMessage: result.message });
     }
 }

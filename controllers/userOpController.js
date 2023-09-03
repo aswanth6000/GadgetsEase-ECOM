@@ -31,22 +31,6 @@ exports.getProfile = async(req, res)=>{
     }
 }
 
-exports.updateProfile = multerHelper.upload.single('profileImage'), async (req, res) => {
-    const userId = req.params.userId;
-    const updatedData = req.body;
-
-    if (req.file) {
-        updatedData.profileImage = req.file.filename;
-    }
-
-    const user = await userHelper.updateProfile(userId, updatedData);
-
-    if (!user) {
-        return res.status(404).render('error', { errorMessage: 'User not found' });
-    }
-
-    res.redirect(`/profile/${userId}`);
-}
 
 exports.manageAddress = async(req, res)=>{
     const userId = req.params.userId;
