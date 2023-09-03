@@ -14,6 +14,7 @@ router.get('/manageaddress/:userId',userOp.manageAddress)
 router.get('/addaddress/:userId',userOp.getAddAddress)
 router.get('/error',userOp.getError)
 router.get('/editAddress/:userId/:addressIndex', userOp.getEditAddress)
+router.get('/viewproduct/:productId',userOp.viewproduct)
 
 // POST Routes
 router.post('/updateProfile/:userId', updateProfile = multerHelper.upload.single('profileImage'), async (req, res) => {

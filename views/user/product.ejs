@@ -28,31 +28,12 @@
  		<link type="text/css" rel="stylesheet" href="/css/style.css"/>
 
     </head>
-	<body>
-		<%- include('../partials/navigation') %>
+	<%- include('../partials/navigation') %>
+	<body style="margin-top: 5%;">
 
 
 
-		<!-- BREADCRUMB -->
-		<div id="breadcrumb" class="section">
-			<!-- container -->
-			<div class="container">
-				<!-- row -->
-				<div class="row">
-					<div class="col-md-12">
-						<ul class="breadcrumb-tree">
-							<li><a href="#">Home</a></li>
-							<li><a href="#">All Categories</a></li>
-							<li><a href="#">Accessories</a></li>
-							<li><a href="#">Headphones</a></li>
-							<li class="active">Product name goes here</li>
-						</ul>
-					</div>
-				</div>
-				<!-- /row -->
-			</div>
-			<!-- /container -->
-		</div>
+
 		<!-- /BREADCRUMB -->
 
 		<!-- SECTION -->
@@ -64,21 +45,11 @@
 					<!-- Product main img -->
 					<div class="col-md-5 col-md-push-2">
 						<div id="product-main-img">
-							<div class="product-preview">
-								<img src="./img/product01.png" alt="">
-							</div>
-
-							<div class="product-preview">
-								<img src="./img/product03.png" alt="">
-							</div>
-
-							<div class="product-preview">
-								<img src="./img/product06.png" alt="">
-							</div>
-
-							<div class="product-preview">
-								<img src="./img/product08.png" alt="">
-							</div>
+							<% product.productImages.forEach(image => { %>
+								<div class="product-preview" style="cursor: zoom-in;">
+									<img src="/uploads/images/<%= image %>" style="object-fit: contain;height: 500px;" alt="">
+								</div>
+							<% }); %>
 						</div>
 					</div>
 					<!-- /Product main img -->
@@ -86,21 +57,11 @@
 					<!-- Product thumb imgs -->
 					<div class="col-md-2  col-md-pull-5">
 						<div id="product-imgs">
-							<div class="product-preview">
-								<img src="./img/product01.png" alt="">
-							</div>
-
-							<div class="product-preview">
-								<img src="./img/product03.png" alt="">
-							</div>
-
-							<div class="product-preview">
-								<img src="./img/product06.png" alt="">
-							</div>
-
-							<div class="product-preview">
-								<img src="./img/product08.png" alt="">
-							</div>
+							<% product.productImages.forEach(image => { %>
+								<div class="product-preview">
+									<img style="object-fit: contain;height: 100px;" src="/uploads/images/<%= image %>" alt="">
+								</div>
+							<% }); %>
 						</div>
 					</div>
 					<!-- /Product thumb imgs -->
@@ -108,7 +69,7 @@
 					<!-- Product details -->
 					<div class="col-md-5">
 						<div class="product-details">
-							<h2 class="product-name">product name goes here</h2>
+							<h2 class="product-name"><%=product.name%></h2>
 							<div>
 								<div class="product-rating">
 									<i class="fa fa-star"></i>
@@ -120,8 +81,15 @@
 								<a class="review-link" href="#">10 Review(s) | Add your review</a>
 							</div>
 							<div>
-								<h3 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h3>
-								<span class="product-available">In Stock</span>
+								<h3 class="product-price">₹<%=product.discountPrice%><del class="product-old-price">₹<%=product.price%></del></h3>
+								<% if (product.quantity > 0) { %>
+									<span class="product-available">In Stock</span>
+								<% } else if (product.quantity > 0 && product.quantity <= 20) { %>
+									<span class="product-available" style="color: red;"><%= product.quantity %> items remaining</span>
+								<% } else { %>
+									<span class="product-available" style="color: red;">Out of Stock</span>
+								<% } %>
+								
 							</div>
 							<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
 

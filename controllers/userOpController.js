@@ -1,20 +1,35 @@
 const express = require('express')
-const router = express.Router()
 const User = require('../model/user')
+const Product = require('../model/product')
 const multer = require('multer');
 const userHelper = require('../helpers/userHelper')
 const {isAuthenticated} = require('../middleware/isUserAuth')
 const nocache = require('nocache')
 const multerHelper = require('../helpers/functionHelper')
 
-exports.getIndex = (req, res)=>{
-    const user = req.session.user;
-    res.render('./user/index',{user})
+exports.getIndex = async(req, res)=>{
+    res.render('./user/index')
 }
 
-exports.getUserHome = (req, res)=>{
-    const user = req.session.user;
-    res.render('./user/index',{user})
+exports.viewproduct = async (req,res)=>{
+    try{
+        const user = req.session.user;
+        const productId = req.params.productId
+        const product = await Product.findById(productId)
+        res.render('./user/product',{user,product})
+    }catch(error){
+        console.log("error fetching details ", error);
+    }
+}
+
+exports.getUserHome = async(req, res)=>{
+    try{
+        const user = req.session.user;
+        const products = await Product.find()
+        res.render('./user/index',{user,products})
+    }catch(error){
+        console.log("Error while fetching products",error);
+    }
 }
 
 exports.getProfile = async(req, res)=>{
