@@ -14,7 +14,8 @@ router.get('/manageaddress/:userId',userOp.manageAddress)
 router.get('/addaddress/:userId',userOp.getAddAddress)
 router.get('/error',userOp.getError)
 router.get('/editAddress/:userId/:addressIndex', userOp.getEditAddress)
-router.get('/viewproduct/:productId',userOp.viewproduct)
+router.get('/viewproduct/:productId',isAuthenticated,userOp.viewproduct)
+router.get('/cart',isAuthenticated,userOp.getcart)
 
 // POST Routes
 router.post('/updateProfile/:userId', updateProfile = multerHelper.upload.single('profileImage'), async (req, res) => {
@@ -36,5 +37,6 @@ router.post('/updateProfile/:userId', updateProfile = multerHelper.upload.single
 router.post('/addAddress/:userId', userOp.postAddAddress);
 router.post('/removeAddress/:userId/:addressIndex', );
 router.post('/editAddress/:userId/:addressId', userOp.postEditAddress);
+router.post('/add-to-cart/:productId',isAuthenticated, userOp.addtocart);
 
 module.exports = router

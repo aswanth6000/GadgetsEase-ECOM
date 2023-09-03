@@ -49,8 +49,13 @@
 					</ul>
 				  </div>
 				<!-- <div class="wishlist"><i class="bi bi-heart"></i></div> -->
-				<div class="cart"><a href="#"><i class="bi bi-cart3"></i>
+				<% if (user) { %>
+				<div class="cart"><a href="/cart"><i class="bi bi-cart3"></i>
 					<span>Cart</span></a></div>
+					<% } else { %>
+						<div class="cart"><a href="/login"><i class="bi bi-cart3"></i>
+							<span>Cart</span></a></div>
+					<% }  %>	
 				<div class="options dropdown">
 					<i class="bi bi-three-dots-vertical" id="optionsDropdown" data-bs-toggle="dropdown" aria-expanded="false"></i>
 					<ul class="dropdown-menu" aria-labelledby="optionsDropdown">

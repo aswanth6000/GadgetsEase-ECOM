@@ -3,6 +3,11 @@ const app = express();
 const mongoose = require('mongoose')
 const session = require('express-session')
 const nocache = require('nocache')
+const socketIo = require('socket.io');
+const http = require('http');
+const server = http.createServer(app);
+const io = socketIo(server);
+
 app.set('view engine', 'ejs')
 app.use(express.static(__dirname + "/public"))
 app.use(nocache())
@@ -13,6 +18,15 @@ app.use(session({
     resave: false,
     saveUninitialized: true
   }));
+
+  io.on('connection', (socket) => {
+    console.log('A user connected.');
+  
+    // Handle disconnection
+    socket.on('disconnect', () => {
+      console.log('A user disconnected.');
+    });
+  });
 
 app.use(require('./routes/user routes/userhome'))
 app.use(require('./routes/user routes/product'))

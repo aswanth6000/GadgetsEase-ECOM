@@ -138,3 +138,40 @@ exports.postEditAddress = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 }
+exports.getcart = (req,res)=>{
+    const user = req.session.user;
+    res.render('./user/cart',{user})
+}
+
+exports.addtocart = async (req, res) => {
+    try {
+        const productId = req.params.productId;
+        const userId = req.session.user._Id; 
+        const user = await User.findById(userId)
+
+        console.log(user);
+        const referringPage = req.get('Referer'); // Get the referring page URL
+ 
+        // Check if the product is already in the cart
+        const productIndex = user.cart.findIndex(item => item.product === productId);
+ 
+        if (productIndex === -1) {
+            // If not in the cart, add it
+            user.cart.push({ product: productId, quantity: 1 });
+        } else {
+            // If already in the cart, increment the quantity
+            user.cart[productIndex].quantity++;
+        }
+ 
+        // Save the updated user data
+        await user.save();
+ 
+        // Redirect back to the referring page
+        res.redirect(referringPage);
+    } catch (error) {
+        console.error('Error adding product to cart:', error);
+        // Handle the error appropriately
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+ }
+ 

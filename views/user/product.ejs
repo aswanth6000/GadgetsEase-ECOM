@@ -82,7 +82,7 @@
 							</div>
 							<div>
 								<h3 class="product-price">₹<%=product.discountPrice%><del class="product-old-price">₹<%=product.price%></del></h3>
-								<% if (product.quantity > 0) { %>
+								<% if (product.quantity > 20) { %>
 									<span class="product-available">In Stock</span>
 								<% } else if (product.quantity > 0 && product.quantity <= 20) { %>
 									<span class="product-available" style="color: red;"><%= product.quantity %> items remaining</span>
@@ -91,7 +91,13 @@
 								<% } %>
 								
 							</div>
-							<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+							<p> RAM : <%= product.ram %> <br>
+								ROM : <%= product.rom %> <br>
+								Expandable : <%= product.expandable %> <br>
+								RearCam : <%= product.rearCam %> <br>
+								FrontCam : <%= product.frontCam %> <br>
+								Processor : <%= product.processor %><br>
+							</p>
 
 							<div class="product-options">
 								<label>
@@ -103,7 +109,7 @@
 								<label>
 									Color
 									<select class="input-select">
-										<option value="0">Red</option>
+										<option value="0"><%= product.productColor %></option>
 									</select>
 								</label>
 							</div>
@@ -112,12 +118,13 @@
 								<div class="qty-label">
 									Qty
 									<div class="input-number">
-										<input type="number">
+										<input type="number" value="1">
 										<span class="qty-up">+</span>
 										<span class="qty-down">-</span>
 									</div>
-								</div>
-								<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
+								</div><form action="/add-to-cart/<%=product._id%>" method="post">
+									<button class="add-to-cart-btn" type="submit"><i class="fa fa-shopping-cart"></i> add to cart</button>
+								</form>
 							</div>
 
 							<ul class="product-btns">
@@ -127,8 +134,8 @@
 
 							<ul class="product-links">
 								<li>Category:</li>
-								<li><a href="#">Headphones</a></li>
-								<li><a href="#">Accessories</a></li>
+								<li><a href="#"><%= product.category %></a></li>
+								<!-- <li><a href="#">Accessories</a></li> -->
 							</ul>
 
 							<ul class="product-links">

@@ -11,13 +11,20 @@ const addressSchema = new mongoose.Schema({
     pinCode: String
 });
 
+const cartItemSchema = new mongoose.Schema({
+    productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
+    quantity: Number,
+});
+
 const userSchema = new mongoose.Schema({
-    username : String,
-    password : String,
-    phoneNumber : String,
+    username: String,
+    password: String,
+    phoneNumber: String,
     addresses: [addressSchema],
-    email : String,
+    email: String,
     verified: Boolean,
-    profileImage : String
-})
-module.exports = mongoose.model('User', userSchema)
+    profileImage: String,
+    cart: [cartItemSchema], 
+});
+
+module.exports = mongoose.model('User', userSchema);
