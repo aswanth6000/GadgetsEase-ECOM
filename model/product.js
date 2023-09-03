@@ -18,14 +18,12 @@ const productSchema = new mongoose.Schema({
     video : String,
     productColor: String,
     ratings: [ratingSchema], // Use the ratingSchema as an array of ratings
-    details: {
-        ram: String,
-        rom: String,
-        expandable: String,
-        frontCam: String,
-        rearCam: String,
-        processor: String,
-    },
+    ram: String,
+    rom: String,
+    expandable: String,
+    frontCam: String,
+    rearCam: String,
+    processor: String,
 });
 
 module.exports = mongoose.model('Product', productSchema);

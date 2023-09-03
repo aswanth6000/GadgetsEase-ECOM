@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product</title>
+    <!-- Add Bootstrap CSS link here -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Edit Product</h1>
+        <form action="/admin/editproduct/<%=product._id%>" method="post" enctype="multipart/form-data">
+            <!-- Product Details -->
+            <div class="form-group">
+                <label for="name">Product Name:</label>
+                <input type="text" class="form-control" id="name" name="name" value="<%=product.name%>" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="category">Category:</label>
+                <input type="text" class="form-control" id="category" name="category" value="<%=product.category%>" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="price">Price:</label>
+                <input type="number" class="form-control" id="price" name="price" value="<%=product.price%>" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="discountPrice">Discount Price:</label>
+                <input type="number" class="form-control" id="discountPrice" name="discountPrice" value="<%=product.discountPrice%>" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="quantity">Quantity:</label>
+                <input type="number" class="form-control" id="quantity" name="quantity" value="<%=product.quantity%>" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="productColor">Product Color:</label>
+                <input type="text" class="form-control" id="productColor" name="productColor" value="<%=product.productColor%>" required>
+            </div>
+            
+            <!-- Product Images -->
+            <div class="form-group">
+                <label for="selectedImages">Selected Images:</label>
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="selectedImages" name="productImages" accept="image/*" multiple>
+                    <label class="custom-file-label" for="selectedImages">Choose images...</label>
+                </div>
+                <div id="image-preview" class="mt-2">
+                    <!-- Loop through product images and display them if available -->
+                    <% if (product.productImages && product.productImages.length > 0) { %>
+                        <% product.productImages.forEach(image => { %>
+                            <div class="mb-2">
+                                <img src="/uploads/images/<%= image %>" alt="Product Image" style="max-width: 100px;" />
+                                <button type="button" class="btn btn-danger btn-sm ml-2">Remove</button>
+                            </div>
+                        <% }); %>
+                    <% } %>
+                </div>
+            </div>
+            <!-- Product Video -->
+            <div class="form-group">
+                <label for="selectedVideo">Selected Video:</label>
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="selectedVideo" name="video" accept="video/*">
+                    <label class="custom-file-label" for="selectedVideo">Choose video...</label>
+                </div>
+                <div id="video-preview" class="mt-2">
+                    <!-- Display existing video if available -->
+                    <% if (product.video) { %>
+                        <video controls>
+                            <source src="/uploads/videos/<%= product.video %>" type="video/mp4">
+                        </video>
+                        <button type="button" class="btn btn-danger btn-sm ml-2" id="removeVideo">Remove Video</button>
+                    <% } %>
+                </div>
+            </div>
+            
+            <!-- Product Details -->
+            <h2>Product Details</h2>
+            <div class="form-group">
+                <label for="ram">RAM:</label>
+                <input type="text" class="form-control" id="ram" name="ram" value="<%=product.ram%>" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="rom">ROM:</label>
+                <input type="text" class="form-control" id="rom" name="rom" value="<%=product.rom%>" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="expandable">Expandable Memory:</label>
+                <input type="text" class="form-control" id="expandable" name="expandable" value="<%=product.expandable%>" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="frontCam">Front Camera:</label>
+                <input type="text" class="form-control" id="frontCam" name="frontCam" value="<%=product.frontCam%>" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="rearCam">Rear Camera:</label>
+                <input type="text" class="form-control" id="rearCam" name="rearCam" value="<%=product.rearCam%>" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="processor">Processor:</label>
+                <input type="text" class="form-control" id="processor" name="processor" value="<%=product.processor%>" required>
+            </div>
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary">Save changes</button>
+        </form>
+    </div>
+    
+    <!-- Add Bootstrap JS and jQuery here -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Function to handle image file input change event
+        document.getElementById('selectedImages').addEventListener('change', function(e) {
+            const imagePreview = document.getElementById('image-preview');
+            imagePreview.innerHTML = ''; // Clear previous previews
+            
+            const files = e.target.files;
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const imgContainer = document.createElement('div');
+                imgContainer.className = 'mb-2';
+    
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                img.style.maxWidth = '100px'; // Adjust the size as needed
+    
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.className = 'btn btn-danger btn-sm ml-2';
+                removeBtn.textContent = 'Remove';
+                
+                // Handle remove button click event
+                removeBtn.addEventListener('click', function() {
+                    imgContainer.remove(); // Remove the image container
+                });
+    
+                imgContainer.appendChild(img);
+                imgContainer.appendChild(removeBtn);
+                imagePreview.appendChild(imgContainer);
+            }
+        });
+    
+        // Function to handle video file input change event
+        document.getElementById('selectedVideo').addEventListener('change', function(e) {
+            const videoPreview = document.getElementById('video-preview');
+            videoPreview.innerHTML = ''; // Clear previous previews
+    
+            const files = e.target.files;
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const videoContainer = document.createElement('div');
+                videoContainer.className = 'mb-2';
+    
+                const video = document.createElement('video');
+                video.src = URL.createObjectURL(file);
+                video.controls = true; // Enable video player controls
+                video.style.maxWidth = '100%'; // Adjust the size as needed
+    
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.className = 'btn btn-danger btn-sm ml-2';
+                removeBtn.textContent = 'Remove';
+                
+                // Handle remove button click event
+                removeBtn.addEventListener('click', function() {
+                    videoContainer.remove(); // Remove the video container
+                    document.getElementById('selectedVideo').value = ''; // Clear the file input
+                });
+    
+                videoContainer.appendChild(video);
+                videoContainer.appendChild(removeBtn);
+                videoPreview.appendChild(videoContainer);
+            }
+        });
+
+        // Function to remove the video
+        document.getElementById('removeVideo').addEventListener('click', function() {
+            const videoPreview = document.getElementById('video-preview');
+            videoPreview.innerHTML = ''; // Clear the video preview
+            document.getElementById('selectedVideo').value = ''; // Clear the file input
+        });
+    </script>
+</body>
+</html>
