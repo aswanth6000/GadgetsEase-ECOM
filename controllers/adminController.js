@@ -31,6 +31,22 @@ exports.viewproducts = async (req, res) => {
     }
 }
 
+exports.getProductCount = async (req, res) => {
+    try {
+        const totalProductsCount = await Product.countDocuments();
+        const inStockProductsCount = await Product.countDocuments({ quantity: { $gt: 0 } });
+        const outOfStockProductsCount = await Product.countDocuments({ quantity: { $lte: 0 } });
+
+        res.json({
+            totalProductsCount,
+            inStockProductsCount,
+            outOfStockProductsCount,
+        });
+    } catch (error) {
+        console.error('Error fetching product counts:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
 
 exports.getAddProducts = (req, res) => {
     res.render('./admin/product-upload');
@@ -50,4 +66,20 @@ exports.geteditProducts = async (req, res) => {
     }
 };
 
+exports.deleteProduct = async (req, res) => {
+    const productId = req.params.productId;
 
+    try {
+        // Find the product by ID and remove it from the database
+        const deletedProduct = await Product.findByIdAndRemove(productId);
+
+        if (!deletedProduct) {
+            return res.status(404).send('Product not found');
+        }
+
+        res.redirect('/admin/viewproducts'); // Redirect to a page after successful deletion
+    } catch (error) {
+        console.error('Error deleting product:', error);
+        res.status(500).send('Internal Server Error');
+    }
+}

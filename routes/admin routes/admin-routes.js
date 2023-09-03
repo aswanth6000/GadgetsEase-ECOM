@@ -1,14 +1,19 @@
 const express = require('express');
+const app = express()
 const router = express.Router()
 const adminController = require('../../controllers/adminController')
 const multerHelper = require('../../helpers/functionHelper')
-const Product = require('../../model/product')
+const Product = require('../../model/product');
+const nocache = require('nocache');
+
+app.use(nocache())
 
 router.get('/adminhome',adminController.adminhome)
 router.get('/admin/viewuser',adminController.viewuser)
 router.get('/admin/viewproducts',adminController.viewproducts)
 router.get('/admin/addproduct',adminController.getAddProducts)
 router.get('/admin/editproduct/:productId',adminController.geteditProducts)
+router.get('/admin/getProductCount',adminController.getProductCount)
 
 // POST Routes
 router.post('/admin/addproduct',addproducts = multerHelper.upload.fields([{ name: 'productImages', maxCount: 5 }, { name: 'video', maxCount: 1 }]), async (req, res) => {
@@ -83,5 +88,6 @@ router.post('/admin/editproduct/:productId', multerHelper.upload.fields([{ name:
         res.status(500).send('Internal Server Error'); // Replace with your error handling logic
     }
 });
+router.post('/admin/deleteproduct/:productId',adminController.deleteProduct)
 
 module.exports = router
