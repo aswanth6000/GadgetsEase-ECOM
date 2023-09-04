@@ -166,3 +166,34 @@
 	}
 
 })(jQuery);
+
+
+// Get references to the elements
+const decrementButton = document.getElementById('decrement');
+const incrementButton = document.getElementById('increment');
+const quantityInput = document.getElementById('quantity');
+
+// Add click event listeners to the buttons
+decrementButton.addEventListener('click', () => {
+    decrementQuantity();
+});
+
+incrementButton.addEventListener('click', () => {
+    incrementQuantity();
+});
+
+// Function to decrement the quantity
+function decrementQuantity() {
+    let currentQuantity = parseInt(quantityInput.value);
+    if (currentQuantity > 1) {
+        currentQuantity--;
+        quantityInput.value = currentQuantity;
+    }
+}
+
+// Function to increment the quantity
+function incrementQuantity() {
+    let currentQuantity = parseInt(quantityInput.value);
+    currentQuantity++;
+    quantityInput.value = currentQuantity;
+}

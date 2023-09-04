@@ -113,16 +113,16 @@
 									</select>
 								</label>
 							</div>
-
+							<form action="/add-to-cart/<%=product._id%>" method="post">
 							<div class="add-to-cart">
 								<div class="qty-label">
 									Qty
 									<div class="input-number">
-										<input type="number" value="1">
-										<span class="qty-up">+</span>
-										<span class="qty-down">-</span>
+										<input type="number" id="quantity" value="1" name="qty">
+										<span class="qty-up" id="increment">+</span>
+										<span class="qty-down" id="decrement">-</span>
 									</div>
-								</div><form action="/add-to-cart/<%=product._id%>" method="post">
+								</div>
 									<button class="add-to-cart-btn" type="submit"><i class="fa fa-shopping-cart"></i> add to cart</button>
 								</form>
 							</div>

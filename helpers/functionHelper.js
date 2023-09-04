@@ -1,4 +1,11 @@
 
+const  express = require('express');
+const app = express()
+const socketIo = require('socket.io');
+const http = require('http');
+const server = http.createServer(app);
+
+
 const multer = require('multer');
 function generateOtp(){
     const length = 6; 
@@ -31,7 +38,9 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+
  module.exports = {
     generateOtp,
-    upload
+    upload,
+    
  }

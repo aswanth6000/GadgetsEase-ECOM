@@ -3,30 +3,23 @@ const app = express();
 const mongoose = require('mongoose')
 const session = require('express-session')
 const nocache = require('nocache')
-const socketIo = require('socket.io');
-const http = require('http');
+const http = require('http')
 const server = http.createServer(app);
-const io = socketIo(server);
-
+const socketIo = require('socket.io');
 app.set('view engine', 'ejs')
+
 app.use(express.static(__dirname + "/public"))
 app.use(nocache())
 app.use(express.json())
-app.use(express.urlencoded({extended : true}))
+app.use(express.urlencoded({ extended: true }))
 app.use(session({
     secret: 'your_session_secret',
     resave: false,
-    saveUninitialized: true
-  }));
-
-  io.on('connection', (socket) => {
-    console.log('A user connected.');
-  
-    // Handle disconnection
-    socket.on('disconnect', () => {
-      console.log('A user disconnected.');
-    });
-  });
+    saveUninitialized: true,
+    cookie: { maxAge: 3600000 }
+}));
+const io = socketIo(server);
+app.locals.io = io;
 
 app.use(require('./routes/user routes/userhome'))
 app.use(require('./routes/user routes/product'))
@@ -35,33 +28,20 @@ app.use(require('./routes/admin routes/admin-routes'))
 app.use(require('./routes/user routes/userAuthRoutes'))
 
 
-
-
-
 // Server
-
-
 const PORT = process.env.PORT || 8000;
-app.listen(PORT, ()=>{
-    console.log(`server running on ${PORT}`);
-})
-
-
-
-
-
-
+server.listen(PORT, () => {
+    console.log(`Server running on ${PORT}`);
+});
 
 // Database 
-
-
-mongoose.connect('mongodb://localhost:27017/GadgetsEaseUser',{
+mongoose.connect('mongodb://localhost:27017/GadgetsEaseUser', {
     useNewUrlParser: true,
     useUnifiedTopology: true
-})
+});
 
 const db = mongoose.connection;
-db.on('error',console.error.bind(console,'connection error'))
-db.once('open',()=>{
+db.on('error', console.error.bind(console, 'Connection error'))
+db.once('open', () => {
     console.log("Database connected");
-})
+});

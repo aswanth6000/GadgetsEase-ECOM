@@ -8,7 +8,13 @@ const nocache = require('nocache')
 const multerHelper = require('../helpers/functionHelper')
 
 exports.getIndex = async(req, res)=>{
-    res.render('./user/index')
+    try{
+        const user = req.session.user;
+        const products = await Product.find()
+        res.render('./user/index',{user,products})
+    }catch(error){
+        console.log("Error",error);
+    }
 }
 
 exports.viewproduct = async (req,res)=>{
@@ -143,35 +149,53 @@ exports.getcart = (req,res)=>{
     res.render('./user/cart',{user})
 }
 
+
+
 exports.addtocart = async (req, res) => {
     try {
+        const userId = req.session.user._id;
+        const user = await User.findById(userId);
         const productId = req.params.productId;
-        const userId = req.session.user._Id; 
-        const user = await User.findById(userId)
+        const { qty } = req.body;
 
-        console.log(user);
-        const referringPage = req.get('Referer'); // Get the referring page URL
- 
-        // Check if the product is already in the cart
-        const productIndex = user.cart.findIndex(item => item.product === productId);
- 
-        if (productIndex === -1) {
-            // If not in the cart, add it
-            user.cart.push({ product: productId, quantity: 1 });
+        // Check if the product already exists in the cart
+        const existingCartItem = await User.findOne({
+            _id: userId,
+            'cart.product': productId,
+        });
+
+        if (existingCartItem) {
+            // If the product already exists, increment the quantity
+            await User.updateOne(
+                { _id: userId, 'cart.product': productId },
+                { $inc: { 'cart.$.quantity': qty } }
+            );
         } else {
-            // If already in the cart, increment the quantity
-            user.cart[productIndex].quantity++;
+            // If the product is not in the cart, add it
+            await User.findByIdAndUpdate(
+                userId,
+                {
+                    $push: { cart: { product: productId, quantity: qty } },
+                },
+                { new: true } // To return the updated user document
+            );
         }
- 
-        // Save the updated user data
-        await user.save();
- 
-        // Redirect back to the referring page
-        res.redirect(referringPage);
+
+        // Update the cart length in the session
+        req.session.cartLength = user.cart.length;
+        const cartLength = req.session.cartLength;
+        console.log(cartLength);
+
+        // Emit the 'cartUpdate' event using the io instance from app.locals
+        req.app.locals.io.emit('cartUpdate', { userId, cartLength });
+        console.log(`Emitted 'cartUpdate' event for user ${userId} with cart length ${cartLength}`);
+
+        // Redirect back to the referring page or cart page
+        const referringPage = req.get('Referer'); // Get the referring page URL
+        res.redirect(referringPage || '/cart'); // Redirect to the cart page if the referring page is not available
     } catch (error) {
         console.error('Error adding product to cart:', error);
         // Handle the error appropriately
         res.status(500).json({ error: 'Internal Server Error' });
     }
- }
- 
+};
