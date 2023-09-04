@@ -140,10 +140,6 @@ function forgotPassAuth(req,res){
     res.render('./user/forgotPassOtpConfirm',{phone : lastDigits})
 }
 
-function resetPassword(req,res){
-    res.render('./user/resetPassword')
-}
-
 function postForgotOtpAuthentication(req,res){
     const {otp} = req.body;
     if(otp === req.session.otp){
@@ -152,7 +148,6 @@ function postForgotOtpAuthentication(req,res){
         res.send.json({error: "OTP Missmatch"})
     }
 }
-
 
 async function postForgotPassotp(req, res) {
     const { phone } = req.body;

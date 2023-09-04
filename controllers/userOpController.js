@@ -18,15 +18,24 @@ exports.getIndex = async(req, res)=>{
 }
 
 exports.viewproduct = async (req,res)=>{
-    try{
+    try {
         const user = req.session.user;
-        const productId = req.params.productId
-        const product = await Product.findById(productId)
-        res.render('./user/product',{user,product})
-    }catch(error){
+        const productId = req.params.productId;
+        const product = await Product.findById(productId);
+    
+        const relatedProductsPromise = Product.find({
+          _id: { $ne: productId },
+          category: product.category,
+        }).exec();
+    
+        const relatedProducts = await relatedProductsPromise;
+    
+        res.render('./user/product', { user, product, relatedProducts });
+      } catch (error) {
         console.log("error fetching details ", error);
-    }
-}
+      }
+    };
+    
 
 exports.getUserHome = async(req, res)=>{
     try{
@@ -199,3 +208,7 @@ exports.addtocart = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
+exports.getCategory = async (req, res)=>{
+    res.render('./user/store')
+}

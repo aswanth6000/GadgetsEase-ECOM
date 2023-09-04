@@ -16,6 +16,7 @@ router.get('/error',userOp.getError)
 router.get('/editAddress/:userId/:addressIndex', userOp.getEditAddress)
 router.get('/viewproduct/:productId',isAuthenticated,userOp.viewproduct)
 router.get('/cart',isAuthenticated,userOp.getcart)
+router.get('/category',userOp.getCategory)
 
 // POST Routes
 router.post('/updateProfile/:userId', updateProfile = multerHelper.upload.single('profileImage'), async (req, res) => {
