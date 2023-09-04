@@ -4,11 +4,12 @@ const multerHelper = require('../../helpers/functionHelper')
 const userHelper = require('../../helpers/userHelper')
 const {isAuthenticated} = require('../../middleware/isUserAuth')
 const userOp = require('../../controllers/userOpController')
+const nocache = require('nocache')
 
 
 // GET Routes
 router.get('/', userOp.getIndex)
-router.get('/userhome',isAuthenticated, userOp.getUserHome)
+router.get('/userhome',nocache(),isAuthenticated, userOp.getUserHome)
 router.get('/profile/:userId',isAuthenticated,userOp.getProfile)
 router.get('/manageaddress/:userId',userOp.manageAddress)
 router.get('/addaddress/:userId',userOp.getAddAddress)

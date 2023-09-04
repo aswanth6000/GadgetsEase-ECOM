@@ -16,7 +16,7 @@ app.use(session({
     secret: 'your_session_secret',
     resave: false,
     saveUninitialized: true,
-    cookie: { maxAge: 3600000 }
+    
 }));
 const io = socketIo(server);
 app.locals.io = io;
