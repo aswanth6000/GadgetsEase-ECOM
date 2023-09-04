@@ -217,3 +217,6 @@ a {
     justify-content: center;
     align-items: center;
 }
+.header_img{
+  display: none;
+}
