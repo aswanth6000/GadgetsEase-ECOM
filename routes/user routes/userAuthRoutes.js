@@ -2,14 +2,14 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../../controllers/userControllers')
 const nocache = require('nocache')
-const {isUserAuthenticated}  = require('../../middleware/loginAuth')
+const {restrictLogin}  = require('../../middleware/isUserAuth')
 
 // GET Routes-----------------------------------------
 router.get('/signup',userController.getSignupPage)
 router.get('/otpAuthentication',userController.getOtpAuthentication)
 router.get('/otpAuth', userController.getOtpAuth)
 router.get('/otpAuth', userController.getOtpAuth)
-router.get('/login',isUserAuthenticated, userController.getLogin)
+router.get('/login',nocache(),restrictLogin, userController.getLogin)
 router.get('/logout',userController.logout)
 router.get('/otpvalidation',userController.getForgotPassotp)
 router.get('/forgotPassAuth',userController.forgotPassAuth)

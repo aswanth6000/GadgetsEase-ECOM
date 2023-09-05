@@ -6,7 +6,6 @@ const {isAuthenticated} = require('../../middleware/isUserAuth')
 const userOp = require('../../controllers/userOpController')
 const nocache = require('nocache')
 
-
 // GET Routes
 router.get('/', userOp.getIndex)
 router.get('/userhome',nocache(),isAuthenticated, userOp.getUserHome)
