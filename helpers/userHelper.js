@@ -17,6 +17,9 @@ async function loginUser(req, email, password) {
         if (!user || !bcrypt.compareSync(password, user.password)) {
             return { success: false, message: "Invalid username or password" };
         }
+        if(user.status === 'blocked'){
+            return { success : false, message : "User is blocked by admin"}
+        }
         req.session.user = user;
         return { success: true, message: "Login successful" };
     } catch (error) {

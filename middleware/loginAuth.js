@@ -1,3 +1,4 @@
+
 const isUserAuthenticated = (req, res, next) => {
     if (req.session.user) {
         req.session.destroy(err => {
@@ -10,8 +11,15 @@ const isUserAuthenticated = (req, res, next) => {
         next();
     }
 };
+const isAdminLoggedIn = (req, res, next)=>{
+    if(req.session.isAdminLoggedIn){
+        next()
+    }else{
+        res.redirect('/login')
+    }
+}
 
-module.exports = { isUserAuthenticated };
+module.exports = { isUserAuthenticated, isAdminLoggedIn };
 
 
 

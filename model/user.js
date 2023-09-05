@@ -28,6 +28,10 @@ const userSchema = new mongoose.Schema({
             quantity: Number,
         },
     ],
+    status: {
+        type: String,
+        default: 'active',
+    },
 });
 
 module.exports = mongoose.model('User', userSchema);

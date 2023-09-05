@@ -1,13 +1,56 @@
 const Product = require('../model/product');
+const User = require('../model/user')
 
 exports.adminhome = (req, res) => {
     res.render('./admin/admin-dash');
 }
 
-exports.viewuser = (req, res) => {
-    res.render('./admin/viewUser');
+exports.getUsersCount = async (req, res) => {
+    try{
+        
+        const totalUsersCount = await User.countDocuments();
+        const activeUsersCount = await User.countDocuments({ status: 'active' });
+        const blockedUsersCount = await User.countDocuments({ status: 'block' });
+
+        res.json({
+            totalUsersCount,
+            activeUsersCount,
+            blockedUsersCount,
+        });
+    }catch{
+        console.log('Error');
+    }
 }
 
+exports.viewUser = async (req,res)=>{
+    const user = await User.find()
+    res.render('./admin/viewUser',{user});
+}
+
+exports.blockuser = async (req, res) => {
+    const userId = req.params.userId;
+  
+    await User.findByIdAndUpdate(userId, { status: 'blocked' })
+      .then(() => {
+        res.redirect('/admin/viewuser');
+      })
+      .catch((error) => {
+        console.error('Error blocking user:', error);
+        res.status(500).send('Internal Server Error');
+      });
+  };
+exports.unblockuser = async (req, res) => {
+    const userId = req.params.userId;
+  
+    await User.findByIdAndUpdate(userId, { status: 'active' })
+      .then(() => {
+        res.redirect('/admin/viewuser');
+      })
+      .catch((error) => {
+        console.error('Error UnBlocking user:', error);
+        res.status(500).send('Internal Server Error');
+      });
+  };
 exports.viewproducts = async (req, res) => {
     const filter = req.query.filter; // Get the filter value from the query parameter
     
@@ -70,14 +113,11 @@ exports.deleteProduct = async (req, res) => {
     const productId = req.params.productId;
 
     try {
-        // Find the product by ID and remove it from the database
         const deletedProduct = await Product.findByIdAndRemove(productId);
-
         if (!deletedProduct) {
             return res.status(404).send('Product not found');
         }
-
-        res.redirect('/admin/viewproducts'); // Redirect to a page after successful deletion
+        res.redirect('/admin/viewproducts');
     } catch (error) {
         console.error('Error deleting product:', error);
         res.status(500).send('Internal Server Error');

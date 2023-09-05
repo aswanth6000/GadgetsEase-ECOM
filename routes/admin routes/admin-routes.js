@@ -5,17 +5,20 @@ const adminController = require('../../controllers/adminController')
 const multerHelper = require('../../helpers/functionHelper')
 const Product = require('../../model/product');
 const nocache = require('nocache');
-
+const {isAdminLoggedIn} = require('../../middleware/loginAuth')
 app.use(nocache())
 
-router.get('/adminhome',adminController.adminhome)
-router.get('/admin/viewuser',adminController.viewuser)
-router.get('/admin/viewproducts',adminController.viewproducts)
-router.get('/admin/addproduct',adminController.getAddProducts)
-router.get('/admin/editproduct/:productId',adminController.geteditProducts)
-router.get('/admin/getProductCount',adminController.getProductCount)
+router.get('/adminhome',isAdminLoggedIn,adminController.adminhome)
+router.get('/admin/viewuser',isAdminLoggedIn,adminController.viewUser)
+router.get('/admin/viewproducts',isAdminLoggedIn,adminController.viewproducts)
+router.get('/admin/addproduct',isAdminLoggedIn,adminController.getAddProducts)
+router.get('/admin/editproduct/:productId',isAdminLoggedIn,adminController.geteditProducts)
+router.get('/admin/getProductCount',isAdminLoggedIn,adminController.getProductCount)
+router.get('/admin/getusersCount',isAdminLoggedIn,adminController.getUsersCount)
 
 // POST Routes
+router.post('/admin/blockuser/:userId',isAdminLoggedIn,adminController.blockuser)
+router.post('/admin/unblockuser/:userId',isAdminLoggedIn,adminController.unblockuser)
 router.post('/admin/addproduct',addproducts = multerHelper.upload.fields([{ name: 'productImages', maxCount: 5 }, { name: 'video', maxCount: 1 }]), async (req, res) => {
     try {
         const { name, category, price, discountPrice, quantity, productColor,ram, rom, expandable, frontCam, rearCam, processor  } = req.body;
