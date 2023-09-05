@@ -22,6 +22,7 @@ exports.getUsersCount = async (req, res) => {
     }
 }
 
+
 exports.viewUser = async (req,res)=>{
     const user = await User.find()
     res.render('./admin/viewUser',{user});

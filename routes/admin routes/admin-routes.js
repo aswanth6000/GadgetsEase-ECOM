@@ -7,6 +7,7 @@ const Product = require('../../model/product');
 const nocache = require('nocache');
 const {isAdminLoggedIn} = require('../../middleware/loginAuth')
 app.use(nocache())
+const userController = require('../../controllers/userControllers')
 
 router.get('/adminhome',isAdminLoggedIn,adminController.adminhome)
 router.get('/admin/viewuser',isAdminLoggedIn,adminController.viewUser)
@@ -15,6 +16,7 @@ router.get('/admin/addproduct',isAdminLoggedIn,adminController.getAddProducts)
 router.get('/admin/editproduct/:productId',isAdminLoggedIn,adminController.geteditProducts)
 router.get('/admin/getProductCount',isAdminLoggedIn,adminController.getProductCount)
 router.get('/admin/getusersCount',isAdminLoggedIn,adminController.getUsersCount)
+router.get('/logout',userController.logout)
 
 // POST Routes
 router.post('/admin/blockuser/:userId',isAdminLoggedIn,adminController.blockuser)
