@@ -28,8 +28,8 @@ function getOtpAuth(req,res){
 
 async function postOtpAuth  (req, res){
     const { phone } = req.body;
+    req.session.phone = phone;
     const stringPhone = phone.toString();
-    console.log(stringPhone);
     try {
         const user = await User.findOne({ phoneNumber: stringPhone });
         if (user) {
@@ -57,9 +57,10 @@ async function postOtpAuth  (req, res){
 }
 
 function postOtpAuthentication(req,res){
+    const phone = req.session.phone;
     const {otp} = req.body;
     if(otp === req.session.otp){
-        res.render('./user/signup')
+        res.render('./user/signup',{phone})
     }else{
         res.send.json({error: "OTP Missmatch"})
     }

@@ -153,9 +153,22 @@ exports.postEditAddress = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 }
+
+
 exports.getcart = (req,res)=>{
     const user = req.session.user;
     res.render('./user/cart',{user})
+}
+
+exports.getCartLength = (req, res)=>{
+    const user = req.session.user
+    const cart = user.cart;
+    const cartSize = cart.length;
+    const cartData = {
+        cartLength : cartSize
+    }
+    console.log(user,cart, cartData);
+    res.json(cartData);
 }
 
 
