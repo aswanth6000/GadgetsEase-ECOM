@@ -153,12 +153,46 @@ exports.postEditAddress = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 }
-
+const calculateSubtotal = (cart) => {
+    let subtotal = 0;
+    for (const cartItem of cart) {
+      subtotal += cartItem.product.price * cartItem.quantity;
+    }
+    return subtotal;
+  };
 
 exports.getcart = (req,res)=>{
-    const user = req.session.user;
-    res.render('./user/cart',{user})
-}
+    const userId = req.session.user._id;
+    User.findById(userId)
+    .populate('cart.product') // Populate the 'product' field in the 'cart' array
+    .exec()
+    .then((user) => {
+      if (!user) {
+        // Handle the case where the user is not found
+        return res.status(404).json({ error: 'User not found.' });
+      }
+  
+      // Now, 'user' contains the cart with populated product details
+      const cart = user.cart;
+  
+      // Loop through the user's cart to access product details
+      cart.forEach((cartItem) => {
+        const product = cartItem.product; // Access the populated product
+        console.log('Product Name:', product.name);
+        console.log('Product Description:', product.description);
+        console.log('Product Price:', product.price);
+        // ... Access other product fields as needed
+      });
+      const subtotal = calculateSubtotal(user.cart);
+      const subtotalwship = subtotal + 100;
+      // Now, you can use 'cart' with populated product details in your response or view
+      res.render('./user/cart', { user, cart, subtotal, subtotalwship });
+    })
+    .catch((err) => {
+      // Handle any errors that occur during the query
+      console.error('Error fetching user cart:', err);
+      res.status(500).json({ error: 'An error occurred while fetching user cart.' });
+    });}
 
 exports.getCartLength = (req, res)=>{
     const user = req.session.user
