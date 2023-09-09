@@ -147,7 +147,10 @@
 												</div>
 											</div>
 											<div class="add-to-cart">
-												<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
+												<form action="/add-to-cart/<%=product._id%>" method="post">
+													<button type="submit" class="add-to-cart-btn" onclick="return confirm('Add <%= product.name%> to cart ? ');"><i class="fa fa-shopping-cart"></i> add to cart</button>
+													<input type="number" value="1" name="qty" style="display: none;">
+												</form>
 											</div>
 										</div>
 										<%})%>

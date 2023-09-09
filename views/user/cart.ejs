@@ -18,6 +18,13 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
     <!-- MDB -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.1/mdb.min.css" rel="stylesheet" />
+    <style>
+        input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+    </style>
 </head>
 
 <body>
@@ -42,126 +49,162 @@
                                         </div>
                                         <div>
                                             <p class="mb-0"><span class="text-muted">Sort by:</span> <a href="#!"
-                                                    class="text-body">price <i class="fas fa-angle-down mt-1"></i></a>
+                                                    class="text-body" id="his">price <i class="fas fa-angle-down mt-1"></i></a>
                                             </p>
                                         </div>
                                     </div>
-
+                                    <% if (user.cart.length === 0) { %>
+                                        <style>
+                                            .text-muted, #his{
+                                                display: none;
+                                            }
+                                        </style>
+                                        <!-- If cart is empty, show Lottie animation -->
+                                        <!-- You should replace 'your-lottie-animation.json' with the actual path to your Lottie animation JSON file -->
+                                        <div id="empty-cart-animation"></div>
+                                        <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.8/lottie.min.js"></script>
+                                        <script>
+                                            // Initialize Lottie animation
+                                            const animationContainer = document.getElementById('empty-cart-animation');
+                                            const animation = lottie.loadAnimation({
+                                                container: animationContainer,
+                                                renderer: 'svg',
+                                                loop: true,
+                                                autoplay: true,
+                                                path: './animation_lmc25fgv.json', // Replace with the path to your Lottie animation JSON file
+                                            });
+                                        </script>
+                                        <% } %>
                                     <% for (let i = 0; i < user.cart.length; i++) { %>
-                                        <div class="card mb-3">
-                                            <div class="card-body">
-                                                <div class="d-flex justify-content-between">
-                                                    <div class="d-flex flex-row align-items-center">
-                                                        <div>
-                                                            <img src="/uploads/images/<%= user.cart[i].product.productImages[2] %>" class="img-fluid rounded-3" alt="Shopping item" style="width: 65px;object-fit: contain;">
-                                                        </div>
-                                                        <div class="ms-3">
-                                                            <h5><%= user.cart[i].product.name %></h5>
-                                                            <p class="small mb-0"><%= user.cart[i].product.description %></p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="d-flex flex-row align-items-center">
-                                                        <div style="width: 50px;">
-                                                            <h5 class="fw-normal mb-0"><%= user.cart[i].quantity %></h5>
-                                                        </div>
-                                                        <div style="width: 80px;">
-                                                            <h5 class="mb-0">₹<%= user.cart[i].product.price %></h5>
-                                                        </div>
-                                                        <a href="#!" style="color: #cecece;"><i class="fas fa-trash-alt"></i></a>
-                                                    </div>
+                                        <div class="card rounded-3 mb-4">
+                                            <div class="card-body p-4">
+                                              <div class="row d-flex justify-content-between align-items-center">
+                                                <div class="col-md-2 col-lg-2 col-xl-2">
+                                                  <img
+                                                    src="/uploads/images/<%= user.cart[i].product.productImages[2] %>"
+                                                    class="img-fluid rounded-3" alt="Cotton T-shirt">
                                                 </div>
+                                                <div class="col-md-3 col-lg-3 col-xl-3">
+                                                  <p class="lead fw-normal mb-2"><%= user.cart[i].product.name %></p>
+                                                  <p><span class="text-muted">Size: </span>M <span class="text-muted">Color: </span>Grey</p>
+                                                </div>
+                                                <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
+                                                  <button class="btn btn-link px-2"
+                                                    onclick="decrementQuantity('<%= user.cart[i].product._id %>')">
+                                                    <i class="fas fa-minus"></i>
+                                                  </button>
+                                  
+                                                  <input   id="quantity_<%= user.cart[i].product._id %>"
+                                                  min="0"
+                                                  name="quantity"
+                                                  value="<%= user.cart[i].quantity %>"
+                                                  type="number"
+                                                  style="width: 40px;"
+                                                  data-product-id="<%= user.cart[i].product._id %>" />
+                                  
+                                                  <button class="btn btn-link px-2"
+                                                  onclick="incrementQuantity('<%= user.cart[i].product._id %>')">
+                                                    <i class="fas fa-plus"></i>
+                                                  </button>
+                                                </div>
+                                                <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+                                                  <h5 class="mb-0">₹<%= user.cart[i].product.price %></h5>
+                                                </div>
+                                                <div class="col-md-1 col-lg-1 col-xl-1 text-end">
+                                                  <a href="#!" class="text-danger"><i class="fas fa-trash fa-lg"></i></a>
+                                                </div>
+                                              </div>
                                             </div>
-                                        </div>
+                                          </div>
                                         <% } %>
                                 </div>
-                                <div class="col-lg-5">
-
-                                    <div class="card bg-primary text-white rounded-3">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between align-items-center mb-4">
-                                                <h5 class="mb-0">Card details</h5>
-                                                <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp"
-                                                    class="img-fluid rounded-3" style="width: 45px;" alt="Avatar">
-                                            </div>
-
-                                            <p class="small mb-2">Card type</p>
-                                            <a href="#!" type="submit" class="text-white"><i
-                                                    class="fab fa-cc-mastercard fa-2x me-2"></i></a>
-                                            <a href="#!" type="submit" class="text-white"><i
-                                                    class="fab fa-cc-visa fa-2x me-2"></i></a>
-                                            <a href="#!" type="submit" class="text-white"><i
-                                                    class="fab fa-cc-amex fa-2x me-2"></i></a>
-                                            <a href="#!" type="submit" class="text-white"><i
-                                                    class="fab fa-cc-paypal fa-2x"></i></a>
-
-                                            <form class="mt-4">
-                                                <div class="form-outline form-white mb-4">
-                                                    <input type="text" id="typeName"
-                                                        class="form-control form-control-lg" siez="17"
-                                                        placeholder="Cardholder's Name" />
-                                                    <label class="form-label" for="typeName">Cardholder's Name</label>
+                                <% if (user.cart.length === 0) { %>
+                                    <div class="col-lg-5" id="cartDetails">
+    
+                                        <div class="card bg-primary text-white rounded-3">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                                    <h5 class="mb-0">Cart details</h5>
+                                                    <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp"
+                                                        class="img-fluid rounded-3" style="width: 45px;" alt="Avatar">
                                                 </div>
-
-                                                <div class="form-outline form-white mb-4">
-                                                    <input type="text" id="typeText"
-                                                        class="form-control form-control-lg" siez="17"
-                                                        placeholder="1234 5678 9012 3457" minlength="19"
-                                                        maxlength="19" />
-                                                    <label class="form-label" for="typeText">Card Number</label>
-                                                </div>
-
-                                                <div class="row mb-4">
-                                                    <div class="col-md-6">
-                                                        <div class="form-outline form-white">
-                                                            <input type="text" id="typeExp"
-                                                                class="form-control form-control-lg"
-                                                                placeholder="MM/YYYY" size="7" id="exp" minlength="7"
-                                                                maxlength="7" />
-                                                            <label class="form-label" for="typeExp">Expiration</label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-outline form-white">
-                                                            <input type="password" id="typeText"
-                                                                class="form-control form-control-lg"
-                                                                placeholder="&#9679;&#9679;&#9679;" size="1"
-                                                                minlength="3" maxlength="3" />
-                                                            <label class="form-label" for="typeText">Cvv</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                            </form>
-
-                                            <hr class="my-4">
-
-                                            <div class="d-flex justify-content-between">
-                                                <p class="mb-2">Subtotal</p>
-                                                <p class="mb-2">₹<%= subtotal %></p>
-                                            </div>
-
-                                            <div class="d-flex justify-content-between">
-                                                <p class="mb-2">Shipping</p>
-                                                <p class="mb-2">₹100.00</p>
-                                            </div>
-
-                                            <div class="d-flex justify-content-between mb-4">
-                                                <p class="mb-2">Total(Incl. taxes)</p>
-                                                <p class="mb-2">₹<%= subtotalwship %></p>
-                                            </div>
-
-                                            <button type="button" class="btn btn-info btn-block btn-lg">
+    
+                                                </form>
+    
+                                                <hr class="my-4">
+    
                                                 <div class="d-flex justify-content-between">
-                                                    <span>$4818.00</span>
-                                                    <span>Checkout <i
-                                                            class="fas fa-long-arrow-alt-right ms-2"></i></span>
+                                                    <p class="mb-2">Subtotal</p>
+                                                    <p class="mb-2">₹0</p>
                                                 </div>
-                                            </button>
-
+    
+                                                <div class="d-flex justify-content-between">
+                                                    <p class="mb-2">Shipping</p>
+                                                    <p class="mb-2">₹0</p>
+                                                </div>
+    
+                                                <div class="d-flex justify-content-between mb-4">
+                                                    <p class="mb-2">Total(Incl. taxes)</p>
+                                                    <p class="mb-2">₹0</p>
+                                                </div>
+    
+                                                <button type="button" class="btn btn-info btn-block btn-lg">
+                                                    <div class="d-flex justify-content-between">
+                                                        <span>₹0</span>
+                                                        <span>Back to shop <i
+                                                                class="fas fa-long-arrow-alt-right ms-2"></i></span>
+                                                    </div>
+                                                </button>
+    
+                                            </div>
                                         </div>
+    
                                     </div>
 
-                                </div>
+                                    <% }else{ %>
+                                        <div class="col-lg-5" id="cartDetails">
+    
+                                            <div class="card bg-primary text-white rounded-3">
+                                                <div class="card-body">
+                                                    <div class="d-flex justify-content-between align-items-center mb-4">
+                                                        <h5 class="mb-0">Cart details</h5>
+                                                        <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp"
+                                                            class="img-fluid rounded-3" style="width: 45px;" alt="Avatar">
+                                                    </div>
+        
+                                                    </form>
+        
+                                                    <hr class="my-4">
+        
+                                                    <div class="d-flex justify-content-between">
+                                                        <p class="mb-2">Subtotal</p>
+                                                        <p class="mb-2">₹<%= subtotal %></p>
+                                                    </div>
+        
+                                                    <div class="d-flex justify-content-between">
+                                                        <p class="mb-2">Shipping</p>
+                                                        <p class="mb-2">₹100.00</p>
+                                                    </div>
+        
+                                                    <div class="d-flex justify-content-between mb-4">
+                                                        <p class="mb-2">Total(Incl. taxes)</p>
+                                                        <p class="mb-2">₹<%= subtotalwship %></p>
+                                                    </div>
+        
+                                                    <button type="button" class="btn btn-info btn-block btn-lg">
+                                                        <div class="d-flex justify-content-between">
+                                                            <span>$4818.00</span>
+                                                            <span>Checkout <i
+                                                                    class="fas fa-long-arrow-alt-right ms-2"></i></span>
+                                                        </div>
+                                                    </button>
+        
+                                                </div>
+                                            </div>
+        
+                                        </div>
+
+                                    <% } %>
 
                             </div>
 
@@ -174,5 +217,53 @@
 </body>
 <!-- MDB -->
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.1/mdb.min.js"></script>
+<script>
+// Function to update quantity via AJAX
+function updateQuantity(productId, newQuantity) {
+  fetch(`/updateQuantity/${productId}`, {
+    method: 'PUT', // Use PUT request to update the quantity
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ quantity: newQuantity }),
+  })
+    .then((response) => {
+      if (response.ok) {
+        // Quantity updated successfully
+        console.log('Quantity updated successfully.');
+      } else {
+        console.error('Error updating quantity.');
+      }
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+}
 
+// Function to decrement quantity
+function decrementQuantity(productId) {
+  const quantityInput = document.getElementById(`quantity_${productId}`);
+  const newQuantity = parseInt(quantityInput.value) - 1;
+
+  // Check if the new quantity is greater than or equal to 1
+  if (newQuantity >= 1) {
+    quantityInput.value = newQuantity;
+    // Update the quantity in the database via AJAX
+    updateQuantity(productId, newQuantity);
+  } else {
+    // Quantity reached zero or less, remove the item from the cart
+    removeItemFromCart(productId);
+  }
+}
+
+// Function to increment quantity
+function incrementQuantity(productId) {
+  const quantityInput = document.getElementById(`quantity_${productId}`);
+  const newQuantity = parseInt(quantityInput.value) + 1;
+
+  quantityInput.value = newQuantity;
+  // Update the quantity in the database via AJAX
+  updateQuantity(productId, newQuantity);
+}
+</script>
 </html>

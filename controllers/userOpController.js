@@ -178,10 +178,6 @@ exports.getcart = (req,res)=>{
       // Loop through the user's cart to access product details
       cart.forEach((cartItem) => {
         const product = cartItem.product; // Access the populated product
-        console.log('Product Name:', product.name);
-        console.log('Product Description:', product.description);
-        console.log('Product Price:', product.price);
-        // ... Access other product fields as needed
       });
       const subtotal = calculateSubtotal(user.cart);
       const subtotalwship = subtotal + 100;
@@ -194,6 +190,44 @@ exports.getcart = (req,res)=>{
       res.status(500).json({ error: 'An error occurred while fetching user cart.' });
     });}
 
+    exports.updateQuantity = (req, res) => {
+        const userId = req.session.user._id;
+        const productId = req.params.productId;
+        const newQuantity = req.body.quantity;
+      
+        User.findById(userId)
+          .then((user) => {
+            if (!user) {
+              return res.status(404).json({ error: 'User not found.' });
+            }
+      
+            // Find the cart item with the specified product ID
+            const cartItem = user.cart.find((item) =>
+              item.product.equals(productId)
+            );
+      
+            if (!cartItem) {
+              return res.status(404).json({ error: 'Product not found in cart.' });
+            }
+      
+            // Update the quantity
+            cartItem.quantity = newQuantity;
+      
+            // Save the user's cart
+            user.save()
+              .then(() => {
+                res.sendStatus(200); // Send a success response
+              })
+              .catch((error) => {
+                console.error('Error updating quantity:', error);
+                res.status(500).json({ error: 'An error occurred while updating quantity.' });
+              });
+          })
+          .catch((error) => {
+            console.error('Error fetching user:', error);
+            res.status(500).json({ error: 'An error occurred while fetching user.' });
+          });
+}
 exports.getCartLength = (req, res)=>{
     const user = req.session.user
     const cart = user.cart;
@@ -201,7 +235,6 @@ exports.getCartLength = (req, res)=>{
     const cartData = {
         cartLength : cartSize
     }
-    console.log(user,cart, cartData);
     res.json(cartData);
 }
 

@@ -41,4 +41,6 @@ router.post('/removeAddress/:userId/:addressIndex', );
 router.post('/editAddress/:userId/:addressId', userOp.postEditAddress);
 router.post('/add-to-cart/:productId',isAuthenticated, userOp.addtocart);
 
+router.put('/updateQuantity/:productId',userOp.updateQuantity)
+
 module.exports = router
