@@ -98,6 +98,7 @@ input::-webkit-inner-spin-button {
                                                   min="0"
                                                   name="quantity"
                                                   value="<%= user.cart[i].quantity %>"
+                                                  max="2"
                                                   type="number"
                                                   style="width: 40px;"
                                                   data-product-id="<%= user.cart[i].product._id %>" />
@@ -108,10 +109,18 @@ input::-webkit-inner-spin-button {
                                                   </button>
                                                 </div>
                                                 <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
-                                                  <h5 class="mb-0">₹<%= user.cart[i].product.price %></h5>
+                                                  <h5 class="mb-0">₹<%= user.cart[i].product.discountPrice %></h5>
                                                 </div>
                                                 <div class="col-md-1 col-lg-1 col-xl-1 text-end">
-                                                  <a href="#!" class="text-danger"><i class="fas fa-trash fa-lg"></i></a>
+                                                    <form action="/removeItemFromCart/<%= user.cart[i].product._id %>" method="post">
+                                                    <button type="submit" class="text-danger" style="background: none;
+                                                    color: inherit;
+                                                    border: none;
+                                                    padding: 0;
+                                                    font: inherit;
+                                                    cursor: pointer;
+                                                    outline: inherit;"><i class="fas fa-trash fa-lg" onclick="return confirm('Are you sure to delete <%=user.cart[i].product.name%>');"></i></button>
+                                                </form>
                                                 </div>
                                               </div>
                                             </div>
@@ -125,7 +134,7 @@ input::-webkit-inner-spin-button {
                                             <div class="card-body">
                                                 <div class="d-flex justify-content-between align-items-center mb-4">
                                                     <h5 class="mb-0">Cart details</h5>
-                                                    <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp"
+                                                    <img src="/uploads/images/<%=user.profileImage%>"
                                                         class="img-fluid rounded-3" style="width: 45px;" alt="Avatar">
                                                 </div>
     
@@ -168,7 +177,7 @@ input::-webkit-inner-spin-button {
                                                 <div class="card-body">
                                                     <div class="d-flex justify-content-between align-items-center mb-4">
                                                         <h5 class="mb-0">Cart details</h5>
-                                                        <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp"
+                                                        <img src="/uploads/images/<%=user.profileImage%>"
                                                             class="img-fluid rounded-3" style="width: 45px;" alt="Avatar">
                                                     </div>
         
@@ -193,7 +202,7 @@ input::-webkit-inner-spin-button {
         
                                                     <button type="button" class="btn btn-info btn-block btn-lg">
                                                         <div class="d-flex justify-content-between">
-                                                            <span>$4818.00</span>
+                                                            <span>₹<%= subtotalwship %></span>
                                                             <span>Checkout <i
                                                                     class="fas fa-long-arrow-alt-right ms-2"></i></span>
                                                         </div>
@@ -229,7 +238,6 @@ function updateQuantity(productId, newQuantity) {
   })
     .then((response) => {
       if (response.ok) {
-        // Quantity updated successfully
         console.log('Quantity updated successfully.');
       } else {
         console.error('Error updating quantity.');
@@ -240,30 +248,50 @@ function updateQuantity(productId, newQuantity) {
     });
 }
 
-// Function to decrement quantity
 function decrementQuantity(productId) {
   const quantityInput = document.getElementById(`quantity_${productId}`);
   const newQuantity = parseInt(quantityInput.value) - 1;
-
-  // Check if the new quantity is greater than or equal to 1
   if (newQuantity >= 1) {
     quantityInput.value = newQuantity;
-    // Update the quantity in the database via AJAX
     updateQuantity(productId, newQuantity);
   } else {
-    // Quantity reached zero or less, remove the item from the cart
     removeItemFromCart(productId);
   }
 }
 
-// Function to increment quantity
 function incrementQuantity(productId) {
   const quantityInput = document.getElementById(`quantity_${productId}`);
   const newQuantity = parseInt(quantityInput.value) + 1;
-
+  if (newQuantity <= 2) {
   quantityInput.value = newQuantity;
-  // Update the quantity in the database via AJAX
   updateQuantity(productId, newQuantity);
+  }
 }
+// Function to remove an item from the cart and database via AJAX
+function removeItemFromCart(productId) {
+  fetch(`/removeItemFromCart/${productId}`, {
+    method: 'DELETE', // Use DELETE request to remove the item
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then((response) => {
+      if (response.ok) {
+        // Item removed successfully, you can also update the UI here if needed
+        console.log('Item removed from cart successfully.');
+        // You might want to remove the item's HTML from the page as well
+        const itemToRemove = document.getElementById(`cart_item_${productId}`);
+        if (itemToRemove) {
+          itemToRemove.remove();
+        }
+      } else {
+        console.error('Error removing item from cart.');
+      }
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+}
+
 </script>
 </html>

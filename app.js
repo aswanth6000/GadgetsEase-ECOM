@@ -19,6 +19,9 @@ app.use(session({
     
 }));
 const io = socketIo(server);
+io.on('connection', (socket) => {
+    console.log('Socket.IO connection established');
+});
 app.locals.io = io;
 
 app.use(require('./routes/user routes/userhome'))

@@ -156,7 +156,7 @@ exports.postEditAddress = async (req, res) => {
 const calculateSubtotal = (cart) => {
     let subtotal = 0;
     for (const cartItem of cart) {
-      subtotal += cartItem.product.price * cartItem.quantity;
+      subtotal += cartItem.product.discountPrice * cartItem.quantity;
     }
     return subtotal;
   };
@@ -164,36 +164,31 @@ const calculateSubtotal = (cart) => {
 exports.getcart = (req,res)=>{
     const userId = req.session.user._id;
     User.findById(userId)
-    .populate('cart.product') // Populate the 'product' field in the 'cart' array
+    .populate('cart.product') 
     .exec()
     .then((user) => {
       if (!user) {
-        // Handle the case where the user is not found
         return res.status(404).json({ error: 'User not found.' });
       }
-  
-      // Now, 'user' contains the cart with populated product details
-      const cart = user.cart;
-  
-      // Loop through the user's cart to access product details
-      cart.forEach((cartItem) => {
-        const product = cartItem.product; // Access the populated product
+        const cart = user.cart;
+        cart.forEach((cartItem) => {
+        const product = cartItem.product;
       });
       const subtotal = calculateSubtotal(user.cart);
       const subtotalwship = subtotal + 100;
-      // Now, you can use 'cart' with populated product details in your response or view
       res.render('./user/cart', { user, cart, subtotal, subtotalwship });
     })
     .catch((err) => {
-      // Handle any errors that occur during the query
       console.error('Error fetching user cart:', err);
       res.status(500).json({ error: 'An error occurred while fetching user cart.' });
     });}
-
     exports.updateQuantity = (req, res) => {
         const userId = req.session.user._id;
         const productId = req.params.productId;
         const newQuantity = req.body.quantity;
+      
+        // Define the maximum allowed quantity
+        const maxQuantity = 2;
       
         User.findById(userId)
           .then((user) => {
@@ -201,7 +196,6 @@ exports.getcart = (req,res)=>{
               return res.status(404).json({ error: 'User not found.' });
             }
       
-            // Find the cart item with the specified product ID
             const cartItem = user.cart.find((item) =>
               item.product.equals(productId)
             );
@@ -210,24 +204,63 @@ exports.getcart = (req,res)=>{
               return res.status(404).json({ error: 'Product not found in cart.' });
             }
       
-            // Update the quantity
-            cartItem.quantity = newQuantity;
-      
-            // Save the user's cart
-            user.save()
-              .then(() => {
-                res.sendStatus(200); // Send a success response
-              })
-              .catch((error) => {
-                console.error('Error updating quantity:', error);
-                res.status(500).json({ error: 'An error occurred while updating quantity.' });
-              });
+            // Check if the new quantity is within the allowed range (0 to maxQuantity)
+            if (newQuantity >= 0 && newQuantity <= maxQuantity) {
+              cartItem.quantity = newQuantity;
+              user.save()
+                .then(() => {
+                  res.sendStatus(200);
+                })
+                .catch((error) => {
+                  console.error('Error updating quantity:', error);
+                  res.status(500).json({ error: 'An error occurred while updating quantity.' });
+                });
+            } else {
+              res.status(400).json({ error: `Quantity must be between 0 and ${maxQuantity}.` });
+            }
           })
           .catch((error) => {
             console.error('Error fetching user:', error);
             res.status(500).json({ error: 'An error occurred while fetching user.' });
           });
-}
+      }
+      
+exports.deleteCart=(req, res) => {
+  const userId = req.session.user._id;
+  const productId = req.params.productId;
+  User.findById(userId)
+    .then((user) => {
+      if (!user) {
+        return res.status(404).json({ error: 'User not found.' });
+      }
+      const cartItemIndex = user.cart.findIndex((item) =>
+        item.product.equals(productId)
+      );
+
+      if (cartItemIndex === -1) {
+        return res.status(404).json({ error: 'Product not found in cart.' });
+      }
+      user.cart.splice(cartItemIndex, 1);
+      user
+        .save()
+        .then(() => {
+            const referringPage = req.get('Referer');
+            res.redirect(referringPage || '/cart');
+        })
+        .catch((error) => {
+          console.error('Error removing item from cart:', error);
+          res.status(500).json({
+            error: 'An error occurred while removing item from cart.',
+          });
+        });
+    })
+    .catch((error) => {
+      console.error('Error fetching user:', error);
+      res.status(500).json({ error: 'An error occurred while fetching user.' });
+    });
+};
+
+
 exports.getCartLength = (req, res)=>{
     const user = req.session.user
     const cart = user.cart;
@@ -236,8 +269,8 @@ exports.getCartLength = (req, res)=>{
         cartLength : cartSize
     }
     res.json(cartData);
-}
 
+}
 
 
 exports.addtocart = async (req, res) => {
@@ -246,45 +279,34 @@ exports.addtocart = async (req, res) => {
         const user = await User.findById(userId);
         const productId = req.params.productId;
         const { qty } = req.body;
-
-        // Check if the product already exists in the cart
         const existingCartItem = await User.findOne({
             _id: userId,
             'cart.product': productId,
         });
 
         if (existingCartItem) {
-            // If the product already exists, increment the quantity
             await User.updateOne(
                 { _id: userId, 'cart.product': productId },
                 { $inc: { 'cart.$.quantity': qty } }
             );
         } else {
-            // If the product is not in the cart, add it
             await User.findByIdAndUpdate(
                 userId,
                 {
                     $push: { cart: { product: productId, quantity: qty } },
                 },
-                { new: true } // To return the updated user document
+                { new: true }
             );
         }
-
-        // Update the cart length in the session
         req.session.cartLength = user.cart.length;
         const cartLength = req.session.cartLength;
         console.log(cartLength);
-
-        // Emit the 'cartUpdate' event using the io instance from app.locals
         req.app.locals.io.emit('cartUpdate', { userId, cartLength });
         console.log(`Emitted 'cartUpdate' event for user ${userId} with cart length ${cartLength}`);
-
-        // Redirect back to the referring page or cart page
-        const referringPage = req.get('Referer'); // Get the referring page URL
-        res.redirect(referringPage || '/cart'); // Redirect to the cart page if the referring page is not available
+        const referringPage = req.get('Referer');
+        res.redirect(referringPage || '/cart');
     } catch (error) {
         console.error('Error adding product to cart:', error);
-        // Handle the error appropriately
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };

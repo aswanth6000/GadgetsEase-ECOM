@@ -1,110 +1,103 @@
-  <!DOCTYPE html>
-  <html lang="en">
-  <head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <title>Bootstrap Example</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/navbar.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css"> 
-  </head>
-  <body>
+</head>
+<body>
     <nav class="navbar navbar-expand-md bg-body-tertiary sticky-top" style="position: fixed;width: 100%;">
-      <div class="container-xl">
-        <a class="navbar-brand" style="text-decoration: none;color: #7DC49D;" href="#">
-          <h3 style="color: #7DC49D;">GadgetEase</h3>
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <div class="search-and-icons">
-            <form class="d-flex mb-2 me-2" role="search">
-              <input class="form-control me-2" type="search" aria-label="Search">
-            </form>
-            <div class="user-icons d-flex mb-2">
-              <div class="options dropdown">
-                <span class="dropdown-toggle" id="optionsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                  <i class="bi bi-person"></i>
-                  Account
-                </span>
-                <ul class="dropdown-menu" aria-labelledby="optionsDropdown">
-                  <% if (user) { %>
-                    <!-- User is logged in, show user-related content -->
-                    <li><a class="dropdown-item" href="/profile/<%= user._id %>"><i class="bi bi-person"></i> My Profile</a></li>
-                    <!-- Other user-related menu items -->
-                  <% } else { %>
-                    <!-- User is not logged in, show login-related content -->
-                    <li><a class="dropdown-item" href="/login"><i class="bi bi-person"></i> Login</a></li>
-                    <!-- Other login-related menu items -->
-                  <% } %>					  
-                  <li><a class="dropdown-item" href="#"><i class="bi bi-heart"></i> Wishlist</a></li>
-                  <li><a class="dropdown-item" href="#"><i class="bi bi-box-seam"></i> Orders</a></li>
-                  <li><a class="dropdown-item" href="#"><i class="bi bi-gift"></i> Gift cards</a></li>
-                  <% if (user) { %>
-                    <!-- User is logged in, show user-related content -->
-                    <li><a class="dropdown-item" href="/logout"><i class="bi bi-box-arrow-left"></i> Logout</a></li>
-                    <!-- Other user-related menu items -->
-                  <% }  %>					  <!-- Add more options as needed -->
-                </ul>
-              </div>
-              <!-- <div class="wishlist"><i class="bi bi-heart"></i></div> -->
-              <% if (user) { %>
-                <div class="cart"><a href="/cart"><i class="bi bi-cart3"><span class="badge badge-danger rounded-100"  id="cart-length-zzz">0</span></i>
-                  </a></div>
-              <% } else { %>
-                <div class="cart"><a href="/login"><i class="bi bi-cart3"></i>
-                  <span>Cart</span></a></div>
-              <% }  %>	
-              <div class="options dropdown">
-                <i class="bi bi-three-dots-vertical" id="optionsDropdown" data-bs-toggle="dropdown" aria-expanded="false"></i>
-                <ul class="dropdown-menu" aria-labelledby="optionsDropdown">
-                  <li><a class="dropdown-item" href="#"><i class="bi bi-headset"></i> Help</a></li>
-                  <!-- Add more options as needed -->
-                </ul>
-              </div>
+        <div class="container-xl">
+            <a class="navbar-brand" style="text-decoration: none;color: #7DC49D;" href="#">
+                <h3 style="color: #7DC49D;">GadgetEase</h3>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <div class="search-and-icons">
+                    <form class="d-flex mb-2 me-2" role="search">
+                        <input class="form-control me-2" type="search" aria-label="Search">
+                    </form>
+                    <div class="user-icons d-flex mb-2">
+                        <div class="options dropdown">
+                            <span class="dropdown-toggle" id="optionsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person"></i>
+                                Account
+                            </span>
+                            <ul class="dropdown-menu" aria-labelledby="optionsDropdown">
+                                <% if (user) { %>
+                                <!-- User is logged in, show user-related content -->
+                                <li><a class="dropdown-item" href="/profile/<%= user._id %>"><i class="bi bi-person"></i> My Profile</a></li>
+                                <!-- Other user-related menu items -->
+                                <% } else { %>
+                                <!-- User is not logged in, show login-related content -->
+                                <li><a class="dropdown-item" href="/login"><i class="bi bi-person"></i> Login</a></li>
+                                <!-- Other login-related menu items -->
+                                <% } %>					  
+                                <li><a class="dropdown-item" href="#"><i class="bi bi-heart"></i> Wishlist</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="bi bi-box-seam"></i> Orders</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="bi bi-gift"></i> Gift cards</a></li>
+                                <% if (user) { %>
+                                <!-- User is logged in, show user-related content -->
+                                <li><a class="dropdown-item" href="/logout"><i class="bi bi-box-arrow-left"></i> Logout</a></li>
+                                <!-- Other user-related menu items -->
+                                <% }  %>					  <!-- Add more options as needed -->
+                            </ul>
+                        </div>
+                        <!-- <div class="wishlist"><i class="bi bi-heart"></i></div> -->
+                        <div class="cart"><a href="/cart"><i class="bi bi-cart3"><span class="badge badge-danger rounded-100"  id="cart-length-zzz">0</span></i>
+                            </a></div>
+                        <div class="options dropdown">
+                            <i class="bi bi-three-dots-vertical" id="optionsDropdown" data-bs-toggle="dropdown" aria-expanded="false"></i>
+                            <ul class="dropdown-menu" aria-labelledby="optionsDropdown">
+                                <li><a class="dropdown-item" href="#"><i class="bi bi-headset"></i> Help</a></li>
+                                <!-- Add more options as needed -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
     </nav>
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const socket = io();
+        document.addEventListener("DOMContentLoaded", function () {
+          const socket = io.connect(window.location.origin);
 
-    // Function to fetch cart data
-function fetchCartData() {
-    fetch('/cartLength') // Replace with the actual API endpoint to fetch cart data
-        .then((response) => response.json())
-        .then((data) => {
-            const cartLengthElement = document.getElementById('cart-length-zzz');
-
-            if (cartLengthElement) {
-                cartLengthElement.textContent = data.cartLength;
+            // Function to update the cart length in the DOM
+            function updateCartLength(cartLength) {
+                const cartLengthElement = document.getElementById('cart-length-zzz');
+                if (cartLengthElement) {
+                    cartLengthElement.textContent = cartLength;
+                }
             }
-            console.log(data.cartLength)
-        })
-        .catch((error) => {
-            console.log('Error fetching cart data:', error);
+
+            // Listen for cart updates via Socket.IO
+            socket.on('cartUpdate', (data) => {
+                console.log('Received cartUpdate event:', data);
+                updateCartLength(data.cartLength);
+            });
+
+            // Function to fetch cart data
+            function fetchCartData() {
+                fetch('/cartLength')
+                    .then((response) => response.json())
+                    .then((data) => {
+                        updateCartLength(data.cartLength);
+                        console.log(data.cartLength,"55555")
+                    })
+                    .catch((error) => {
+                        console.log('Error fetching cart data:', error);
+                    });
+            }
+
+            fetchCartData();
         });
-}
-    // Fetch cart data when the page loads
-    fetchCartData();
-
-    // Listen for cart updates via Socket.IO
-    socket.on('cartUpdate', (data) => {
-      console.log('Received cartUpdate event:', data);
-      const cartLengthElement = document.getElementById('cart-length-zzz');
-      console.log('Data.cartLength:', data.cartLength);
-      if (cartLengthElement) {
-        cartLengthElement.textContent = data.cartLength;
-        console.log('Updating cart length to:', data.cartLength);
-      }
-    });
-  });
-
     </script>
-      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
-  </body>
-  </html>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

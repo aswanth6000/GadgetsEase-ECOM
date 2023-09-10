@@ -8,6 +8,9 @@ const nocache = require('nocache')
 
 // GET Routes
 router.get('/', userOp.getIndex)
+router.get('/text',(req,res)=>{
+    res.render('./user/checkout')
+})
 router.get('/userhome',nocache(),isAuthenticated, userOp.getUserHome)
 router.get('/profile/:userId',isAuthenticated,userOp.getProfile)
 router.get('/manageaddress/:userId',userOp.manageAddress)
@@ -40,6 +43,7 @@ router.post('/addAddress/:userId', userOp.postAddAddress);
 router.post('/removeAddress/:userId/:addressIndex', );
 router.post('/editAddress/:userId/:addressId', userOp.postEditAddress);
 router.post('/add-to-cart/:productId',isAuthenticated, userOp.addtocart);
+router.post('/removeItemFromCart/:productId',userOp.deleteCart)
 
 router.put('/updateQuantity/:productId',userOp.updateQuantity)
 

@@ -28,6 +28,21 @@ const userSchema = new mongoose.Schema({
             quantity: Number,
         },
     ],
+    orders : [{
+        product: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Product',
+        },
+        quantity: Number,
+        userDetails : {
+            type : mongoose.Schema.Types.ObjectId,
+            ref : 'User'
+        },
+        orderDate: {
+            type: Date,
+            default: Date.now,
+        },
+    }],
     status: {
         type: String,
         default: 'active',
