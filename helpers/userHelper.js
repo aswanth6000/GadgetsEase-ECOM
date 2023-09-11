@@ -33,7 +33,6 @@ async function signupUser(username, password, confirmPassword, phone, email) {
     if (password !== confirmPassword) {
         return { success: false, message: "Passwords do not match" };
     }
-
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({
         username: username,
@@ -41,7 +40,6 @@ async function signupUser(username, password, confirmPassword, phone, email) {
         phoneNumber: phone,
         email: email
     });
-
     try {
         await user.save();
         return { success: true, message: "User registered successfully" };
@@ -71,7 +69,6 @@ async function addAddress(userId, type, phone, houseName, name, street, city, st
         if (user.addresses.length >= 5) {
             return { success: false, message: 'Maximum address limit reached' };
         }
-
         user.addresses.push({
             type,
             phone,
@@ -82,7 +79,6 @@ async function addAddress(userId, type, phone, houseName, name, street, city, st
             state,
             pinCode
         });
-
         await user.save();
         return { success: true, message: 'Address added successfully' };
     } catch (error) {
@@ -101,7 +97,6 @@ async function removeAddress(userId, addressIndex) {
         if (addressIndex < 0 || addressIndex >= user.addresses.length) {
             return { success: false, errorMessage: 'Invalid address index' };
         }
-
         user.addresses.splice(addressIndex, 1);
         await user.save();
         return { success: true };
@@ -117,7 +112,6 @@ async function editAddress(userId, addressId, type, phone, houseName, name, stre
         if (!user) {
             return { success: false, message: 'User not found' };
         }
-
         const addressToUpdate = user.addresses.id(addressId);
         if (!addressToUpdate) {
             return { success: false, message: 'Address not found' };
@@ -131,7 +125,6 @@ async function editAddress(userId, addressId, type, phone, houseName, name, stre
         addressToUpdate.city = city;
         addressToUpdate.state = state;
         addressToUpdate.pinCode = pinCode;
-
         await user.save();
         return { success: true, message: 'Address updated successfully' };
     } catch (error) {
@@ -142,25 +135,18 @@ async function editAddress(userId, addressId, type, phone, houseName, name, stre
 
 async function resetPassword(phone, newPassword, confirmPassword) {
     try {
-        // Check if passwords match
         if (newPassword !== confirmPassword) {
             return { success: false, message: "Passwords don't match" };
         }
-
-        // Hash the new password
         const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-        // Update the user's password in the database
         const updatedUser = await User.findOneAndUpdate(
             { phoneNumber: phone },
             { password: hashedPassword },
             { new: true }
         );
-
         if (!updatedUser) {
             return { success: false, message: 'User not found' };
         }
-
         return { success: true, message: 'Password reset successfully' };
     } catch (error) {
         console.error("An error occurred during resetting the password:", error);

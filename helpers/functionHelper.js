@@ -19,18 +19,15 @@ function generateOtp(){
 }
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-      // Set the destination directory for uploads (images and videos)
       if (file.mimetype.startsWith('image/')) {
           cb(null, 'public/uploads/images');
       } else if (file.mimetype.startsWith('video/')) {
           cb(null, 'public/uploads/videos');
       } else {
-          // Handle other file types as needed
           cb(new Error('Invalid file type'));
       }
   },
   filename: (req, file, cb) => {
-      // Set the filename for uploaded files
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
       cb(null, uniqueSuffix + '-' + file.originalname);
   },

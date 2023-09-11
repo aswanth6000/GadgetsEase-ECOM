@@ -7,10 +7,8 @@ const userOp = require('../../controllers/userOpController')
 const nocache = require('nocache')
 
 // GET Routes
-router.get('/', userOp.getIndex)
-router.get('/text',(req,res)=>{
-    res.render('./user/checkout')
-})
+router.get('/', userOp.getIndex) 
+router.get('/checkout',isAuthenticated,userOp.getCheckout)
 router.get('/userhome',nocache(),isAuthenticated, userOp.getUserHome)
 router.get('/profile/:userId',isAuthenticated,userOp.getProfile)
 router.get('/manageaddress/:userId',userOp.manageAddress)
@@ -44,6 +42,7 @@ router.post('/removeAddress/:userId/:addressIndex', );
 router.post('/editAddress/:userId/:addressId', userOp.postEditAddress);
 router.post('/add-to-cart/:productId',isAuthenticated, userOp.addtocart);
 router.post('/removeItemFromCart/:productId',userOp.deleteCart)
+router.post('/postCheckout/:userId',userOp.postCheckout)
 
 router.put('/updateQuantity/:productId',userOp.updateQuantity)
 

@@ -158,6 +158,7 @@ const calculateSubtotal = (cart) => {
     for (const cartItem of cart) {
       subtotal += cartItem.product.discountPrice * cartItem.quantity;
     }
+    console.log("Subtotal calculated:", subtotal);
     return subtotal;
   };
 
@@ -181,7 +182,8 @@ exports.getcart = (req,res)=>{
     .catch((err) => {
       console.error('Error fetching user cart:', err);
       res.status(500).json({ error: 'An error occurred while fetching user cart.' });
-    });}
+    });
+}
     exports.updateQuantity = (req, res) => {
         const userId = req.session.user._id;
         const productId = req.params.productId;
@@ -313,4 +315,65 @@ exports.addtocart = async (req, res) => {
 
 exports.getCategory = async (req, res)=>{
     res.render('./user/store')
+}
+
+exports.getCheckout = (req,res)=>{
+  const userId = req.session.user._id;
+  User.findById(userId)
+  .populate('cart.product') 
+  .exec()
+  .then((user) => {
+    if (!user) {
+      return res.status(404).json({ error: 'User not found.' });
+    }
+      const cart = user.cart;
+      cart.forEach((cartItem) => {
+    });
+    const subtotal = calculateSubtotal(user.cart);
+    const subtotalwship = subtotal + 100;
+    res.render('./user/checkout', { user, cart, subtotal, subtotalwship });
+  })
+  .catch((err) => {
+    console.error('Error fetching user cart:', err);
+    res.status(500).json({ error: 'An error occurred while fetching user cart.' });
+  });
+}
+
+exports.postCheckout = async (req, res)=>{
+  try{
+    const {
+      address,
+      payment,
+    } = req.body;
+    const luser = req.session.user;
+    const userId = luser._id;
+    const user = await User.findById(userId);
+    const selectedAddress = user.addresses.find((a) => a._id.toString() === address);
+    const cartProducts = user.cart;
+    for (const cartItem of cartProducts) {
+      const productId = cartItem.product;
+      const quantity = cartItem.quantity;
+      const wsprice = calculateSubtotal(user.cart);
+      const shippingCost = 100;
+      console.log("Before price calculation: wsprice =", wsprice);
+const price = 48997
+console.log("After price calculation: price =", price);
+    const newOrder = {
+      product: productId,
+      quantity: quantity,
+      userDetails: userId,
+      orderDate: new Date(),
+      status: 'active',
+      billingAddress: selectedAddress,
+      paymentMethod : payment,
+      price : price
+    }
+    user.cart = [];
+    user.orders.push(newOrder);
+    await user.save();
+    res.redirect('/userhome');
+  }
+  }catch(error){
+    console.log("Error while ordering ", error);
+  }
 }
