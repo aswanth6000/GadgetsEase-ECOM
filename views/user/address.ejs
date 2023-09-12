@@ -20,22 +20,22 @@
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h4 class="text-right">Manage Address</h4>
                     </div>
-                    <% for (let i = 0; i < user.addresses.length; i++) { %>
+                    <% for (let i = 0; i < addresses.length; i++) { %>
                     <div class="card" style="margin-bottom: 6%;">
-                        <h5 class="card-header"><%= user.addresses[i].type %></h5>
+                        <h5 class="card-header"><%= addresses[i].type %></h5>
                         <div class="card-body">
-                          <h5 class="card-title"><%= user.addresses[i].name %></h5>
-                          <p class="card-text"><%= user.addresses[i].houseName %></p>
-                          <p class="card-text"><%= user.addresses[i].street %></p>
-                          <p class="card-text"><%= user.addresses[i].city %></p>
-                          <p class="card-text"><%= user.addresses[i].pinCode %></p>
-                          <p class="card-text"><%= user.addresses[i].state %></p>
-                          <p class="card-text"><%= user.addresses[i].phone %></p>
+                          <h5 class="card-title"><%= addresses[i].name %></h5>
+                          <p class="card-text"><%= addresses[i].houseName %></p>
+                          <p class="card-text"><%= addresses[i].street %></p>
+                          <p class="card-text"><%= addresses[i].city %></p>
+                          <p class="card-text"><%= addresses[i].pinCode %></p>
+                          <p class="card-text"><%= addresses[i].state %></p>
+                          <p class="card-text"><%= addresses[i].phone %></p>
                           <div class="btns" style="display: flex; justify-content: space-around;">
                               <form action="/removeAddress/<%= user._id %>/<%= i %>" method="POST">
                                 <button type="submit" class="btn btn-danger" style="width: 100px;" onclick="return confirm('Are you sure you want to delete this address?');">Delete</button>
                             </form>
-                            <form action="/editAddress/<%= user._id %>/<%= i %>">
+                            <form action="/editAddress/<%= addresses._id %>/<%= i %>" method="get">
                                 <button type="submit" class="btn btn-primary" style="width: 100px;">Edit</button>
                             </form>
                           </div>

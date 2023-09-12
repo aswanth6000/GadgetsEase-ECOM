@@ -1,5 +1,6 @@
 const User = require('../model/user');
 const bcrypt = require('bcrypt')
+const Address = require('../model/addresses')
 
 async function getUserById(userId){
     try{
@@ -61,32 +62,26 @@ async function updateProfile(userId, updatedData) {
 
 async function addAddress(userId, type, phone, houseName, name, street, city, state, pinCode) {
     try {
-        const user = await User.findById(userId);
-        if (!user) {
-            return { success: false, message: 'User not found' };
-        }
-
-        if (user.addresses.length >= 5) {
-            return { success: false, message: 'Maximum address limit reached' };
-        }
-        user.addresses.push({
-            type,
-            phone,
-            houseName,
-            name,
-            street,
-            city,
-            state,
-            pinCode
-        });
-        await user.save();
-        return { success: true, message: 'Address added successfully' };
+      const userAddress = new Address({
+        user: userId,
+        type,
+        phone,
+        houseName,
+        name,
+        street,
+        city,
+        state,
+        pinCode,
+      });
+  
+      await userAddress.save();
+  
+      return { success: true, message: 'Address added successfully' };
     } catch (error) {
-        console.error('Error adding address:', error);
-        return { success: false, message: 'An error occurred while adding address' };
+      console.error('Error adding address:', error);
+      return { success: false, message: 'An error occurred while adding address' };
     }
-}
-
+  }
 async function removeAddress(userId, addressIndex) {
     try {
         const user = await User.findById(userId);

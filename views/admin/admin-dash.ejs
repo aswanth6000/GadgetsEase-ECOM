@@ -76,7 +76,7 @@
                                 <thead class="small text-uppercase bg-body text-muted">
                                     <tr>
                                         <th>Order Date</th>
-                                        <th>Shipping Address</th>
+                                        <th>Product name</th>
                                         <th>Payment Method</th>
                                         <th>Phone</th>
                                         <th>Amount</th>
@@ -94,7 +94,7 @@
                                                 </div>
                                             </div>
                                         </td>
-                                        <td> <% order.address %></td>
+                                        <td> <%= order.product.name %></td>
                                         <td> <span class="d-inline-block align-middle"><%= order.paymentMethod %></span></td>
                                         <td><span><%= order.userDetails.phoneNumber %></span></td>
                                         <td>$<%= order.price %></td>

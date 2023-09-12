@@ -7,6 +7,7 @@ const server = http.createServer(app);
 
 
 const multer = require('multer');
+
 function generateOtp(){
     const length = 6; 
     const charset = '1234567890';

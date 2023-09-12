@@ -1,5 +1,6 @@
 const Product = require('../model/product');
 const User = require('../model/user')
+const Order = require('../model/order')
 
 exports.adminhome = (req, res) => {
     User.find()
@@ -137,31 +138,32 @@ exports.deleteProduct = async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 }
-exports.orderDetails = async (req, res) => {
-    try {
-      const orderId = req.params.orderId;
 
-      const user = await User.findOne({ 'orders._id': orderId })
-        .populate({
-          path: 'orders.product',
-          model: 'Product', // Adjust the model name as needed
-        });
-  
-      if (!user) {
-        return res.status(404).json({ error: 'Order not found.' });
-      }
-  
-      // Find the specific order by order ID
-      const order = user.orders.find((order) => order._id.toString() === orderId);
-  
-      // Render the order-details.ejs template with the order details
-      res.render('./admin/orderDetails', { order });
-    } catch (error) {
-      console.error('Error fetching order details:', error);
-      res.status(500).json({ error: 'An error occurred while fetching order details.' });
+exports.orderDetails = async (req, res) => {
+  try {
+    const orderId = req.params.orderId;
+
+    const order = await User.findOne({ 'orders._id': orderId })
+      .populate({
+        path: 'orders.product',
+        model: 'Product', // Populate the product field
+      })
+      .populate('orders.userDetails'); // Populate the user field
+
+    if (!order) {
+      return res.status(404).json({ error: 'Order not found.' });
     }
-}
-    exports.postOrderDetails = async (req, res) => {
+
+    // Render the order-details.ejs template with the order details
+    res.render('./admin/orderDetails', { order });
+  } catch (error) {
+    console.error('Error fetching order details:', error);
+    res.status(500).json({ error: 'An error occurred while fetching order details.' });
+  }
+};
+
+
+exports.postOrderDetails = async (req, res) => {
         try {
           const orderId = req.params.orderId;
           const newStatus = req.body.orderStatus;

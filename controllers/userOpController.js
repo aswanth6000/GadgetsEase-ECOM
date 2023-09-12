@@ -6,6 +6,9 @@ const userHelper = require('../helpers/userHelper')
 const {isAuthenticated} = require('../middleware/isUserAuth')
 const nocache = require('nocache')
 const multerHelper = require('../helpers/functionHelper')
+const Order = require('../model/order')
+const Address = require('../model/addresses')
+
 
 exports.getIndex = async(req, res)=>{
     try{
@@ -63,13 +66,11 @@ exports.getProfile = async(req, res)=>{
 
 
 exports.manageAddress = async(req, res)=>{
+  try{
     const userId = req.params.userId;
-    try{
-        const user = await User.findById(userId);
-        if(!user){
-            console.log("no user found");
-        }
-        res.render('./user/address', { user });
+    const user = await User.findById(userId)
+      const addresses = await Address.find({ user: userId }).exec();
+        res.render('./user/address', { addresses, user});
     }catch(error){
         console.log(error);
     }
@@ -118,24 +119,15 @@ exports.getError = (req,res)=>{
     res.render('./user/error')
 }
 
-exports.getEditAddress = async (req,res)=>{
-    const userId = req.params.userId;
-    const addressIndex = req.params.addressIndex;
-    try{
-        const user = await User.findById(userId);
-        if(!user){
-            console.log("No user Found");
-        }
-        if(addressIndex < 0 || addressIndex.length > 5){
-            console.log("No address Found");
-        }
-        const addressToEdit = user.addresses[addressIndex];
-        res.render('./user/addressEditForm',{user,addressToEdit});
-    }catch(error){
-        console.log("Error occoured ", errror);
-    }
-}
-
+exports.getEditAddress = async (req, res) => {
+  try {
+  const addressId = req.params.addressId;
+    const address = await Address.findById(addressId);
+    res.render('./user/addressEditForm', { address });
+  } catch (error) {
+    console.log("Error occurred", error);
+  }
+};
 exports.postEditAddress = async (req, res) => {
     const userId = req.params.userId;
     const addressId = req.params.addressId;
@@ -158,7 +150,6 @@ const calculateSubtotal = (cart) => {
     for (const cartItem of cart) {
       subtotal += cartItem.product.discountPrice * cartItem.quantity;
     }
-    console.log("Subtotal calculated:", subtotal);
     return subtotal;
   };
 
@@ -302,7 +293,6 @@ exports.addtocart = async (req, res) => {
         }
         req.session.cartLength = user.cart.length;
         const cartLength = req.session.cartLength;
-        console.log(cartLength);
         req.app.locals.io.emit('cartUpdate', { userId, cartLength });
         console.log(`Emitted 'cartUpdate' event for user ${userId} with cart length ${cartLength}`);
         const referringPage = req.get('Referer');
@@ -339,44 +329,92 @@ exports.getCheckout = (req,res)=>{
   });
 }
 
-exports.postCheckout = async (req, res)=>{
-  try{
-    const {
-      address,
-      payment,
-    } = req.body;
-    console.log("address, pay",address,payment);
+exports.postCheckout = async (req, res) => {
+  try {
+    const { address, payment } = req.body;
     const userId = req.session.user._id;
-    console.log(userId);
     const user = await User.findById(userId);
-    console.log(user);
-    const selectedAddress = user.addresses.find((addressItem) => addressItem._id.toString() === address);
-    console.log(selectedAddress);
-    const cartProducts = user.cart;
-    for (const cartItem of cartProducts) {
+    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found.' });
+    }
+
+    // Create an array to store all the new orders
+    const newOrders = [];
+
+    // Iterate through the user's cart products
+    for (const cartItem of user.cart) {
       const productId = cartItem.product;
       const quantity = cartItem.quantity;
-      const wsprice = calculateSubtotal(user.cart);
       const shippingCost = 100;
-      console.log("Before price calculation: wsprice =", wsprice);
-const price = 48997
-console.log("After price calculation: price =", price);
-    const newOrder = {
-      product: productId,
-      quantity: quantity,
-      userDetails: userId,
-      orderDate: new Date(),
-      status: 'active',
-      address: selectedAddress,
-      paymentMethod : payment,
-      price : price
+
+      // Calculate the price for each order
+      const price = await calculateOrderPrice(productId, quantity, shippingCost);
+
+      // Create a new order object
+      const newOrder = {
+        user: userId,
+        address: address,
+        orderDate: new Date(),
+        status: 'active',
+        paymentMethod: payment,
+        items: [{
+          product: productId,
+          quantity: quantity,
+          price: price
+        }]
+      };
+
+      // Push the new order into the array
+      newOrders.push(newOrder);
+
+      // Find the product and decrement its quantity in stock
+      const product = await Product.findById(productId);
+      if (!product) {
+        return res.status(404).json({ error: 'Product not found.' });
+      }
+
+      // Ensure there's enough quantity in stock
+      if (product.quantity < quantity) {
+        return res.status(400).json({ error: 'Not enough quantity in stock.' });
+      }
+
+      // Update the product's quantity in stock
+      product.quantity -= quantity;
+
+      // Save the updated product
+      await product.save();
     }
+
+    // Now, insert all the new orders into the Order collection
+    await Order.insertMany(newOrders);
+
+    // Clear the user's cart
     user.cart = [];
-    user.orders.push(newOrder);
+
+    // Save the user with all the new orders
     await user.save();
+
+    // Redirect to the user's home page
     res.redirect('/userhome');
-  }
-  }catch(error){
+  } catch (error) {
     console.log("Error while ordering ", error);
+    // Handle the error appropriately, e.g., show an error message to the user
   }
+};
+
+// Function to calculate order price
+async function calculateOrderPrice(productId, quantity, shippingCost) {
+  // Retrieve product details
+  const product = await Product.findById(productId);
+
+  if (!product) {
+    throw new Error('Product not found');
+  }
+
+  // Calculate the total price for the order
+  const productPrice = product.price;
+  const totalPrice = (productPrice * quantity) + shippingCost;
+
+  return totalPrice;
 }
