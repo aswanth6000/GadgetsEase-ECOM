@@ -14,7 +14,7 @@ router.get('/profile/:userId',isAuthenticated,userOp.getProfile)
 router.get('/manageaddress/:userId',userOp.manageAddress)
 router.get('/addaddress/:userId',userOp.getAddAddress)
 router.get('/error',userOp.getError)
-router.get('/editAddress/:addressId/:addressIndex', userOp.getEditAddress)
+router.get('/editAddress/:addressId', userOp.getEditAddress)
 router.get('/viewproduct/:productId',isAuthenticated,userOp.viewproduct)
 router.get('/cart',isAuthenticated,userOp.getcart)
 router.get('/cartLength',isAuthenticated,userOp.getCartLength)
@@ -39,7 +39,7 @@ router.post('/updateProfile/:userId', updateProfile = multerHelper.upload.single
 });
 router.post('/addAddress/:userId', userOp.postAddAddress);
 router.post('/removeAddress/:userId/:addressIndex', );
-router.post('/editAddress/:userId/:addressId', userOp.postEditAddress);
+router.post('/editAddress/:addressId', userOp.postEditAddress);
 router.post('/add-to-cart/:productId',isAuthenticated, userOp.addtocart);
 router.post('/removeItemFromCart/:productId',userOp.deleteCart)
 router.post('/postCheckout/:userId',userOp.postCheckout)

@@ -35,7 +35,7 @@
                               <form action="/removeAddress/<%= user._id %>/<%= i %>" method="POST">
                                 <button type="submit" class="btn btn-danger" style="width: 100px;" onclick="return confirm('Are you sure you want to delete this address?');">Delete</button>
                             </form>
-                            <form action="/editAddress/<%= addresses._id %>/<%= i %>" method="get">
+                            <form action="/editAddress/<%= addresses[i]._id %>" method="get">
                                 <button type="submit" class="btn btn-primary" style="width: 100px;">Edit</button>
                             </form>
                           </div>

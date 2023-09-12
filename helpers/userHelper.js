@@ -100,34 +100,31 @@ async function removeAddress(userId, addressIndex) {
         return { success: false, errorMessage: 'Internal Server Error' };
     }
 }
-
-async function editAddress(userId, addressId, type, phone, houseName, name, street, city, state, pinCode) {
+async function editAddress( addressId, type, phone, houseName, name, street, city, state, pinCode) {
     try {
-        const user = await User.findById(userId);
-        if (!user) {
-            return { success: false, message: 'User not found' };
-        }
-        const addressToUpdate = user.addresses.id(addressId);
-        if (!addressToUpdate) {
-            return { success: false, message: 'Address not found' };
-        }
-
-        addressToUpdate.type = type;
-        addressToUpdate.phone = phone;
-        addressToUpdate.houseName = houseName;
-        addressToUpdate.name = name;
-        addressToUpdate.street = street;
-        addressToUpdate.city = city;
-        addressToUpdate.state = state;
-        addressToUpdate.pinCode = pinCode;
-        await user.save();
-        return { success: true, message: 'Address updated successfully' };
+  
+      const addressToUpdate = await Address.findById(addressId);
+  
+      if (!addressToUpdate) {
+        return { success: false, message: 'Address not found' };
+      }
+      addressToUpdate.type = type;
+      addressToUpdate.phone = phone;
+      addressToUpdate.houseName = houseName;
+      addressToUpdate.name = name;
+      addressToUpdate.street = street;
+      addressToUpdate.city = city;
+      addressToUpdate.state = state;
+      addressToUpdate.pinCode = pinCode;
+      await addressToUpdate.save();
+      
+      return { success: true, message: 'Address updated successfully' };
     } catch (error) {
-        console.error('Error updating address:', error);
-        return { success: false, message: 'An error occurred while updating address' };
+      console.error('Error updating address:', error);
+      return { success: false, message: 'An error occurred while updating address' };
     }
-}
-
+  }
+  
 async function resetPassword(phone, newPassword, confirmPassword) {
     try {
         if (newPassword !== confirmPassword) {

@@ -129,22 +129,24 @@ exports.getEditAddress = async (req, res) => {
   }
 };
 exports.postEditAddress = async (req, res) => {
-    const userId = req.params.userId;
-    const addressId = req.params.addressId;
-    const { type, phone, houseName, name, street, city, state, pinCode } = req.body;
+  const addressId = req.params.addressId;
+  const user = req.session.user
+  const userId = user._id
+  const { type, phone, houseName, name, street, city, state, pinCode } = req.body;
 
-    try {
-        const result = await userHelper.editAddress(userId, addressId, type, phone, houseName, name, street, city, state, pinCode);
-        if (result.success) {
-            res.redirect('/manageaddress/' + userId);
-        } else {
-            res.send.json({message : 'Address edit failed'})
-        }
-    } catch (error) {
-        console.error('Error editing address:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
+  try {
+      const result = await userHelper.editAddress( addressId, type, phone, houseName, name, street, city, state, pinCode);
+      if (result.success) {
+          res.redirect('/manageaddress/' + userId);
+      } else {
+          res.status(400).json({ message: 'Address edit failed' });
+      }
+  } catch (error) {
+      console.error('Error editing address:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
 }
+
 const calculateSubtotal = (cart) => {
     let subtotal = 0;
     for (const cartItem of cart) {
