@@ -46,7 +46,9 @@ const userSchema = new mongoose.Schema({
             type : String,
             default : 'active',
         },
-        price : Number
+        price : Number,
+        address : String,
+        paymentMethod: String
     }],
     status: {
         type: String,

@@ -184,7 +184,7 @@ exports.getcart = (req,res)=>{
       res.status(500).json({ error: 'An error occurred while fetching user cart.' });
     });
 }
-    exports.updateQuantity = (req, res) => {
+exports.updateQuantity = (req, res) => {
         const userId = req.session.user._id;
         const productId = req.params.productId;
         const newQuantity = req.body.quantity;
@@ -345,10 +345,13 @@ exports.postCheckout = async (req, res)=>{
       address,
       payment,
     } = req.body;
-    const luser = req.session.user;
-    const userId = luser._id;
+    console.log("address, pay",address,payment);
+    const userId = req.session.user._id;
+    console.log(userId);
     const user = await User.findById(userId);
-    const selectedAddress = user.addresses.find((a) => a._id.toString() === address);
+    console.log(user);
+    const selectedAddress = user.addresses.find((addressItem) => addressItem._id.toString() === address);
+    console.log(selectedAddress);
     const cartProducts = user.cart;
     for (const cartItem of cartProducts) {
       const productId = cartItem.product;
@@ -364,7 +367,7 @@ console.log("After price calculation: price =", price);
       userDetails: userId,
       orderDate: new Date(),
       status: 'active',
-      billingAddress: selectedAddress,
+      address: selectedAddress,
       paymentMethod : payment,
       price : price
     }

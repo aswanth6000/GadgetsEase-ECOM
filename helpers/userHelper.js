@@ -154,9 +154,6 @@ async function resetPassword(phone, newPassword, confirmPassword) {
     }
 }
 
-
-
-
 module.exports = {
     loginUser,
     signupUser,

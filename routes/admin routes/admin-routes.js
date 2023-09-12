@@ -17,9 +17,11 @@ router.get('/admin/editproduct/:productId',isAdminLoggedIn,adminController.geted
 router.get('/admin/getProductCount',isAdminLoggedIn,adminController.getProductCount)
 router.get('/admin/getusersCount',isAdminLoggedIn,adminController.getUsersCount)
 router.get('/logout',userController.logout)
+router.get('/order-details/:orderId',adminController.orderDetails)
 
 // POST Routes
 router.post('/admin/blockuser/:userId',isAdminLoggedIn,adminController.blockuser)
+router.post('/postOrderDetails/:orderId',isAdminLoggedIn,adminController.postOrderDetails)
 router.post('/admin/unblockuser/:userId',isAdminLoggedIn,adminController.unblockuser)
 router.post('/admin/addproduct',addproducts = multerHelper.upload.fields([{ name: 'productImages', maxCount: 5 }, { name: 'video', maxCount: 1 }]), async (req, res) => {
     try {
