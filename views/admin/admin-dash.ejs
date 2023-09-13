@@ -66,50 +66,52 @@
         <div class="box"><h3>This Month</h3>: <h4>30</h4></div>
         <div class="box"><h3>Total Orders</h3>: <h4>30</h4></div>
     </div>
-    <div class="height-auto bg-light" id="tab">
+     <div class="height-auto bg-light" id="tab">
         <div class="container">
             <div class="row">
                 <div class="col-12 mb-3 mb-lg-5">
-                    <div class="overflow-hidden card table-nowrap table-card">
-                        <div class="table-responsive">
-                            <table class="table mb-0">
-                                <thead class="small text-uppercase bg-body text-muted">
-                                    <tr>
-                                        <th>Order Date</th>
-                                        <th>Product name</th>
-                                        <th>Payment Method</th>
-                                        <th>Phone</th>
-                                        <th>Amount</th>
-                                        <th>Status</th>
-                                        <th class="text-end">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% orders.forEach(order => { %>
-                                    <tr class="align-middle">
-                                        <td>
-                                            <div class="table-profile">
-                                                <div>
-                                                    <div class="h6 mb-0 lh-1"><%= order.orderDate.toDateString() %></div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td> <%= order.product.name %></td>
-                                        <td> <span class="d-inline-block align-middle"><%= order.paymentMethod %></span></td>
-                                        <td><span><%= order.userDetails.phoneNumber %></span></td>
-                                        <td>$<%= order.price %></td>
-                                        <td><%= order.status %></td>
-                                        <td class="text-end">
-                                            <div class="actions">
-                                                <a href="/order-details/<%= order._id %>"><i class='bx bx-edit' style="font-size: 30px;"></i></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <% }); %>
-                                </tbody>
-                            </table>
+                    
+<div class="col-12 mb-3 mb-lg-5">
+    <div class="overflow-hidden card table-responsive">
+        <table class="table table-bordered table-hover mb-0">
+            <thead class="small text-uppercase bg-body text-muted">
+                <tr>
+                    <th>Order Date</th>
+                    <th>Product name</th>
+                    <th>Payment Method</th>
+                    <th>Phone</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th class="text-end">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% orders.forEach(order => { %>
+                <tr class="align-middle">
+                    <td>
+                        <div class="table-profile">
+                            <div>
+                                <div class="h6 mb-0 lh-1"><%= order.orderDate.toDateString() %></div>
+                            </div>
                         </div>
-                    </div>
+                    </td>
+                    <td> <%= order.items[0].product.name %></td>
+                    <td> <span class="d-inline-block align-middle"><%= order.paymentMethod %></span></td>
+                    <td><span><%= order.user.phoneNumber %></span></td>
+                    <td>$<%= order.items[0].price %></td>
+                    <td><%= order.status %></td>
+                    <td class="text-end">
+                        <div class="actions">
+                            <a href="/order-details/<%= order._id %>"><i class='bx bx-edit' style="font-size: 30px;"></i></a>
+                        </div>
+                    </td>
+                </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
                 </div>
             </div>
         </div>

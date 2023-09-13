@@ -1,24 +1,27 @@
 const Product = require('../model/product');
 const User = require('../model/user')
 const Order = require('../model/order')
+const Address = require('../model/addresses')
+exports.adminhome = async (req, res) => {
+  try {
+    const orders = await Order.find()
+      .populate('user')
+      .populate({
+        path: 'address', // Use the correct path
+        model: 'Address',
+      })
+      .populate({
+        path: 'items.product',
+        model: 'Product',
+      })
+      .sort({ orderDate: -1 });
 
-exports.adminhome = (req, res) => {
-    User.find()
-    .populate('orders.userDetails') 
-    .exec()
-    .then((users) => {
-      if (!users) {
-        return res.status(404).json({ error: 'Users not found.' });
-      }
-        const orders = users.flatMap(user => user.orders);
-      res.render('./admin/admin-dash', { orders });
-    })
-    .catch((err) => {
-      console.error('Error fetching user orders:', err);
-      res.status(500).json({ error: 'An error occurred while fetching user orders.' });
-    });
-}
-
+    res.render('./admin/admin-dash', { orders });
+  } catch (error) {
+    console.error('Error fetching order details:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
 
 exports.getUsersCount = async (req, res) => {
     try{
@@ -142,55 +145,43 @@ exports.deleteProduct = async (req, res) => {
 exports.orderDetails = async (req, res) => {
   try {
     const orderId = req.params.orderId;
-
-    const order = await User.findOne({ 'orders._id': orderId })
+    const orders = await Order.findById(orderId)
+      .populate('user')
       .populate({
-        path: 'orders.product',
-        model: 'Product', // Populate the product field
+        path: 'address', // Use the correct path
+        model: 'Address',
       })
-      .populate('orders.userDetails'); // Populate the user field
+      .populate({
+        path: 'items.product',
+        model: 'Product',
+      })
+      .sort({ orderDate: -1 });
+      console.log(orders);
 
-    if (!order) {
-      return res.status(404).json({ error: 'Order not found.' });
-    }
-
-    // Render the order-details.ejs template with the order details
-    res.render('./admin/orderDetails', { order });
+    res.render('./admin/orderDetails', { orders });
   } catch (error) {
     console.error('Error fetching order details:', error);
-    res.status(500).json({ error: 'An error occurred while fetching order details.' });
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
 
 exports.postOrderDetails = async (req, res) => {
-        try {
-          const orderId = req.params.orderId;
-          const newStatus = req.body.orderStatus;
-      
-          // Find the user document that contains the order by order ID
-          const user = await User.findOne({ 'orders._id': orderId });
-      
-          if (!user) {
-            return res.status(404).json({ error: 'Order not found.' });
-          }
-      
-          // Find and update the specific order by order ID
-          const order = user.orders.find((order) => order._id.toString() === orderId);
-      
-          if (!order) {
-            return res.status(404).json({ error: 'Order not found.' });
-          }
-      
-          // Update the order status
-          order.status = newStatus;
-          
-          // Save the user document with the updated order status
-          await user.save();
-      
-          // Redirect to the order details page or any other appropriate page
-          res.redirect(`/adminhome`); 
-        }catch(error){
-            console.log("er4ror while updating the order status",error)
-        }
-    }
+  try {
+      const orderId = req.params.orderId;
+      const newStatus = req.body.orderStatus;
+
+      // Find the order by order ID and update its status
+      const updatedOrder = await Order.findByIdAndUpdate(orderId, { status: newStatus }, { new: true });
+
+      if (!updatedOrder) {
+          return res.status(404).json({ error: 'Order not found.' });
+      }
+
+      // Redirect to the order details page or any other appropriate page
+      res.redirect(`/adminhome`);
+  } catch (error) {
+      console.error('Error while updating the order status', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
