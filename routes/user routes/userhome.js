@@ -19,6 +19,7 @@ router.get('/viewproduct/:productId',isAuthenticated,userOp.viewproduct)
 router.get('/cart',isAuthenticated,userOp.getcart)
 router.get('/cartLength',isAuthenticated,userOp.getCartLength)
 router.get('/category',userOp.getCategory)
+router.get('/viewOrders', userOp.getOrderDetails)
 
 // POST Routes
 router.post('/updateProfile/:userId', updateProfile = multerHelper.upload.single('profileImage'), async (req, res) => {
@@ -43,7 +44,6 @@ router.post('/editAddress/:addressId', userOp.postEditAddress);
 router.post('/add-to-cart/:productId',isAuthenticated, userOp.addtocart);
 router.post('/removeItemFromCart/:productId',userOp.deleteCart)
 router.post('/postCheckout/:userId',userOp.postCheckout)
-
 router.put('/updateQuantity/:productId',userOp.updateQuantity)
 
 module.exports = router

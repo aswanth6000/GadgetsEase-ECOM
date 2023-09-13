@@ -73,21 +73,21 @@
 								<h3 class="title">Billing address</h3>
 							</div>
 							<div class="form-group">
-								<% for (let i = 0; i < user.addresses.length; i++) { %>
+								<% for (let i = 0; i < addresses.length; i++) { %>
 								<div class="input-radio">
-									<input type="radio" name="address" id="<%= user.addresses[i].name %>" value="<%= user.addresses[i]._id %>">
-									<label for="<%= user.addresses[i].name %>">
+									<input type="radio" name="address" id="<%= addresses[i].name %>" value="<%= addresses[i]._id %>">
+									<label for="<%= addresses[i].name %>">
 										<span></span>
-										<%= user.addresses[i].type %>
+										<%= addresses[i].type %>
 									</label>
 									<div class="caption">
-										<h5 class="card-title"><%= user.addresses[i].name %></h5>
-                          				<p class="card-text"><%= user.addresses[i].houseName %></p>
-                          				<p class="card-text"><%= user.addresses[i].street %></p>
-                          				<p class="card-text"><%= user.addresses[i].city %></p>
-                          				<p class="card-text"><%= user.addresses[i].pinCode %></p>
-                          				<p class="card-text"><%= user.addresses[i].state %></p>
-                          				<p class="card-text"><%= user.addresses[i].phone %></p>
+										<h5 class="card-title"><%= addresses[i].name %></h5>
+                          				<p class="card-text"><%= addresses[i].houseName %></p>
+                          				<p class="card-text"><%= addresses[i].street %></p>
+                          				<p class="card-text"><%= addresses[i].city %></p>
+                          				<p class="card-text"><%= addresses[i].pinCode %></p>
+                          				<p class="card-text"><%= addresses[i].state %></p>
+                          				<p class="card-text"><%= addresses[i].phone %></p>
 									</div>
 								</div>
 								<% } %>
@@ -126,7 +126,7 @@
 							</div>
 							<div class="order-col">
 								<div><strong>TOTAL</strong></div>
-								<div><strong class="order-total">₹<%= subtotalwship %></strong></div>
+								<div><strong class="order-total">₹<%= subtotalWithShipping %></strong></div>
 							</div>
 							<% } %>
 						</div>

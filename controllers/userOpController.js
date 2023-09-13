@@ -308,35 +308,36 @@ exports.addtocart = async (req, res) => {
 exports.getCategory = async (req, res)=>{
     res.render('./user/store')
 }
-
-exports.getCheckout = (req,res)=>{
+exports.getCheckout = async (req, res) => {
   const userId = req.session.user._id;
-  User.findById(userId)
-  .populate('cart.product') 
-  .exec()
-  .then((user) => {
+  try {
+    // Fetch user data, addresses, and cart details in parallel using Promise.all
+    const [user, addresses] = await Promise.all([
+      User.findById(userId).populate('cart.product').exec(),
+      Address.find({ user: userId }).exec(),
+    ]);
+
     if (!user) {
       return res.status(404).json({ error: 'User not found.' });
     }
-      const cart = user.cart;
-      cart.forEach((cartItem) => {
-    });
-    const subtotal = calculateSubtotal(user.cart);
-    const subtotalwship = subtotal + 100;
-    res.render('./user/checkout', { user, cart, subtotal, subtotalwship });
-  })
-  .catch((err) => {
-    console.error('Error fetching user cart:', err);
-    res.status(500).json({ error: 'An error occurred while fetching user cart.' });
-  });
-}
+
+    const cart = user.cart;
+    const subtotal = calculateSubtotal(cart);
+    const subtotalWithShipping = subtotal + 100;
+
+    res.render('./user/checkout', { user, cart, subtotal, subtotalWithShipping, addresses });
+  } catch (err) {
+    console.error('Error fetching user data and addresses:', err);
+    res.status(500).json({ error: 'An error occurred while fetching user data and addresses.' });
+  }
+};
 
 exports.postCheckout = async (req, res) => {
   try {
     const { address, payment } = req.body;
     const userId = req.session.user._id;
     const user = await User.findById(userId);
-    
+
     if (!user) {
       return res.status(404).json({ error: 'User not found.' });
     }
@@ -354,18 +355,18 @@ exports.postCheckout = async (req, res) => {
       const price = await calculateOrderPrice(productId, quantity, shippingCost);
 
       // Create a new order object
-      const newOrder = {
+      const newOrder = new Order({
         user: userId,
         address: address,
         orderDate: new Date(),
-        status: 'active',
+        status: 'pending',
         paymentMethod: payment,
         items: [{
           product: productId,
           quantity: quantity,
-          price: price
-        }]
-      };
+          price: price,
+        }],
+      });
 
       // Push the new order into the array
       newOrders.push(newOrder);
@@ -404,7 +405,6 @@ exports.postCheckout = async (req, res) => {
     // Handle the error appropriately, e.g., show an error message to the user
   }
 };
-
 // Function to calculate order price
 async function calculateOrderPrice(productId, quantity, shippingCost) {
   // Retrieve product details
@@ -419,4 +419,7 @@ async function calculateOrderPrice(productId, quantity, shippingCost) {
   const totalPrice = (productPrice * quantity) + shippingCost;
 
   return totalPrice;
+}
+exports.getOrderDetails = (req, res) =>{
+  res.render('./user/list-orders')
 }
