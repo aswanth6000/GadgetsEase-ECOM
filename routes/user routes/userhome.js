@@ -19,7 +19,7 @@ router.get('/viewproduct/:productId',isAuthenticated,userOp.viewproduct)
 router.get('/cart',isAuthenticated,userOp.getcart)
 router.get('/cartLength',isAuthenticated,userOp.getCartLength)
 router.get('/category',isAuthenticated,userOp.getCategory)
-router.get('/viewOrders',isAuthenticated, userOp.getOrderDetails)
+router.get('/viewOrders/:userId',isAuthenticated, userOp.getOrderDetails)
 router.get('/orderPlaced',isAuthenticated, userOp.orderPlaced)
 
 // POST Routes

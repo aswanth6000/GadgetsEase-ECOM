@@ -213,3 +213,39 @@ exports.postOrderDetails = async (req, res) => {
       res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
+exports.getCategory = async (req, res) => {
+  try {
+    // Get distinct categories from the products
+    const distinctCategories = await Product.distinct('category');
+
+    // Create an empty object to store products grouped by category
+    const productsByCategory = {};
+
+    // Loop through each distinct category
+    for (const category of distinctCategories) {
+      // Find products in the current category
+      const productsInCategory = await Product.find({ category });
+
+      // Add the products to the object with the category as the key
+      productsByCategory[category] = productsInCategory;
+    }
+
+    // Render the 'category' template and pass the products grouped by category
+    res.render('./admin/category', { productsByCategory });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+exports.listCategory = async (req, res) => {
+  const categoryp = req.params.category;
+  try {
+    const products = await Product.find({ category: categoryp });
+    res.render('./admin/listCategory', { category: categoryp, products });
+  } catch (error) {
+    console.error("Error occurred:", error);
+    res.status(500).send('Internal Server Error');
+  }
+};

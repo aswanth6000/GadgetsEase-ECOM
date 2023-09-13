@@ -421,25 +421,30 @@ async function calculateOrderPrice(productId, quantity, shippingCost) {
 
   return totalPrice;
 }
-exports.getOrderDetails =  async (req, res) =>{
-  try{
-    const orders = await Order.find()
-    .populate('user')
-    .populate({
-      path: 'address', 
-      model: 'Address',
-    })
-    .populate({
-      path: 'items.product',
-      model: 'Product',
-    })
-    .sort({ orderDate: -1 });
-    res.render('./user/list-orders', { orders });
-  }catch{
+exports.getOrderDetails = async (req, res) => {
+  try {
+    // Assuming you have the user ID from the request params
+    const userId = req.params.userId;
 
+    // Fetch orders for the specific user
+    const orders = await Order.find({ user: userId })
+      .populate('user')
+      .populate({
+        path: 'address',
+        model: 'Address',
+      })
+      .populate({
+        path: 'items.product',
+        model: 'Product',
+      })
+      .sort({ orderDate: -1 });
+
+    res.render('./user/list-orders', { orders });
+  } catch (error) {
+    console.error("Error occurred:", error);
+    res.status(500).send('Internal Server Error');
   }
-  res.render('./user/list-orders')
-}
+};
 
 exports.cancelOrder = async (req, res) => {
   try{

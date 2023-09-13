@@ -38,10 +38,10 @@
                                 <li><a class="dropdown-item" href="/login"><i class="bi bi-person"></i> Login</a></li>
                                 <!-- Other login-related menu items -->
                                 <% } %>					  
-                                <li><a class="dropdown-item" href="#"><i class="bi bi-heart"></i> Wishlist</a></li>
-                                <li><a class="dropdown-item" href="/viewOrders"><i class="bi bi-box-seam"></i> Orders</a></li>
-                                <li><a class="dropdown-item" href="#"><i class="bi bi-gift"></i> Gift cards</a></li>
                                 <% if (user) { %>
+                                    <li><a class="dropdown-item" href="#"><i class="bi bi-heart"></i> Wishlist</a></li>
+                                    <li><a class="dropdown-item" href="/viewOrders/<%= user._id %>"><i class="bi bi-box-seam"></i> Orders</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="bi bi-gift"></i> Gift cards</a></li>
                                 <!-- User is logged in, show user-related content -->
                                 <li><a class="dropdown-item" href="/logout"><i class="bi bi-box-arrow-left"></i> Logout</a></li>
                                 <!-- Other user-related menu items -->

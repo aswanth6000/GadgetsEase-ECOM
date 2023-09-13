@@ -121,6 +121,7 @@ z-index: 0
   <section class="vh-100 gradient-custom-2">
       <div class="container py-5 h-100">
           <div class="row justify-content-center align-items-center">
+            <% if (orders.length > 0) { %>
               <% orders.forEach(order => { %>
               <div class="col-md-6 col-lg-4 mb-4">
                   <div class="card card-stepper" style="border-radius: 16px;">
@@ -142,30 +143,24 @@ z-index: 0
                                   <h4 class="mb-3"> ₹ <%= order.items[0].price %> <span class="small text-muted"> via (<%= order.paymentMethod %> ) </span></h4>
                                   <!-- Add more dynamic details as needed -->
                                   <p class="text-muted">Tracking Status: 
-                                    <span class="<% 
+                                    <span class="<%= (() => {
                                         switch (order.status) {
                                             case 'pending':
-                                                %>text-pending<%
-                                                break;
+                                                return 'text-pending';
                                             case 'confirmed':
-                                                %>text-confirmed<%
-                                                break;
+                                                return 'text-confirmed';
                                             case 'shipped':
-                                                %>text-shipped<%
-                                                break;
+                                                return 'text-shipped';
                                             case 'delivered':
-                                                %>text-delivered<%
-                                                break;
+                                                return 'text-delivered';
                                             case 'refund initiated':
-                                                %>text-refund<%
-                                                break;
+                                                return 'text-refund';
                                             case 'cancelled':
-                                                %>text-cancelled<%
-                                                break;
+                                                return 'text-cancelled';
                                             default:
-                                                %>text-body<%
+                                                return 'text-body';
                                         }
-                                    %>"><%= order.status %></span>
+                                    })() %>"><%= order.status %></span>
                                 </p>
                               </div>
                               <div>
@@ -194,12 +189,23 @@ z-index: 0
                   </div>
               </div>
               <% }); %>
+              <% } else { %>
+                <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <div id="lottie-no-orders" class="lottie-container"></div>
+                                <p class="text-muted">No orders found.</p>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
           </div>
       </div>
   </section>
 </body>
 <!-- MDB -->
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.1/mdb.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.8/lottie.min.js"></script>
 <script>
   function cancelOrder(orderId) {
     // Send a PUT request to your server endpoint to cancel the order
@@ -218,5 +224,25 @@ z-index: 0
       alert('An error occurred while cancelling the order.');
     });
   }
+
+</script>
+<script>
+ // Specify the path to your Lottie JSON file
+ const animationPath = './animation_lmhi4lul.json'; // Replace with the actual path
+    
+    // Get a reference to the container element
+    const container = document.getElementById('lottie-no-orders');
+
+    // Configure the Lottie options
+    const animationOptions = {
+        container: container,
+        renderer: 'svg', // You can choose 'svg', 'canvas', or 'html' based on your preference
+        loop: false, // Set to true if you want the animation to loop
+        autoplay: true, // Set to true to automatically start the animation
+        path: animationPath, // Path to your Lottie JSON file
+    };
+
+    // Load the Lottie animation
+    const anim = lottie.loadAnimation(animationOptions);
 </script>
 </html>
