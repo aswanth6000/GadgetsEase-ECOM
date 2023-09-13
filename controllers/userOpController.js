@@ -454,6 +454,23 @@ exports.cancelOrder = async (req, res) => {
   }
 };
 
-exports.orderPlaced = async (req, res)=>{
-  res.render('./user/orderSuccess');
-}
+exports.orderPlaced = async (req, res) => {
+  try {
+    // Fetch the most recent order based on the orderDate field in descending order
+    const mostRecentOrder = await Order.findOne().sort({ orderDate: -1 })
+    .populate('address user');
+
+    if (!mostRecentOrder) {
+      // Handle the case where no orders are found
+      return res.status(404).send('No orders found');
+    }
+
+    // Render the 'orderSuccess' template and pass the most recent order details as an object
+    res.render('./user/orderSuccess', { order: mostRecentOrder });
+    console.log(mostRecentOrder);
+  } catch (err) {
+    // Handle any errors that occur during the process
+    console.error(err);
+    res.status(500).send('Internal Server Error');
+  }
+};
