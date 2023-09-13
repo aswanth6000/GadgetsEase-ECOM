@@ -5,13 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cart</title>
-    <style>
-        @media (min-width: 1025px) {
-            .h-custom {
-                height: 100vh !important;
-            }
-        }
-    </style>
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
     <!-- Google Fonts -->
@@ -120,7 +113,7 @@ z-index: 0
 }
 
 .text-cancelled {
-    color: gray; /* Change this to your desired color */
+    color: rgb(255, 0, 0); /* Change this to your desired color */
 }
    </style>
 </head>
@@ -146,7 +139,7 @@ z-index: 0
                                   <!-- Dynamic quantity -->
                                   <p class="text-muted"> Qty: <%= order.items[0].quantity %> item</p>
                                   <!-- Dynamic price -->
-                                  <h4 class="mb-3"> $ <%= order.items[0].price %> <span class="small text-muted"> via (<%= order.paymentMethod %> ) </span></h4>
+                                  <h4 class="mb-3"> ₹ <%= order.items[0].price %> <span class="small text-muted"> via (<%= order.paymentMethod %> ) </span></h4>
                                   <!-- Add more dynamic details as needed -->
                                   <p class="text-muted">Tracking Status: 
                                     <span class="<% 
@@ -183,15 +176,19 @@ z-index: 0
                       </div>
                       <div class="card-footer p-4">
                           <div class="d-flex justify-content-between">
-                              <h5 class="fw-normal mb-0"><a href="#!">Track</a></h5>
+                            <% if (order.status !== 'cancelled') { %>
+                                <h5 class="fw-normal mb-0">
+                                <a href="/cancelOrder/<%= order._id %>" onclick="return confirm('Are you sure you want to cancel <%= order.items[0].product.name  %>');">Cancel</a>
+                                </h5>
                               <div class="border-start h-100"></div>
-                              <h5 class="fw-normal mb-0"><a href="#!">Cancel</a></h5>
+                              <h5 class="fw-normal mb-0"><a href="#!">Track</a></h5>
                               <div class="border-start h-100"></div>
                               <h5 class="fw-normal mb-0"><a href="#!">Pre-pay</a></h5>
                               <div class="border-start h-100"></div>
                               <h5 class="fw-normal mb-0"><a href="#!" class="text-muted"><i
                                           class="fas fa-ellipsis-v"></i></a>
                               </h5>
+                              <% } %>
                           </div>
                       </div>
                   </div>
@@ -203,4 +200,23 @@ z-index: 0
 </body>
 <!-- MDB -->
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.1/mdb.min.js"></script>
+<script>
+  function cancelOrder(orderId) {
+    // Send a PUT request to your server endpoint to cancel the order
+    fetch(`/cancelOrder/${orderId}`, {
+      method: 'PUT',
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      // Handle the response from the server (e.g., show a success message)
+      alert(data.message);
+      // Optionally, update the status on the page without a full page reload
+      // You can use JavaScript to change the status color or text here
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      alert('An error occurred while cancelling the order.');
+    });
+  }
+</script>
 </html>

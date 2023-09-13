@@ -439,3 +439,16 @@ exports.getOrderDetails =  async (req, res) =>{
   }
   res.render('./user/list-orders')
 }
+
+exports.cancelOrder = async (req, res) => {
+  try{
+    const orderId = req.params.orderId;
+    const canclledOrder = await Order.findByIdAndUpdate(orderId, { status: 'cancelled' }, { new: true });
+    if (!canclledOrder) {
+      return res.status(404).json({ error: 'Order not found.' });
+  }
+  res.redirect('/viewOrders')
+  }catch(error){
+    console.log("Error occoured", error);
+  }
+};
