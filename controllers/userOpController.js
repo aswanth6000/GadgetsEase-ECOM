@@ -311,6 +311,7 @@ exports.getCategory = async (req, res)=>{
 exports.getCheckout = async (req, res) => {
   const userId = req.session.user._id;
   try {
+    const userp = User.findById(userId)
     // Fetch user data, addresses, and cart details in parallel using Promise.all
     const [user, addresses] = await Promise.all([
       User.findById(userId).populate('cart.product').exec(),
@@ -325,7 +326,7 @@ exports.getCheckout = async (req, res) => {
     const subtotal = calculateSubtotal(cart);
     const subtotalWithShipping = subtotal + 100;
 
-    res.render('./user/checkout', { user, cart, subtotal, subtotalWithShipping, addresses });
+    res.render('./user/checkout', { user, cart, subtotal, subtotalWithShipping, addresses, userp });
   } catch (err) {
     console.error('Error fetching user data and addresses:', err);
     res.status(500).json({ error: 'An error occurred while fetching user data and addresses.' });
@@ -399,7 +400,7 @@ exports.postCheckout = async (req, res) => {
     await user.save();
 
     // Redirect to the user's home page
-    res.redirect('/userhome');
+    res.redirect('/orderPlaced');
   } catch (error) {
     console.log("Error while ordering ", error);
     // Handle the error appropriately, e.g., show an error message to the user
@@ -452,3 +453,7 @@ exports.cancelOrder = async (req, res) => {
     console.log("Error occoured", error);
   }
 };
+
+exports.orderPlaced = async (req, res)=>{
+  res.render('./user/orderSuccess');
+}

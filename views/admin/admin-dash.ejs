@@ -62,9 +62,9 @@
         </nav>
     </div>
     <div class="tot">
-        <div class="box"><h3>Today Orders</h3>: <h4>30</h4></div>
-        <div class="box"><h3>This Month</h3>: <h4>30</h4></div>
-        <div class="box"><h3>Total Orders</h3>: <h4>30</h4></div>
+        <div class="box"><h3>Today Orders</h3>: <h4><%= orderCounts.todayOrders %></h4></div>
+        <div class="box"><h3>This Month</h3>: <h4><%= orderCounts.thisMonthOrders %></h4></div>
+        <div class="box"><h3>Total Orders</h3>: <h4><%= orderCounts.totalOrders %></h4></div>
     </div>
      <div class="height-auto bg-light" id="tab">
         <div class="container">
@@ -79,7 +79,7 @@
                     <th>Order Date</th>
                     <th>Product name</th>
                     <th>Payment Method</th>
-                    <th>Phone</th>
+                    <th>quantity</th>
                     <th>Amount</th>
                     <th>Status</th>
                     <th class="text-end">Action</th>
@@ -97,7 +97,7 @@
                     </td>
                     <td> <%= order.items[0].product.name %></td>
                     <td> <span class="d-inline-block align-middle"><%= order.paymentMethod %></span></td>
-                    <td><span><%= order.user.phoneNumber %></span></td>
+                    <td><span><%= order.items[0].quantity %></span></td>
                     <td>$<%= order.items[0].price %></td>
                     <td><%= order.status %></td>
                     <td class="text-end">

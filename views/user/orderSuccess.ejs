@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+    <!-- Add Bootstrap CSS link here -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.8/lottie.min.js"></script>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body text-center" style="display: flex;flex-direction: column;align-items: center;">
+                        <div id="lottie-container" class="lottie-container" style="height: 40%;width: 40%;"></div>
+                        <h1 class="mt-3 text-success">Order Placed Successfully!</h1>
+                        <p class="lead">Your order details:</p>
+                        <ul class="list-group mb-4">
+                            <li class="list-group-item"><strong>Order ID:</strong> #123456</li>
+                            <li class="list-group-item"><strong>Order Date:</strong> September 15, 2023</li>
+                            <li class="list-group-item"><strong>Shipping Address:</strong> 123 Main St, City</li>
+                            <li class="list-group-item"><strong>Payment Method:</strong> Credit Card</li>
+                        </ul>
+                        <p class="text-primary">Expected Delivery: Within 2-4 days</p>
+                        <p>A confirmation email has been sent to <strong>your@email.com</strong></p>
+                        <a href="/userhome" class="btn btn-primary btn-lg">Continue Shopping</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Bootstrap JS and jQuery scripts here (if needed) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Specify the path to your Lottie JSON file
+        const animationPath = './animation_lmhi4lul.json'; // Replace with the actual path
+    
+        // Get a reference to the container element
+        const container = document.getElementById('lottie-container');
+    
+        // Configure the Lottie options
+        const animationOptions = {
+            container: container,
+            renderer: 'svg', // You can choose 'svg', 'canvas', or 'html' based on your preference
+            loop: false, // Set to true if you want the animation to loop
+            autoplay: true, // Set to true to automatically start the animation
+            path: animationPath, // Path to your Lottie JSON file
+        };
+    
+        // Load the Lottie animation
+        const anim = lottie.loadAnimation(animationOptions);
+    </script>
+</body>
+</html>

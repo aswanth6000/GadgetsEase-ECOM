@@ -4,6 +4,10 @@ const Order = require('../model/order')
 const Address = require('../model/addresses')
 exports.adminhome = async (req, res) => {
   try {
+    const today = new Date();
+    const startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0);
+    const endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59);
+    const orderCounts = await countOrders(startDate, endDate);
     const orders = await Order.find()
       .populate('user')
       .populate({
@@ -16,7 +20,7 @@ exports.adminhome = async (req, res) => {
       })
       .sort({ orderDate: -1 });
 
-    res.render('./admin/admin-dash', { orders });
+    res.render('./admin/admin-dash', { orders, orderCounts });
   } catch (error) {
     console.error('Error fetching order details:', error);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -142,6 +146,35 @@ exports.deleteProduct = async (req, res) => {
     }
 }
 
+async function countOrders(startDate, endDate) {
+  try {
+    const todayOrders = await Order.countDocuments({
+      orderDate: {
+        $gte: startDate,
+        $lte: endDate,
+      },
+    });
+
+    const thisMonthOrders = await Order.countDocuments({
+      orderDate: {
+        $gte: startDate,
+        $lte: endDate,
+      },
+    });
+
+    const totalOrders = await Order.countDocuments();
+
+    return {
+      todayOrders,
+      thisMonthOrders,
+      totalOrders,
+    };
+  } catch (error) {
+    console.error('Error counting orders:', error);
+    throw error;
+  }
+}
+
 exports.orderDetails = async (req, res) => {
   try {
     const orderId = req.params.orderId;
@@ -158,7 +191,7 @@ exports.orderDetails = async (req, res) => {
       .sort({ orderDate: -1 });
       console.log(orders);
 
-    res.render('./admin/orderDetails', { orders });
+    res.render('./admin/orderDetails', { orders});
   } catch (error) {
     console.error('Error fetching order details:', error);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -170,15 +203,10 @@ exports.postOrderDetails = async (req, res) => {
   try {
       const orderId = req.params.orderId;
       const newStatus = req.body.orderStatus;
-
-      // Find the order by order ID and update its status
       const updatedOrder = await Order.findByIdAndUpdate(orderId, { status: newStatus }, { new: true });
-
       if (!updatedOrder) {
           return res.status(404).json({ error: 'Order not found.' });
       }
-
-      // Redirect to the order details page or any other appropriate page
       res.redirect(`/adminhome`);
   } catch (error) {
       console.error('Error while updating the order status', error);
