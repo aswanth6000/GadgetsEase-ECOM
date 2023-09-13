@@ -19,16 +19,6 @@
     <!-- MDB -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.1/mdb.min.css" rel="stylesheet" />
    <style>
-    .gradient-custom-2 {
-/* fallback for old browsers */
-background: #a1c4fd;
-
-/* Chrome 10-25, Safari 5.1-6 */
-background: -webkit-linear-gradient(to right, rgba(161, 196, 253, 1), rgba(194, 233, 251, 1));
-
-/* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-background: linear-gradient(to right, rgba(161, 196, 253, 1), rgba(194, 233, 251, 1))
-}
 
 #progressbar-1 {
 color: #455A64;
@@ -107,64 +97,109 @@ background: #1266f1;
 .card-stepper {
 z-index: 0
 }
+
+/* Define CSS classes for different statuses */
+.text-pending {
+    color: orange; /* Change this to your desired color */
+}
+
+.text-confirmed {
+    color: green; /* Change this to your desired color */
+}
+
+.text-shipped {
+    color: blue; /* Change this to your desired color */
+}
+
+.text-delivered {
+    color: purple; /* Change this to your desired color */
+}
+
+.text-refund {
+    color: red; /* Change this to your desired color */
+}
+
+.text-cancelled {
+    color: gray; /* Change this to your desired color */
+}
    </style>
 </head>
-
 <body>
-    <section class="vh-100 gradient-custom-2">
-        <div class="container py-5 h-100">
-          <div class="row d-flex justify-content-center align-items-center h-100">
-            <div class="col-md-10 col-lg-8 col-xl-6">
-              <div class="card card-stepper" style="border-radius: 16px;">
-                <div class="card-header p-4">
-                  <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                      <p class="text-muted mb-2"> Order ID <span class="fw-bold text-body">1222528743</span></p>
-                      <p class="text-muted mb-0"> Place On <span class="fw-bold text-body">12,March 2019</span> </p>
-                    </div>
-                    <div>
-                      <h6 class="mb-0"> <a href="#">View Details</a> </h6>
-                    </div>
+  <section class="vh-100 gradient-custom-2">
+      <div class="container py-5 h-100">
+          <div class="row justify-content-center align-items-center">
+              <% orders.forEach(order => { %>
+              <div class="col-md-6 col-lg-4 mb-4">
+                  <div class="card card-stepper" style="border-radius: 16px;">
+                      <div class="card-header p-4">
+                          <div class="d-flex justify-content-between align-items-center">
+                              <div>
+                                  <p class="text-muted mb-2"> Order ID <span class="fw-bold text-body"><%= order._id %></span></p>
+                                  <p class="text-muted mb-0"> Place On <span class="fw-bold text-body"><%= order.orderDate.toDateString() %></span> </p>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="card-body p-4">
+                          <div class="d-flex flex-row mb-4 pb-2">
+                              <div class="flex-fill">
+                                  <h5 class="bold"><%= order.items[0].product.name %></h5>
+                                  <!-- Dynamic quantity -->
+                                  <p class="text-muted"> Qty: <%= order.items[0].quantity %> item</p>
+                                  <!-- Dynamic price -->
+                                  <h4 class="mb-3"> $ <%= order.items[0].price %> <span class="small text-muted"> via (<%= order.paymentMethod %> ) </span></h4>
+                                  <!-- Add more dynamic details as needed -->
+                                  <p class="text-muted">Tracking Status: 
+                                    <span class="<% 
+                                        switch (order.status) {
+                                            case 'pending':
+                                                %>text-pending<%
+                                                break;
+                                            case 'confirmed':
+                                                %>text-confirmed<%
+                                                break;
+                                            case 'shipped':
+                                                %>text-shipped<%
+                                                break;
+                                            case 'delivered':
+                                                %>text-delivered<%
+                                                break;
+                                            case 'refund initiated':
+                                                %>text-refund<%
+                                                break;
+                                            case 'cancelled':
+                                                %>text-cancelled<%
+                                                break;
+                                            default:
+                                                %>text-body<%
+                                        }
+                                    %>"><%= order.status %></span>
+                                </p>
+                              </div>
+                              <div>
+                                  <img class="align-self-center img-fluid " alt="product image"
+                                      src="/uploads/images/<%= order.items[0].product.productImages[3] %> " width="150px" height="150px" style="object-fit: cover;">
+                              </div>
+                          </div>
+                      </div>
+                      <div class="card-footer p-4">
+                          <div class="d-flex justify-content-between">
+                              <h5 class="fw-normal mb-0"><a href="#!">Track</a></h5>
+                              <div class="border-start h-100"></div>
+                              <h5 class="fw-normal mb-0"><a href="#!">Cancel</a></h5>
+                              <div class="border-start h-100"></div>
+                              <h5 class="fw-normal mb-0"><a href="#!">Pre-pay</a></h5>
+                              <div class="border-start h-100"></div>
+                              <h5 class="fw-normal mb-0"><a href="#!" class="text-muted"><i
+                                          class="fas fa-ellipsis-v"></i></a>
+                              </h5>
+                          </div>
+                      </div>
                   </div>
-                </div>
-                <div class="card-body p-4">
-                  <div class="d-flex flex-row mb-4 pb-2">
-                    <div class="flex-fill">
-                      <h5 class="bold">Headphones Bose 35 II</h5>
-                      <p class="text-muted"> Qt: 1 item</p>
-                      <h4 class="mb-3"> $ 299 <span class="small text-muted"> via (COD) </span></h4>
-                      <p class="text-muted">Tracking Status on: <span class="text-body">11:30pm, Today</span></p>
-                    </div>
-                    <div>
-                      <img class="align-self-center img-fluid"
-                        src="https://mdbcdn.b-cdn.net/img/Photos/Horizontal/E-commerce/Products/6.webp" width="250">
-                    </div>
-                  </div>
-                  <ul id="progressbar-1" class="mx-0 mt-0 mb-5 px-0 pt-0 pb-4">
-                    <li class="step0 active" id="step1"><span
-                        style="margin-left: 22px; margin-top: 12px;">PLACED</span></li>
-                    <li class="step0 active text-center" id="step2"><span>SHIPPED</span></li>
-                    <li class="step0 text-muted text-end" id="step3"><span
-                        style="margin-right: 22px;">DELIVERED</span></li>
-                  </ul>
-                </div>
-                <div class="card-footer p-4">
-                  <div class="d-flex justify-content-between">
-                    <h5 class="fw-normal mb-0"><a href="#!">Track</a></h5>
-                    <div class="border-start h-100"></div>
-                    <h5 class="fw-normal mb-0"><a href="#!">Cancel</a></h5>
-                    <div class="border-start h-100"></div>
-                    <h5 class="fw-normal mb-0"><a href="#!">Pre-pay</a></h5>
-                    <div class="border-start h-100"></div>
-                    <h5 class="fw-normal mb-0"><a href="#!" class="text-muted"><i class="fas fa-ellipsis-v"></i></a>
-                    </h5>
-                  </div>
-                </div>
               </div>
-            </div>
+              <% }); %>
           </div>
-        </div>
-      </section>
+      </div>
+  </section>
 </body>
 <!-- MDB -->
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.1/mdb.min.js"></script>

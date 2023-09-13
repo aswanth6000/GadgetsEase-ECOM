@@ -420,6 +420,22 @@ async function calculateOrderPrice(productId, quantity, shippingCost) {
 
   return totalPrice;
 }
-exports.getOrderDetails = (req, res) =>{
+exports.getOrderDetails =  async (req, res) =>{
+  try{
+    const orders = await Order.find()
+    .populate('user')
+    .populate({
+      path: 'address', 
+      model: 'Address',
+    })
+    .populate({
+      path: 'items.product',
+      model: 'Product',
+    })
+    .sort({ orderDate: -1 });
+    res.render('./user/list-orders', { orders });
+  }catch{
+
+  }
   res.render('./user/list-orders')
 }
