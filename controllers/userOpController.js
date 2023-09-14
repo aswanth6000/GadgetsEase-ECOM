@@ -64,12 +64,11 @@ exports.getProfile = async(req, res)=>{
     }
 }
 
-
 exports.manageAddress = async(req, res)=>{
   try{
     const userId = req.params.userId;
     const user = await User.findById(userId)
-      const addresses = await Address.find({ user: userId }).exec();
+      const addresses = await Address.find({ user: userId }).sort({ createdDate: -1 }).exec();
         res.render('./user/address', { addresses, user});
     }catch(error){
         console.log(error);
@@ -264,6 +263,7 @@ exports.getCartLength = (req, res)=>{
         cartLength : cartSize
     }
     res.json(cartData);
+    console.log(cartData);
 
 }
 
@@ -295,10 +295,6 @@ exports.addtocart = async (req, res) => {
         }
         req.session.cartLength = user.cart.length;
         const cartLength = req.session.cartLength;
-        req.app.locals.io.emit('cartUpdate', { userId, cartLength });
-        console.log(`Emitted 'cartUpdate' event for user ${userId} with cart length ${cartLength}`);
-        const referringPage = req.get('Referer');
-        res.redirect(referringPage || '/cart');
     } catch (error) {
         console.error('Error adding product to cart:', error);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -311,7 +307,8 @@ exports.getCategory = async (req, res)=>{
 exports.getCheckout = async (req, res) => {
   const userId = req.session.user._id;
   try {
-    const userp = User.findById(userId)
+    const userp = User.findById(userId);
+
     // Fetch user data, addresses, and cart details in parallel using Promise.all
     const [user, addresses] = await Promise.all([
       User.findById(userId).populate('cart.product').exec(),
@@ -326,12 +323,16 @@ exports.getCheckout = async (req, res) => {
     const subtotal = calculateSubtotal(cart);
     const subtotalWithShipping = subtotal + 100;
 
-    res.render('./user/checkout', { user, cart, subtotal, subtotalWithShipping, addresses, userp });
+    // Check if any product in the cart has a quantity less than or equal to zero
+    const outOfStockError = cart.some(item => item.product.quantity <= 0);
+
+    res.render('./user/checkout', { user, cart, subtotal, subtotalWithShipping, addresses, userp, outOfStockError });
   } catch (err) {
     console.error('Error fetching user data and addresses:', err);
     res.status(500).json({ error: 'An error occurred while fetching user data and addresses.' });
   }
-};
+}
+
 
 exports.postCheckout = async (req, res) => {
   try {

@@ -24,6 +24,10 @@ const productSchema = new mongoose.Schema({
     frontCam: String,
     rearCam: String,
     processor: String,
+    orderDate: {
+        type: Date,
+        default: Date.now,
+      },
 });
 
 module.exports = mongoose.model('Product', productSchema);

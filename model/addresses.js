@@ -13,7 +13,11 @@ const addressSchema = new mongoose.Schema({
   street: String,
   city: String,
   state: String,
-  pinCode: String
+  pinCode: String,
+  createdDate: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 module.exports = mongoose.model('Address', addressSchema);

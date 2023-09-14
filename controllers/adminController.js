@@ -46,7 +46,7 @@ exports.getUsersCount = async (req, res) => {
 
 
 exports.viewUser = async (req,res)=>{
-    const user = await User.find()
+    const user = await User.find().sort({ createdDate: -1 });
     res.render('./admin/viewUser',{user});
 }
 
@@ -86,7 +86,7 @@ exports.viewproducts = async (req, res) => {
         } else if (filter === 'outOfStock') {
             products = await Product.find({ quantity: { $lte: 0 } }); // Fetch products with quantity <= 0
         } else {
-            products = await Product.find(); // Fetch all products
+            products = await Product.find().sort({ orderDate: -1 });; // Fetch all products
         }
 
         // Render an HTML template with the filtered products
@@ -189,8 +189,6 @@ exports.orderDetails = async (req, res) => {
         model: 'Product',
       })
       .sort({ orderDate: -1 });
-      console.log(orders);
-
     res.render('./admin/orderDetails', { orders});
   } catch (error) {
     console.error('Error fetching order details:', error);

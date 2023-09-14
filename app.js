@@ -18,11 +18,6 @@ app.use(session({
     saveUninitialized: true,
     
 }));
-const io = socketIo(server);
-io.on('connection', (socket) => {
-    console.log('Socket.IO connection established');
-});
-app.locals.io = io;
 
 app.use(require('./routes/user routes/userhome'))
 app.use(require('./routes/user routes/product'))

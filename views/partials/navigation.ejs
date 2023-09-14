@@ -63,40 +63,6 @@
             </div>
         </div>
     </nav>
-    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-          const socket = io.connect(window.location.origin);
-
-            // Function to update the cart length in the DOM
-            function updateCartLength(cartLength) {
-                const cartLengthElement = document.getElementById('cart-length-zzz');
-                if (cartLengthElement) {
-                    cartLengthElement.textContent = cartLength;
-                }
-            }
-
-            // Listen for cart updates via Socket.IO
-            socket.on('cartUpdate', (data) => {
-                console.log('Received cartUpdate event:', data);
-                updateCartLength(data.cartLength);
-            });
-
-            // Function to fetch cart data
-            function fetchCartData() {
-                fetch('/cartLength')
-                    .then((response) => response.json())
-                    .then((data) => {
-                        updateCartLength(data.cartLength);
-                        console.log(data.cartLength,"55555")
-                    })
-                    .catch((error) => {
-                        console.log('Error fetching cart data:', error);
-                    });
-            }
-
-            fetchCartData();
-        });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
