@@ -8,6 +8,7 @@ const nocache = require('nocache')
 const multerHelper = require('../helpers/functionHelper')
 const Order = require('../model/order')
 const Address = require('../model/addresses')
+const Transaction = require('../model/transaction')
 
 
 exports.getIndex = async(req, res)=>{
@@ -480,3 +481,68 @@ exports.orderPlaced = async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 };
+
+exports.getWithdraw = async (req,res)=>{
+  const userp = req.session.user;
+  const userId = userp._id;
+  const user = await User.findById(userId);
+  res.render('./user/withdraw', {user})
+}
+
+exports.getWallet = async (req, res)=>{
+try{
+  const userId = req.params.userId;
+  const user = await User.findById(userId);
+  const transaction = await Transaction.find({user : userId});
+  res.render('./user/wallet', {user, transaction});
+}catch(error){
+  console.log("Error happend", error);
+}
+}
+
+exports.postWithdraw = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { amount } = req.body;
+
+    // Validate and update the user's wallet balance
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found.' });
+    }
+
+    if (amount <= 0 || amount > user.walletBalance) {
+      return res.status(400).json({ error: 'Invalid withdrawal amount.' });
+    }
+
+    user.walletBalance -= amount;
+    await user.save();
+
+    // Record the transaction
+    const transaction = new Transaction({
+      user: userId,
+      amount,
+      type: 'debit',
+    });
+    await transaction.save();
+
+    res.json({ message: 'Funds withdrawn successfully.' });
+  } catch (error) {
+    console.error('Error withdrawing funds:', error);
+    res.status(500).json({ error: 'An error occurred while withdrawing funds.' });
+  }
+};
+
+exports.returnOrder = async(req,res) =>{
+try{
+  const orderId = req.params.orderId;
+  const order = await Order.findByIdAndUpdate(orderId,  { status: 'return requested' }, { new: true });
+  if (!order) {
+    return res.status(404).json({ error: 'Order not found.' });
+}
+res.redirect('/viewOrders')
+}catch(error){
+  console.log("Erorr while updating", error);
+}
+
+}

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet</title>
+    <!-- Add Bootstrap CSS and any custom CSS here -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-4">
+                <!-- User's Wallet Balance -->
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Wallet Balance</h5>
+                        <h4 class="card-text">₹<%= user.walletBalance %></h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <!-- Wallet Actions: Add Money and Withdraw -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Add Money</h5>
+                                <button class="btn btn-primary">Deposit</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Withdraw</h5>
+                                <a href="/withdraw"><button class="btn btn-danger">Withdraw</button></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Recent Transactions -->
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Recent Transactions</h5>
+                        <ul class="list-group">
+                            <% transaction.forEach(transaction => { %>
+                            <li class="list-group-item">
+                                <strong>Transaction ID:</strong> <%= transaction._id %><br>
+                                <strong>Description:</strong> <%= transaction.description %>
+                                <% if (transaction.type === 'credit') { %>
+                                <span class="badge badge-success float-right">₹<%= transaction.amount.toFixed(2) %></span>
+                                <% } else if (transaction.type === 'debit') { %>
+                                <span class="badge badge-danger float-right">-₹<%= transaction.amount.toFixed(2) %></span>
+                                <% } %>
+                            </li>
+                            <% }); %>
+                        </ul>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Bootstrap JS and any custom JS here -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

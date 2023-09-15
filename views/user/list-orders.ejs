@@ -171,9 +171,14 @@ z-index: 0
                       </div>
                       <div class="card-footer p-4">
                           <div class="d-flex justify-content-between">
-                            <% if (order.status !== 'cancelled') { %>
+                            <% if (order.status !== 'cancelled' && order.status !== 'refund-initiated'  ) { %>
+                                <% if (order.status === 'delivered') {%>
+                                    <h5 class="fw-normal mb-0">
+                                    <a href="/cancelOrder/<%= order._id %>" onclick="return confirm('Are you sure you want to return <%= order.items[0].product.name  %>');">Return</a>
+                                    </h5>
+                                    <% }else{ %>
                                 <h5 class="fw-normal mb-0">
-                                <a href="/cancelOrder/<%= order._id %>" onclick="return confirm('Are you sure you want to cancel <%= order.items[0].product.name  %>');">Cancel</a>
+                                <a href="/returnOrder/<%= order._id %>" onclick="return confirm('Are you sure you want to cancel <%= order.items[0].product.name  %>');">Cancel</a>
                                 </h5>
                               <div class="border-start h-100"></div>
                               <h5 class="fw-normal mb-0"><a href="#!">Track</a></h5>
@@ -183,6 +188,7 @@ z-index: 0
                               <h5 class="fw-normal mb-0"><a href="#!" class="text-muted"><i
                                           class="fas fa-ellipsis-v"></i></a>
                               </h5>
+                              <% } %>
                               <% } %>
                           </div>
                       </div>

@@ -21,6 +21,10 @@ router.get('/cartLength',isAuthenticated,userOp.getCartLength)
 router.get('/category',isAuthenticated,userOp.getCategory)
 router.get('/viewOrders/:userId',isAuthenticated, userOp.getOrderDetails)
 router.get('/orderPlaced',isAuthenticated, userOp.orderPlaced)
+router.get('/cancelOrder/:orderId',userOp.cancelOrder)
+router.get('/wallet/:userId',userOp.getWallet)
+router.get('/withdraw',userOp.getWithdraw)
+router.get('/returnOrder/:orderId',isAuthenticated,userOp.returnOrder)
 
 // POST Routes
 router.post('/updateProfile/:userId', updateProfile = multerHelper.upload.single('profileImage'), async (req, res) => {
@@ -46,6 +50,7 @@ router.post('/add-to-cart/:productId',isAuthenticated, userOp.addtocart);
 router.post('/removeItemFromCart/:productId',userOp.deleteCart)
 router.post('/postCheckout/:userId',userOp.postCheckout)
 router.put('/updateQuantity/:productId',userOp.updateQuantity)
-router.get('/cancelOrder/:orderId',userOp.cancelOrder)
+router.post('/withdraw/:userId',userOp.postWithdraw)
+
 
 module.exports = router

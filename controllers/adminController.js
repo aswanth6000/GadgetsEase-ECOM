@@ -1,6 +1,7 @@
 const Product = require('../model/product');
 const User = require('../model/user')
 const Order = require('../model/order')
+const Transaction = require('../model/transaction'); 
 const Address = require('../model/addresses')
 exports.adminhome = async (req, res) => {
   try {
@@ -197,21 +198,53 @@ exports.orderDetails = async (req, res) => {
 };
 
 
+
 exports.postOrderDetails = async (req, res) => {
   try {
-      const orderId = req.params.orderId;
-      const newStatus = req.body.orderStatus;
-      const updatedOrder = await Order.findByIdAndUpdate(orderId, { status: newStatus }, { new: true });
-      if (!updatedOrder) {
-          return res.status(404).json({ error: 'Order not found.' });
-      }
-      res.redirect(`/adminhome`);
+    const orderId = req.params.orderId;
+    const newStatus = req.body.orderStatus;
+
+    const updatedOrder = await Order.findByIdAndUpdate(orderId, { status: newStatus }, { new: true });
+
+    if (!updatedOrder) {
+      return res.status(404).json({ error: 'Order not found.' });
+    }
+
+    // Check if the new status is 'refund-initiated'
+    if (newStatus === 'refund-initiated') {
+      // Find the user who placed the order
+      const user = await User.findById(updatedOrder.user);
+
+      // Calculate the total refund amount based on the items in the order
+      const refundAmount = updatedOrder.items.reduce((total, item) => {
+        return total + item.price * item.quantity;
+      }, 0);
+
+      // Add the refund amount to the user's wallet balance
+      user.walletBalance += refundAmount;
+
+      // Save the updated user information
+      await user.save();
+
+      // Create a transaction record for the refund
+      const transaction = new Transaction({
+        user: user._id,
+        type: 'credit',
+        amount: refundAmount,
+        description: 'Refund for order ID: ' + orderId,
+      });
+
+      // Save the transaction record
+      await transaction.save();
+    }
+
+    // Redirect to the admin dashboard or any other appropriate page
+    res.redirect(`/adminhome`);
   } catch (error) {
-      console.error('Error while updating the order status', error);
-      res.status(500).json({ error: 'Internal Server Error' });
+    console.error('Error while updating the order status', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
-
 exports.getCategory = async (req, res) => {
   try {
     // Get distinct categories from the products

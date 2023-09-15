@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Withdraw Money</title>
+    <!-- Add Bootstrap CSS and any custom CSS here -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Withdraw Money</h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="/withdraw/<%=user._id%>" method="post">
+                            <div class="form-group">
+                                <label for="withdrawAmount">Amount to Withdraw <span style="color: red;">max : <%=user.walletBalance%></span></label>
+                                <input type="number" required class="form-control" id="withdrawAmount" placeholder="Enter amount" max="<%=user.walletBalance%>">
+                            </div>
+                            <div class="form-group">
+                                <label for="withdrawMethod">Withdrawal Method</label>
+                                <select class="form-control" id="withdrawMethod">
+                                    <option value="bank">Bank Transfer</option>
+                                    <option value="paypal">PayPal</option>
+                                    <!-- Add more withdrawal methods here -->
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="accountNumber">Account Number</label>
+                                <input type="text" required class="form-control" id="accountNumber" placeholder="Enter account number">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Withdraw</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Bootstrap JS and any custom JS here -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
