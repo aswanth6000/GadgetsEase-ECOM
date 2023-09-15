@@ -74,6 +74,18 @@
 <div class="col-12 mb-3 mb-lg-5">
     <div class="overflow-hidden card table-responsive">
         <table class="table table-bordered table-hover mb-0">
+            <div class="dropdown" style="margin-left: 50%;">
+                <select name="cars" id="filterDropdown" class="form-select form-select-sm" id="cars">
+                    <option value="all">All Users</option>
+                    <option value="pending">Pending</option>
+                    <option value="confirmed">Confirmed</option>
+                    <option value="shipped">Shipped</option>
+                    <option value="delivered">Delivered</option>
+                    <option value="refund-initiated">Refund initiated</option>
+                    <option value="return requested">Return requested</option>
+                    <option value="canclled">Cancelled</option>
+                </select>
+            </div>
             <thead class="small text-uppercase bg-body text-muted">
                 <tr>
                     <th>Order Date</th>
@@ -145,4 +157,23 @@
         /*===== LINK ACTIVE =====*/
     });
 </script>
+<script>
+    // Add an event listener to the select element
+    document.getElementById('filterDropdown').addEventListener('change', function () {
+        const selectedValue = this.value;
+        const rows = document.querySelectorAll('tbody tr');
+    
+        // Loop through all rows and show/hide them based on the selected value
+        rows.forEach(row => {
+            const statusCell = row.querySelector('td:nth-child(6)'); // Assuming the status cell is the 6th cell
+            const status = statusCell.textContent.trim();
+    
+            if (selectedValue === 'all' || status === selectedValue) {
+                row.style.display = 'table-row';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+    </script>
 </html>

@@ -1,13 +1,10 @@
-
-const  express = require('express');
-const app = express()
-const socketIo = require('socket.io');
-const http = require('http');
-const server = http.createServer(app);
-
+const nodemailer = require('nodemailer')
+const emailConfig = require('../config/emailConfig')
+require('dotenv').config
+const Mailgen = require('mailgen')
+const emailTemplate = require('./emailTemplate');
 
 const multer = require('multer');
-
 function generateOtp(){
     const length = 6; 
     const charset = '1234567890';
@@ -18,6 +15,7 @@ function generateOtp(){
     }
     return otp; 
 }
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
       if (file.mimetype.startsWith('image/')) {
@@ -35,10 +33,51 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
+const transporter= nodemailer.createTransport(emailConfig)
 
+const sendEmail = async (to, subject, text) =>{
+    try{
+        const info = await transporter.sendMail({
+            from : EMAIL ,
+            to,
+            subject,
+            text
+        });
+        console.log("Email sent : ", info.messageId);
+    }catch(error){
+        console.log("error occoured", error);
+    }
+}
 
- module.exports = {
+const mailGenerator = new Mailgen({
+    theme: 'default',
+    product: {
+      name: 'GadgetEase',
+      link: 'https://www.example.com', // Your website URL
+      logo: 'https://www.example.com/logo.png', // Your logo URL
+    },
+});  
+  
+const sendOrderReceiptEmail = async (toEmail, order) => {
+    const email = emailTemplate(order);
+    const message = {
+      from: 'gadgetease.info.gmail.com',
+      to: toEmail,
+      subject: 'Order Receipt - GadgetEase',
+      html: email,
+    };  
+    try {
+      const info = await transporter.sendMail(message);
+      console.log('Email sent:', info.response);
+    } catch (error) {
+      console.error('Error sending email:', error);
+    }
+};
+
+module.exports = {
     generateOtp,
     upload,
-    
- }
+    sendEmail,
+    emailTemplate,
+    sendOrderReceiptEmail
+}

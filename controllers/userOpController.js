@@ -9,6 +9,7 @@ const multerHelper = require('../helpers/functionHelper')
 const Order = require('../model/order')
 const Address = require('../model/addresses')
 const Transaction = require('../model/transaction')
+const emailTemplate = require('../helpers/functionHelper')
 
 
 exports.getIndex = async(req, res)=>{
@@ -400,6 +401,10 @@ exports.postCheckout = async (req, res) => {
 
     // Save the user with all the new orders
     await user.save();
+    const userEmail = user.email; 
+    const userName = user.username// Replace with the user's email
+    const userData = {userEmail, userName}
+    sendOrderReceiptEmail(userData, newOrders);
 
     // Redirect to the user's home page
     res.redirect('/orderPlaced');
@@ -535,14 +540,18 @@ exports.postWithdraw = async (req, res) => {
 
 exports.returnOrder = async(req,res) =>{
 try{
+  const userId = req.session.user._id
   const orderId = req.params.orderId;
   const order = await Order.findByIdAndUpdate(orderId,  { status: 'return requested' }, { new: true });
   if (!order) {
     return res.status(404).json({ error: 'Order not found.' });
 }
-res.redirect('/viewOrders')
+res.redirect('/viewOrders/'+ userId)
 }catch(error){
   console.log("Erorr while updating", error);
 }
 
 }
+
+
+

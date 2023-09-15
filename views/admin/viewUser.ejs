@@ -120,11 +120,6 @@
               <option value="blocked">Blocked</option>
           </select>
       </div>
-        <!-- <div class="addproduct">
-          <a href="/admin/addproduct"><button type="button" class="btn btn-primary">
-            <i class="fa-solid fa-plus"></i> Add Product
-          </button></a>
-        </div> -->
       </div>
       <thead class="bg-light">
         <tr>
@@ -164,9 +159,6 @@
             </td>
             <td><%= user.email %></td> 
             <td>
-                <!-- <a href="/admin/edituser/"><button type="button" class="btn btn-link btn-sm btn-rounded">
-                  Edit
-              </button></a> -->
               <% if(user.status === 'active'){ %>
                 <form action="/admin/blockuser/<%=user._id%>" method="POST">
                   <button type="submit" class="btn btn-link btn-sm btn-rounded" onclick="return confirm('Are you sure you want to block this user');">Block</button>
