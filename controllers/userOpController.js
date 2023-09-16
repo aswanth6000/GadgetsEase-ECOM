@@ -5,6 +5,15 @@ const functionHelper = require('../helpers/functionHelper')
 const Order = require('../model/order')
 const Address = require('../model/addresses')
 const Transaction = require('../model/transaction')
+const paypal = require('paypal-rest-sdk')
+const {PAYPAL_MODE, PAYPAL_CLIENT_KEY, PAYPAL_SECRET_KEY} = process.env;
+
+
+paypal.configure({
+    'mode': PAYPAL_MODE, //sandbox or live
+    'client_id': PAYPAL_CLIENT_KEY,
+    'client_secret': PAYPAL_SECRET_KEY
+  });
 
 exports.getIndex = async(req, res)=>{
     try{
@@ -411,19 +420,16 @@ exports.postCheckout = async (req, res) => {
       if (!user) {
         return res.status(404).json({ error: 'User not found.' });
       }
-  
-      // Create an array to store all the new orders
+
       const newOrders = [];
-  
-      // Create an array to store product details for the email
-      const orderItems = [];
+
       for (const cartItem of user.cart) {
         const productId = cartItem.product;
         const quantity = cartItem.quantity;
         const shippingCost = 100;
-  
+
         const price = await calculateOrderPrice(productId, quantity, shippingCost);
-  
+
         const newOrder = new Order({
           user: userId,
           address: address,
@@ -436,9 +442,61 @@ exports.postCheckout = async (req, res) => {
             price: price,
           }],
         });
-  
+
         newOrders.push(newOrder);
       }
+
+      // Calculate the total amount
+      const totalAmount = newOrders.reduce((sum, order) => {
+        return sum + order.items[0].price; // Assuming each order has only one item
+      }, 0);
+
+      const create_payment_json = {
+        intent: 'sale',
+        payer: {
+          payment_method: 'paypal',
+        },
+        redirect_urls: {
+          return_url: 'http://return.url',
+          cancel_url: 'http://cancel.url',
+        },
+        transactions: [
+          {
+            item_list: {
+              items: [
+                {
+                  name: 'item',
+                  sku: 'item',
+                  price: totalAmount.toFixed(2), // Format as a string with 2 decimal places
+                  currency: 'USD',
+                  quantity: 1,
+                },
+              ],
+            },
+            amount: {
+              currency: 'USD',
+              total: totalAmount.toFixed(2), // Format as a string with 2 decimal places
+            },
+            description: 'This is the payment description.',
+          },
+        ],
+      };
+
+      paypal.payment.create(create_payment_json, function (error, payment) {
+        if (error) {
+          console.error(error);
+          // Handle the error here
+        } else {
+          // Redirect the user to PayPal for payment approval
+          for (let i = 0; i < payment.links.length; i++) {
+            if (payment.links[i].rel === 'approval_url') {
+              res.redirect(payment.links[i].href);
+              break;
+            }
+          }
+        }
+      });
+      // res.render('./user/payment waiting', {user, newOrders})
     }
     
   } catch (error) {
