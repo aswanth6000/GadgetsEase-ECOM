@@ -9,7 +9,8 @@ const multerHelper = require('../helpers/functionHelper')
 const Order = require('../model/order')
 const Address = require('../model/addresses')
 const Transaction = require('../model/transaction')
-const emailTemplate = require('../helpers/functionHelper')
+const transporter = require('../config/emailConfig');
+const emailTemplates = require('../helpers/emailTemplate')
 
 
 exports.getIndex = async(req, res)=>{
@@ -335,7 +336,24 @@ exports.getCheckout = async (req, res) => {
   }
 }
 
+const sendOrderConfirmationEmail = (userEmail, userName, orderId, orderItems) => {
+  const emailHTML = emailTemplates.generateOrderConfirmation(userName, orderId, orderItems);
 
+  const mailOptions = {
+    from: 'gadgetease.info@gmail.com',
+    to: userEmail,
+    subject: 'Order Confirmation',
+    html: emailHTML,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error(error);
+    } else {
+      console.log('Email sent: ' + info.response);
+    }
+  });
+};
 exports.postCheckout = async (req, res) => {
   try {
     const { address, payment } = req.body;
@@ -348,6 +366,9 @@ exports.postCheckout = async (req, res) => {
 
     // Create an array to store all the new orders
     const newOrders = [];
+
+    // Create an array to store product details for the email
+    const orderItems = [];
 
     // Iterate through the user's cart products
     for (const cartItem of user.cart) {
@@ -375,7 +396,7 @@ exports.postCheckout = async (req, res) => {
       // Push the new order into the array
       newOrders.push(newOrder);
 
-      // Find the product and decrement its quantity in stock
+      // Find the product
       const product = await Product.findById(productId);
       if (!product) {
         return res.status(404).json({ error: 'Product not found.' });
@@ -391,6 +412,13 @@ exports.postCheckout = async (req, res) => {
 
       // Save the updated product
       await product.save();
+
+      // Store product details for the email
+      orderItems.push({
+        name: product.name,
+        price: product.price,
+        quantity: quantity,
+      });
     }
 
     // Now, insert all the new orders into the Order collection
@@ -401,18 +429,21 @@ exports.postCheckout = async (req, res) => {
 
     // Save the user with all the new orders
     await user.save();
-    const userEmail = user.email; 
-    const userName = user.username// Replace with the user's email
-    const userData = {userEmail, userName}
-    sendOrderReceiptEmail(userData, newOrders);
 
-    // Redirect to the user's home page
+    const userName = user.username;
+    const orderId = newOrders[0]._id; // Assuming there's only one order
+    const userEmail = user.email;
+    console.log(orderItems);
+    sendOrderConfirmationEmail(userEmail, userName, orderId, orderItems);
+
     res.redirect('/orderPlaced');
   } catch (error) {
     console.log("Error while ordering ", error);
     // Handle the error appropriately, e.g., show an error message to the user
   }
 };
+
+
 // Function to calculate order price
 async function calculateOrderPrice(productId, quantity, shippingCost) {
   // Retrieve product details
@@ -476,10 +507,10 @@ exports.orderPlaced = async (req, res) => {
       // Handle the case where no orders are found
       return res.status(404).send('No orders found');
     }
-
+    const user = await User.findById(mostRecentOrder.user)
+    console.log(user);
     // Render the 'orderSuccess' template and pass the most recent order details as an object
-    res.render('./user/orderSuccess', { order: mostRecentOrder });
-    console.log(mostRecentOrder);
+    res.render('./user/orderSuccess', { order: mostRecentOrder, user });
   } catch (err) {
     // Handle any errors that occur during the process
     console.error(err);
