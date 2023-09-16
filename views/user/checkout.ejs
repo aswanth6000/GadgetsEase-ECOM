@@ -75,7 +75,7 @@
 							<div class="form-group">
 								<% for (let i = 0; i < addresses.length; i++) { %>
 								<div class="input-radio">
-									<input type="radio" name="address" id="<%= addresses[i].name %>" value="<%= addresses[i]._id %>">
+									<input type="radio" required name="address" id="<%= addresses[i].name %>" value="<%= addresses[i]._id %>">
 									<label for="<%= addresses[i].name %>">
 										<span></span>
 										<%= addresses[i].type %>

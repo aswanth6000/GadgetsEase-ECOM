@@ -1,5 +1,7 @@
 const nodemailer = require('nodemailer')
 require('dotenv').config
+const transporter = require('../config/emailConfig');
+const emailTemplates = require('../helpers/emailTemplate')
 
 const multer = require('multer');
 function generateOtp(){
@@ -31,7 +33,27 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+const sendOrderConfirmationEmail = (userEmail, userName, orderId, orderItems) => {
+    const emailHTML = emailTemplates.generateOrderConfirmation(userName, orderId, orderItems);
+  
+    const mailOptions = {
+      from: 'gadgetease.info@gmail.com',
+      to: userEmail,
+      subject: 'Order Confirmation',
+      html: emailHTML,
+    };
+  
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error(error);
+      } else {
+        console.log('Email sent: ' + info.response);
+      }
+    });
+  };
+
 module.exports = {
     generateOtp,
     upload,
+    sendOrderConfirmationEmail 
 }

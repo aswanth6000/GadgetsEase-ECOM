@@ -18,6 +18,10 @@ const orderSchema = new mongoose.Schema({
     default: 'pending',
   },
   paymentMethod: String,
+  paymentStatus: String, // Add payment status field
+  paymentTransactionId: String, // Add payment transaction ID field
+  paymentDate: Date, // Add payment date field
+  paymentAmount: Number, // Add payment amount field
   items: [
     {
       product: {

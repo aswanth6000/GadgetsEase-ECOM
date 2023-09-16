@@ -1,17 +1,10 @@
-const express = require('express')
 const User = require('../model/user')
 const Product = require('../model/product')
-const multer = require('multer');
 const userHelper = require('../helpers/userHelper')
-const {isAuthenticated} = require('../middleware/isUserAuth')
-const nocache = require('nocache')
-const multerHelper = require('../helpers/functionHelper')
+const functionHelper = require('../helpers/functionHelper')
 const Order = require('../model/order')
 const Address = require('../model/addresses')
 const Transaction = require('../model/transaction')
-const transporter = require('../config/emailConfig');
-const emailTemplates = require('../helpers/emailTemplate')
-
 
 exports.getIndex = async(req, res)=>{
     try{
@@ -336,27 +329,12 @@ exports.getCheckout = async (req, res) => {
   }
 }
 
-const sendOrderConfirmationEmail = (userEmail, userName, orderId, orderItems) => {
-  const emailHTML = emailTemplates.generateOrderConfirmation(userName, orderId, orderItems);
 
-  const mailOptions = {
-    from: 'gadgetease.info@gmail.com',
-    to: userEmail,
-    subject: 'Order Confirmation',
-    html: emailHTML,
-  };
-
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.error(error);
-    } else {
-      console.log('Email sent: ' + info.response);
-    }
-  });
-};
 exports.postCheckout = async (req, res) => {
   try {
     const { address, payment } = req.body;
+    console.log(payment);
+    if(payment === 'Cash on delivery'){
     const userId = req.session.user._id;
     const user = await User.findById(userId);
 
@@ -376,10 +354,8 @@ exports.postCheckout = async (req, res) => {
       const quantity = cartItem.quantity;
       const shippingCost = 100;
 
-      // Calculate the price for each order
       const price = await calculateOrderPrice(productId, quantity, shippingCost);
 
-      // Create a new order object
       const newOrder = new Order({
         user: userId,
         address: address,
@@ -393,27 +369,21 @@ exports.postCheckout = async (req, res) => {
         }],
       });
 
-      // Push the new order into the array
       newOrders.push(newOrder);
 
-      // Find the product
       const product = await Product.findById(productId);
       if (!product) {
         return res.status(404).json({ error: 'Product not found.' });
       }
 
-      // Ensure there's enough quantity in stock
       if (product.quantity < quantity) {
         return res.status(400).json({ error: 'Not enough quantity in stock.' });
       }
 
-      // Update the product's quantity in stock
       product.quantity -= quantity;
 
-      // Save the updated product
       await product.save();
 
-      // Store product details for the email
       orderItems.push({
         name: product.name,
         price: product.price,
@@ -421,25 +391,58 @@ exports.postCheckout = async (req, res) => {
       });
     }
 
-    // Now, insert all the new orders into the Order collection
     await Order.insertMany(newOrders);
 
-    // Clear the user's cart
     user.cart = [];
 
-    // Save the user with all the new orders
     await user.save();
 
     const userName = user.username;
-    const orderId = newOrders[0]._id; // Assuming there's only one order
+    const orderId = newOrders[0]._id; 
     const userEmail = user.email;
     console.log(orderItems);
-    sendOrderConfirmationEmail(userEmail, userName, orderId, orderItems);
+    functionHelper.sendOrderConfirmationEmail(userEmail, userName, orderId, orderItems);
 
     res.redirect('/orderPlaced');
+    }else{
+      const userId = req.session.user._id;
+      const user = await User.findById(userId);
+
+      if (!user) {
+        return res.status(404).json({ error: 'User not found.' });
+      }
+  
+      // Create an array to store all the new orders
+      const newOrders = [];
+  
+      // Create an array to store product details for the email
+      const orderItems = [];
+      for (const cartItem of user.cart) {
+        const productId = cartItem.product;
+        const quantity = cartItem.quantity;
+        const shippingCost = 100;
+  
+        const price = await calculateOrderPrice(productId, quantity, shippingCost);
+  
+        const newOrder = new Order({
+          user: userId,
+          address: address,
+          orderDate: new Date(),
+          status: 'pending',
+          paymentMethod: payment,
+          items: [{
+            product: productId,
+            quantity: quantity,
+            price: price,
+          }],
+        });
+  
+        newOrders.push(newOrder);
+      }
+    }
+    
   } catch (error) {
     console.log("Error while ordering ", error);
-    // Handle the error appropriately, e.g., show an error message to the user
   }
 };
 
