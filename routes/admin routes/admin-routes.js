@@ -20,6 +20,9 @@ router.get('/logout',userController.logout)
 router.get('/order-details/:orderId',adminController.orderDetails)
 router.get('/viewcategory',adminController.getCategory)
 router.get('/listcategory/:category',adminController.listCategory)
+router.get('/getAddCoupon',isAdminLoggedIn,adminController.getCoupon)
+router.get('/viewCoupon',isAdminLoggedIn,adminController.viewCoupon)
+router.get('/viewCouponUsers/:couponId', isAdminLoggedIn,adminController.viewCouponUsedUsers)
 
 // POST Routes
 router.post('/admin/blockuser/:userId',isAdminLoggedIn,adminController.blockuser)
@@ -97,6 +100,8 @@ router.post('/admin/editproduct/:productId', multerHelper.upload.fields([{ name:
         res.status(500).send('Internal Server Error'); // Replace with your error handling logic
     }
 });
+
+router.post('/addCoupon',adminController.postAddCoupon)
 router.post('/admin/deleteproduct/:productId',adminController.deleteProduct)
 
 module.exports = router

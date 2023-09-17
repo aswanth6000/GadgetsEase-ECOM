@@ -5,10 +5,11 @@ const userHelper = require('../../helpers/userHelper')
 const {isAuthenticated} = require('../../middleware/isUserAuth')
 const userOp = require('../../controllers/userOpController')
 const nocache = require('nocache') 
+const cartController = require('../../controllers/cartController')
+const checkoutController = require('../../controllers/checkoutController')
 
 // GET Routes
 router.get('/', userOp.getIndex) 
-router.get('/checkout',isAuthenticated,userOp.getCheckout)
 router.get('/userhome',nocache(),isAuthenticated, userOp.getUserHome)
 router.get('/profile/:userId',isAuthenticated,userOp.getProfile)
 router.get('/manageaddress/:userId',userOp.manageAddress)
@@ -16,16 +17,23 @@ router.get('/addaddress/:userId',userOp.getAddAddress)
 router.get('/error',userOp.getError)
 router.get('/editAddress/:addressId', userOp.getEditAddress)
 router.get('/viewproduct/:productId',isAuthenticated,userOp.viewproduct)
-router.get('/cart',isAuthenticated,userOp.getcart)
-router.get('/cartLength',isAuthenticated,userOp.getCartLength)
+
+// CHECKOUT
+router.get('/checkout',isAuthenticated,checkoutController.getCheckout)
+router.get('/orderPlaced',isAuthenticated, checkoutController.orderPlaced)
+router.get('/cancelOrder/:orderId',checkoutController.cancelOrder)
+router.get('/orderPlaced',isAuthenticated,checkoutController.orderDone)
+router.get('/viewOrders/:userId',isAuthenticated, checkoutController.getOrderDetails)
+
+// CART
+router.get('/cart',isAuthenticated,cartController.getcart)
+router.get('/cartLength',isAuthenticated,cartController.getCartLength)
+
+
 router.get('/category',isAuthenticated,userOp.getCategory)
-router.get('/viewOrders/:userId',isAuthenticated, userOp.getOrderDetails)
-router.get('/orderPlaced',isAuthenticated, userOp.orderPlaced)
-router.get('/cancelOrder/:orderId',userOp.cancelOrder)
 router.get('/wallet/:userId',userOp.getWallet)
 router.get('/withdraw',userOp.getWithdraw)
 router.get('/returnOrder/:orderId',isAuthenticated,userOp.returnOrder)
-router.get('/orderPlaced',isAuthenticated,userOp.orderDone)
 
 // POST Routes
 router.post('/updateProfile/:userId', updateProfile = multerHelper.upload.single('profileImage'), async (req, res) => {
@@ -44,13 +52,24 @@ router.post('/updateProfile/:userId', updateProfile = multerHelper.upload.single
 
     res.redirect(`/profile/${userId}`);
 });
+
+
+// ADDRESS
 router.post('/addAddress/:userId', userOp.postAddAddress);
 router.post('/removeAddress/:userId/:addressIndex', );
 router.post('/editAddress/:addressId', userOp.postEditAddress);
-router.post('/add-to-cart/:productId',isAuthenticated, userOp.addtocart);
-router.post('/removeItemFromCart/:productId',userOp.deleteCart)
-router.post('/postCheckout/:userId',userOp.postCheckout)
-router.put('/updateQuantity/:productId',userOp.updateQuantity)
+// CART
+router.post('/removeItemFromCart/:productId',cartController.deleteCart)
+router.post('/add-to-cart/:productId',isAuthenticated, cartController.addtocart);
+router.put('/updateQuantity/:productId',cartController.updateQuantity)
+
+// CHECKOUT
+router.post('/postCheckout/:userId',checkoutController.postCheckout)
+
+
+// COUPON
+router.post('/applyCoupon', checkoutController.applyCoupon)
+
 router.post('/withdraw/:userId',userOp.postWithdraw)
 
 

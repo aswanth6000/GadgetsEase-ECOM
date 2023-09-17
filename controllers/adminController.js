@@ -2,6 +2,7 @@ const Product = require('../model/product');
 const User = require('../model/user')
 const Order = require('../model/order')
 const Transaction = require('../model/transaction'); 
+const Coupon = require('../model/coupon')
 const Address = require('../model/addresses')
 exports.adminhome = async (req, res) => {
   try {
@@ -210,9 +211,7 @@ exports.postOrderDetails = async (req, res) => {
       return res.status(404).json({ error: 'Order not found.' });
     }
 
-    // Check if the new status is 'refund-initiated'
     if (newStatus === 'refund-initiated') {
-      // Find the user who placed the order
       const user = await User.findById(updatedOrder.user);
 
       // Calculate the total refund amount based on the items in the order
@@ -280,3 +279,44 @@ exports.listCategory = async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 };
+
+exports.viewCoupon =async (req, res)=>{
+  try{
+    const coupons = await Coupon.find()
+    res.render('./admin/viewCoupon',{coupons})
+  }catch(err){
+    console.log("Error occoured while fetching coupons", err);
+  }
+}
+exports.getCoupon = (req, res)=>{
+  res.render('./admin/couponAdd')
+}
+
+exports.postAddCoupon = async (req, res) =>{
+  const {couponCode, discount, expiryDate, limit} = req.body;
+  try{
+    const newCoupon = new Coupon ({
+      code : couponCode,
+      discount : discount,
+      limit : limit,
+      expiry : expiryDate
+    })
+    await Coupon.insertMany(newCoupon);
+    res.redirect('/viewCoupon')
+  }catch(err){
+    console.log("Error adding coupon", err);
+  }
+}
+exports.viewCouponUsedUsers = async (req, res)=>{
+  try{
+    const couponId = req.params.couponId;
+    const coupon = await Coupon.findById(couponId)
+    .populate('usersUsed') 
+    .sort({ _id: -1 })
+    .exec();    
+    const users = coupon.usersUsed;
+    res.render('./admin/viewCouponUsers', {users});
+  }catch(err){
+    console.log("Error finding the coupon code", err);
+  } 
+}

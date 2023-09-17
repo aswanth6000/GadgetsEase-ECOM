@@ -64,11 +64,11 @@
               <i class="bx bx-user nav_icon"></i>
               <span class="nav_name">Users</span>
             </a>
-            <a href="/admin/viewproducts" class="nav_link active">
+            <a href="/admin/viewproducts" class="nav_link">
                 <i class='bx bx-package nav_icon' ></i>
               <span class="nav_name">Products</span>
             </a>
-            <a href="/viewCoupon" class="nav_link">
+            <a href="#" class="nav_link active">
                 <i class='bx bxs-pie-chart-alt-2 nav_icon'></i>
               <span class="nav_name">Coupons</span>
             </a>
@@ -89,6 +89,20 @@
       </nav>
     </div>
     <!--Container Main start-->
+    <div class="tot">
+      <div class="box">
+          <div><h3>Total products</h3></div>
+          <div><h5 id="totalProductsCount">Loading...</h5></div>
+      </div>
+      <div class="box">
+          <div><h3>In Stock</h3></div>
+          <div><h5 id="inStockProductsCount">Loading...</h5></div>
+      </div>
+      <div class="box">
+          <div><h3>Out of Stock</h3></div>
+          <div><h5 id="outOfStockProductsCount">Loading...</h5></div>
+      </div>
+  </div>
     <table class="table align-middle mb-0 bg-white">
       <div class="utils">
         <div class="input-group" style="display: flex;justify-content: center;width: 400px;margin-left: 5%;">
@@ -107,56 +121,41 @@
           </select>
       </div>
         <div class="addproduct">
-          <a href="/admin/addproduct"><button type="button" class="btn btn-primary">
-            <i class="fa-solid fa-plus"></i> Add Product
+          <a href="/getAddCoupon"><button type="button" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i> Add Coupon
           </button></a>
         </div>
       </div>
       <thead class="bg-light">
         <tr>
-          <th>Name</th>
-          <th>Price</th>
-          <th>Status</th>
-          <th>Color</th>
+          <th>Cooupon Code</th>
+          <th>Limit</th>
+          <th>Discount</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        <% products.forEach(product => { %>
+        <% coupons.forEach(coupon => { %>
         <tr>
             <td>
                 <div class="d-flex align-items-center">
-                    <img
-                        src="/uploads/images/<%= product.productImages[3] %>"
-                        alt="product image"
-                        style="width: 45px; height: 45px"
-                        class="rounded-circle"
-                    />
-                    <div class="ms-3">
-                        <p class="fw-bold mb-1"><%= product.name %></p>
-                        <p class="text-muted mb-0"><%= product.category %></p>
-                    </div>
+                        <p class="fw-bold mb-1"><%= coupon.code %></p>
                 </div>
             </td>
             <td>
-                <p class="fw-normal mb-1"><%= product.price %></p>
-                <p class="text-muted mb-0"><%= product.discountPrice %></p>
+                <p class="fw-normal mb-1"><%= coupon.limit %></p>
             </td>
             <td>
-                <% if (product.quantity !== null && product.quantity > 0) { %>
-                    <span class="badge badge-success rounded-pill d-inline">In Stock <%=product.quantity%> left</span>
-                <% } else { %>
-                    <span class="badge badge-danger rounded-pill d-inline">Out of Stock 0 left</span>
-                <% } %>
+                <p class="fw-normal mb-1"><%= coupon.discount %></p>
             </td>
-            <td><%= product.productColor %></td> 
             <td>
-                <a href="/admin/editproduct/<%=product._id%>"><button type="button" class="btn btn-link btn-sm btn-rounded">
+                <a href="/admin/editproduct/<%=coupon._id%>"><button type="button" class="btn btn-link btn-sm btn-rounded">
                   Edit
               </button></a>
-              <form action="/admin/deleteproduct/<%=product._id%>" method="POST">
-                <button type="submit" class="btn btn-link btn-sm btn-rounded" onclick="return confirm('Are you sure you want to delete this address?');">Delete</button>
-            </form>
+                <a href="/viewCouponUsers/<%=coupon._id%>"><button type="button" class="btn btn-link btn-sm btn-rounded">
+                  View Users
+              </button></a>
+
             </td>
         </tr>
         <% }); %>
