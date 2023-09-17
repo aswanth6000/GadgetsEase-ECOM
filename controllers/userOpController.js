@@ -338,12 +338,11 @@ exports.getCheckout = async (req, res) => {
   }
 }
 
-
+const newOrders = [];
 exports.postCheckout = async (req, res) => {
   try {
     const { address, payment } = req.body;
     console.log(payment);
-    if(payment === 'Cash on delivery'){
     const userId = req.session.user._id;
     const user = await User.findById(userId);
 
@@ -352,7 +351,6 @@ exports.postCheckout = async (req, res) => {
     }
 
     // Create an array to store all the new orders
-    const newOrders = [];
 
     // Create an array to store product details for the email
     const orderItems = [];
@@ -399,6 +397,7 @@ exports.postCheckout = async (req, res) => {
         quantity: quantity,
       });
     }
+    if(payment === 'Cash on delivery'){
 
     await Order.insertMany(newOrders);
 
@@ -420,35 +419,16 @@ exports.postCheckout = async (req, res) => {
       if (!user) {
         return res.status(404).json({ error: 'User not found.' });
       }
+      const transactionItems = newOrders.map(order => ({
+        name: 'item',
+        sku: 'item',
+        price: order.items[0].price.toFixed(2), 
+        currency: 'USD',
+        quantity: 1,
+      }));
 
-      const newOrders = [];
-
-      for (const cartItem of user.cart) {
-        const productId = cartItem.product;
-        const quantity = cartItem.quantity;
-        const shippingCost = 100;
-
-        const price = await calculateOrderPrice(productId, quantity, shippingCost);
-
-        const newOrder = new Order({
-          user: userId,
-          address: address,
-          orderDate: new Date(),
-          status: 'pending',
-          paymentMethod: payment,
-          items: [{
-            product: productId,
-            quantity: quantity,
-            price: price,
-          }],
-        });
-
-        newOrders.push(newOrder);
-      }
-
-      // Calculate the total amount
       const totalAmount = newOrders.reduce((sum, order) => {
-        return sum + order.items[0].price; // Assuming each order has only one item
+        return sum + order.items[0].price; 
       }, 0);
 
       const create_payment_json = {
@@ -457,21 +437,13 @@ exports.postCheckout = async (req, res) => {
           payment_method: 'paypal',
         },
         redirect_urls: {
-          return_url: 'http://return.url',
-          cancel_url: 'http://cancel.url',
+          return_url: 'http://localhost:8000/orderPlaced',
+          cancel_url: 'http://localhost:8000/cart',
         },
         transactions: [
           {
             item_list: {
-              items: [
-                {
-                  name: 'item',
-                  sku: 'item',
-                  price: totalAmount.toFixed(2), // Format as a string with 2 decimal places
-                  currency: 'USD',
-                  quantity: 1,
-                },
-              ],
+              items: transactionItems,
             },
             amount: {
               currency: 'USD',
@@ -496,11 +468,51 @@ exports.postCheckout = async (req, res) => {
           }
         }
       });
-      // res.render('./user/payment waiting', {user, newOrders})
+      
+      
     }
     
   } catch (error) {
     console.log("Error while ordering ", error);
+  }
+};
+
+exports.orderDone = async (req, res) => {
+  try {
+    const { paymentId, PayerID } = req.query;
+
+    // Get payment details from PayPal
+    paypal.payment.get(paymentId, async (error, payment) => {
+      if (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Error getting payment details from PayPal.' });
+      }
+
+      // Verify payment status
+      if (payment.state !== 'approved') {
+        return res.status(400).json({ error: 'Payment not approved by PayPal.' });
+      }
+
+      // Find the user and cart
+      const userId = req.session.user._id;
+      const user = await User.findById(userId);
+
+      if (!user) {
+        return res.status(404).json({ error: 'User not found.' });
+      }
+
+      await Order.insertMany(newOrders);
+
+      // Clear user's cart
+      user.cart = [];
+      await user.save();
+
+      // Redirect to a success page
+      res.render('./user/orderPlaced', { newOrders }); // You can customize this view as needed
+    });
+  } catch (error) {
+    console.error('Error while processing PayPal payment:', error);
+    res.status(500).json({ error: 'An error occurred while processing your payment.' });
   }
 };
 

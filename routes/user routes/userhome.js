@@ -25,6 +25,7 @@ router.get('/cancelOrder/:orderId',userOp.cancelOrder)
 router.get('/wallet/:userId',userOp.getWallet)
 router.get('/withdraw',userOp.getWithdraw)
 router.get('/returnOrder/:orderId',isAuthenticated,userOp.returnOrder)
+router.get('/orderPlaced',isAuthenticated,userOp.orderDone)
 
 // POST Routes
 router.post('/updateProfile/:userId', updateProfile = multerHelper.upload.single('profileImage'), async (req, res) => {
