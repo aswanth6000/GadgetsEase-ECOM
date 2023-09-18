@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Product</title>
     <!-- Add Bootstrap CSS link here -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
@@ -49,7 +51,14 @@
                     <input type="file" class="custom-file-input" id="selectedImages" name="productImages" accept="image/*" multiple required>
                     <label class="custom-file-label" for="selectedImages">Choose images...</label>
                 </div>
-                <div id="image-preview" class="mt-2"></div>
+                <div id="image-preview-container">
+                    <img id="image-preview" src="" alt="Preview" class="img-fluid">
+                </div>
+                <input type="hidden" class="cropped-image" name="croppedImages[]" value="">
+<input type="hidden" class="cropped-image" name="croppedImages[]" value="">
+
+                <!-- Add this hidden input to store the cropped image data -->
+                <input type="hidden" id="cropped-image" name="croppedImage">
             </div>
             <!-- Product Video -->
             <div class="form-group">
@@ -161,6 +170,50 @@
             videoContainer.appendChild(removeBtn);
             videoPreview.appendChild(videoContainer);
         });
+
+        document.getElementById('selectedImages').addEventListener('change', function(e) {
+        const imagePreviewContainer = document.getElementById('image-preview-container');
+        const files = e.target.files;
+
+        // Clear previous previews and cropped images
+        imagePreviewContainer.innerHTML = '';
+        document.querySelectorAll('.cropped-image').forEach(function(input) {
+            input.value = '';
+        });
+
+        // Loop through selected files and create Cropper.js instances
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const imgContainer = document.createElement('div');
+            imgContainer.className = 'mb-2';
+
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(file);
+            img.style.maxWidth = '100px'; // Adjust the size as needed
+
+            const cropper = new Cropper(img, {
+                aspectRatio: 1, // You can specify the aspect ratio as needed
+                viewMode: 1,    // Set the initial view mode (e.g., 0, 1, 2, 3)
+                crop: function(event) {
+                    const croppedCanvas = cropper.getCroppedCanvas();
+                    const croppedImageData = croppedCanvas.toDataURL('image/jpeg'); // Adjust the format as needed
+
+                    // Create a hidden input for each cropped image
+                    const croppedImageInput = document.createElement('input');
+                    croppedImageInput.type = 'hidden';
+                    croppedImageInput.className = 'cropped-image';
+                    croppedImageInput.name = 'croppedImages[]';
+                    croppedImageInput.value = croppedImageData;
+
+                    // Append the cropped image input to the form
+                    document.getElementById('image-preview-container').appendChild(croppedImageInput);
+                }
+            });
+
+            imgContainer.appendChild(img);
+            imagePreviewContainer.appendChild(imgContainer);
+        }
+    });
     </script>
 </body>
 </html>

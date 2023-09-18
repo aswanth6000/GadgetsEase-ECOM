@@ -17,11 +17,12 @@ const orderSchema = new mongoose.Schema({
     type: String,
     default: 'pending',
   },
+  totalAmount : Number,
   paymentMethod: String,
-  paymentStatus: String, // Add payment status field
-  paymentTransactionId: String, // Add payment transaction ID field
-  paymentDate: Date, // Add payment date field
-  paymentAmount: Number, // Add payment amount field
+  paymentStatus: String, 
+  paymentTransactionId: String, 
+  paymentDate: Date, 
+  paymentAmount: Number, 
   items: [
     {
       product: {

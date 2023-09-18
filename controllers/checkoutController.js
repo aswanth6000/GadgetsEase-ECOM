@@ -2,11 +2,13 @@ const User = require('../model/user')
 const Product = require('../model/product')
 const userHelper = require('../helpers/userHelper')
 const functionHelper = require('../helpers/functionHelper')
+const mongoose = require('mongoose')
 const Order = require('../model/order')
 const Address = require('../model/addresses')
 const Transaction = require('../model/transaction')
 const paypal = require('paypal-rest-sdk')
 const {PAYPAL_MODE, PAYPAL_CLIENT_KEY, PAYPAL_SECRET_KEY} = process.env;
+const session = require('express-session')
 const Coupon = require('../model/coupon')
 
 
@@ -17,124 +19,101 @@ const calculateSubtotal = (cart) => {
     }
     return subtotal;
   };
-  
-  exports.getCheckout = async (req, res) => {
+
+
+exports.getCheckout = async (req, res) => {
     const userId = req.session.user._id;
     try {
       const userp = User.findById(userId);
-  
-      // Fetch user data, addresses, and cart details in parallel using Promise.all
       const [user, addresses] = await Promise.all([
         User.findById(userId).populate('cart.product').exec(),
         Address.find({ user: userId }).exec(),
       ]);
-  
       if (!user) {
         return res.status(404).json({ error: 'User not found.' });
       }
-  
       const cart = user.cart;
       const subtotal = calculateSubtotal(cart);
       const subtotalWithShipping = subtotal + 100;
-  
-      // Check if any product in the cart has a quantity less than or equal to zero
       const outOfStockError = cart.some(item => item.product.quantity <= 0);
-  
       res.render('./user/checkout', { user, cart, subtotal, subtotalWithShipping, addresses, userp, outOfStockError });
     } catch (err) {
       console.error('Error fetching user data and addresses:', err);
       res.status(500).json({ error: 'An error occurred while fetching user data and addresses.' });
     }
   }
-  
-  const newOrders = [];
+
+ let order;
   exports.postCheckout = async (req, res) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+  
+    const userId = req.session.user._id;
+
+    const user = await User.findById(userId);
     try {
       const { address, payment } = req.body;
-      console.log(payment);
-      const userId = req.session.user._id;
-      const user = await User.findById(userId);
   
       if (!user) {
-        return res.status(404).json({ error: 'User not found.' });
+        throw new Error('User not found.');
       }
-      const orderItems = [];
+  
+      let totalAmount = 0;
+      const orderedProducts = [];
+  
       for (const cartItem of user.cart) {
-        const productId = cartItem.product;
-        const quantity = cartItem.quantity;
-        const shippingCost = 100;
+        const product = await Product.findById(cartItem.product);
   
-        const price = await calculateOrderPrice(productId, quantity, shippingCost);
-  
-        const newOrder = new Order({
-          user: userId,
-          address: address,
-          orderDate: new Date(),
-          status: 'pending',
-          paymentMethod: payment,
-          items: [{
-            product: productId,
-            quantity: quantity,
-            price: price,
-          }],
-        });
-  
-        newOrders.push(newOrder);
-  
-        const product = await Product.findById(productId);
         if (!product) {
-          return res.status(404).json({ error: 'Product not found.' });
+          throw new Error('Product not found.');
         }
   
-        if (product.quantity < quantity) {
-          return res.status(400).json({ error: 'Not enough quantity in stock.' });
+        if (product.quantity < cartItem.quantity) {
+          throw new Error('Not enough quantity in stock.');
         }
   
-        product.quantity -= quantity;
+        product.quantity -= cartItem.quantity;
+  
+        const shippingCost = 100;
+        const itemTotal = (product.price * cartItem.quantity) + shippingCost;
+        totalAmount += itemTotal;
   
         await product.save();
   
-        orderItems.push({
-          name: product.name,
+        orderedProducts.push({
+          product: product._id,
+          quantity: cartItem.quantity,
           price: product.price,
-          quantity: quantity,
         });
       }
-      if(payment === 'Cash on delivery'){
   
-      await Order.insertMany(newOrders);
+      const order = new Order({
+        user: userId,
+        address: address,
+        orderDate: new Date(),
+        status: 'Pending',
+        paymentMethod: payment,
+        items: orderedProducts,
+        totalAmount: totalAmount,
+      });
   
-      user.cart = [];
+      await order.save();
   
-      await user.save();
+      if (payment === 'Cash on Delivery') {
+        order.status = 'Paid';
+        await order.save();
+      } else if (payment === 'Online Payment') {
+        // Handle online payment method (e.g., PayPal) here
   
-      const userName = user.username;
-      const orderId = newOrders[0]._id; 
-      const userEmail = user.email;
-      console.log(orderItems);
-      functionHelper.sendOrderConfirmationEmail(userEmail, userName, orderId, orderItems);
-  
-      res.redirect('/orderPlaced');
-      }else{
-        const userId = req.session.user._id;
-        const user = await User.findById(userId);
-  
-        if (!user) {
-          return res.status(404).json({ error: 'User not found.' });
-        }
-        const transactionItems = newOrders.map(order => ({
-          name: 'item',
-          sku: 'item',
-          price: order.items[0].price.toFixed(2), 
+        const transactionItems = orderedProducts.map(item => ({
+          name: item.product.name,
+          sku: item.product._id.toString(), // Use a unique identifier for each product
+          price: item.price,
           currency: 'USD',
-          quantity: 1,
+          quantity: item.quantity,
         }));
   
-        const totalAmount = newOrders.reduce((sum, order) => {
-          return sum + order.items[0].price; 
-        }, 0);
-  
-        const create_payment_json = {
+        const createPaymentJson = {
           intent: 'sale',
           payer: {
             payment_method: 'paypal',
@@ -150,35 +129,67 @@ const calculateSubtotal = (cart) => {
               },
               amount: {
                 currency: 'USD',
-                total: totalAmount.toFixed(2), // Format as a string with 2 decimal places
+                total: totalAmount.toFixed(2),
               },
-              description: 'This is the payment description.',
+              description: 'Payment for your order',
             },
           ],
         };
   
-        paypal.payment.create(create_payment_json, function (error, payment) {
+        paypal.payment.create(createPaymentJson, function (error, payment) {
           if (error) {
-            console.error(error);
-            // Handle the error here
+            console.error('Error creating PayPal payment:', error);
+            throw new Error('Error creating PayPal payment.');
           } else {
-            // Redirect the user to PayPal for payment approval
             for (let i = 0; i < payment.links.length; i++) {
               if (payment.links[i].rel === 'approval_url') {
                 res.redirect(payment.links[i].href);
-                break;
+                return;
               }
             }
+            throw new Error('No PayPal approval URL found.');
           }
         });
-        
-        
       }
-      
+  
+      user.cart = [];
+      await user.save();
+  
+      const userName = user.username;
+      const orderId = order._id;
+      const userEmail = user.email;
+  
+      // Send order confirmation email (you need to implement this function)
+      functionHelper.sendOrderConfirmationEmail(userEmail, userName, orderId, orderedProducts);
+  
+      await session.commitTransaction();
+      session.endSession();
+  
+      res.status(200).json({ message: 'Order placed successfully.', order: order });
     } catch (error) {
-      console.log("Error while ordering ", error);
+      console.error('Error placing the order:', error);
+  
+      if (session) {
+        await session.abortTransaction();
+        session.endSession();
+      }
+  
+      if (user && order) {
+        order.status = 'Failed';
+        await order.save();
+  
+        for (const cartItem of user.cart) {
+          const product = await Product.findById(cartItem.product);
+          if (product) {
+            product.quantity += cartItem.quantity;
+            await product.save();
+          }
+        }
+      }
+  
+      res.status(500).json({ error: 'An error occurred while placing the order.' });
     }
-  };
+  }
   
   exports.orderDone = async (req, res) => {
     try {
@@ -187,12 +198,13 @@ const calculateSubtotal = (cart) => {
       // Get payment details from PayPal
       paypal.payment.get(paymentId, async (error, payment) => {
         if (error) {
-          console.error(error);
+          console.error('Error getting payment details from PayPal:', error);
           return res.status(500).json({ error: 'Error getting payment details from PayPal.' });
         }
   
         // Verify payment status
         if (payment.state !== 'approved') {
+          console.error('Payment not approved by PayPal:', payment);
           return res.status(400).json({ error: 'Payment not approved by PayPal.' });
         }
   
@@ -204,22 +216,24 @@ const calculateSubtotal = (cart) => {
           return res.status(404).json({ error: 'User not found.' });
         }
   
-        await Order.insertMany(newOrders);
+        await Order.insertMany(order);
+        const userName = user.username;
+        const orderId = order._id; 
+        const userEmail = user.email;
+        functionHelper.sendOrderConfirmationEmail(userEmail, userName, orderId, orderItems);
   
         // Clear user's cart
         user.cart = [];
         await user.save();
   
         // Redirect to a success page
-        res.render('./user/orderPlaced', { newOrders }); // You can customize this view as needed
+        res.render('./user/orderPlaced', { /* You can customize this view as needed */ });
       });
     } catch (error) {
       console.error('Error while processing PayPal payment:', error);
       res.status(500).json({ error: 'An error occurred while processing your payment.' });
     }
   };
-  
-  
   // Function to calculate order price
   async function calculateOrderPrice(productId, quantity, shippingCost) {
     // Retrieve product details
