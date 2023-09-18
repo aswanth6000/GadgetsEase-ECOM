@@ -18,13 +18,19 @@ router.get('/admin/getProductCount',isAdminLoggedIn,adminController.getProductCo
 router.get('/admin/getusersCount',isAdminLoggedIn,adminController.getUsersCount)
 router.get('/logout',userController.logout)
 router.get('/order-details/:orderId',adminController.orderDetails)
+
+
 router.get('/viewcategory',adminController.getCategory)
 router.get('/listcategory/:category',adminController.listCategory)
+router.get('/addCategory',isAdminLoggedIn,adminController.getAddCategory)
+
 router.get('/getAddCoupon',isAdminLoggedIn,adminController.getCoupon)
 router.get('/viewCoupon',isAdminLoggedIn,adminController.viewCoupon)
 router.get('/viewCouponUsers/:couponId', isAdminLoggedIn,adminController.viewCouponUsedUsers)
 
+
 // POST Routes
+router.post('/upload-category',isAdminLoggedIn,adminController.postaddCategory)
 router.post('/admin/blockuser/:userId',isAdminLoggedIn,adminController.blockuser)
 router.post('/postOrderDetails/:orderId',isAdminLoggedIn,adminController.postOrderDetails)
 router.post('/admin/unblockuser/:userId',isAdminLoggedIn,adminController.unblockuser)

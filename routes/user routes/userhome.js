@@ -29,8 +29,11 @@ router.get('/viewOrders/:userId',isAuthenticated, checkoutController.getOrderDet
 router.get('/cart',isAuthenticated,cartController.getcart)
 router.get('/cartLength',isAuthenticated,cartController.getCartLength)
 
-
+// CATEGORY
 router.get('/category',isAuthenticated,userOp.getCategory)
+
+
+
 router.get('/wallet/:userId',userOp.getWallet)
 router.get('/withdraw',userOp.getWithdraw)
 router.get('/returnOrder/:orderId',isAuthenticated,userOp.returnOrder)

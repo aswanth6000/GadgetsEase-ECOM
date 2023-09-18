@@ -4,6 +4,7 @@ const Order = require('../model/order')
 const Transaction = require('../model/transaction'); 
 const Coupon = require('../model/coupon')
 const Address = require('../model/addresses')
+const Category = require('../model/category')
 exports.adminhome = async (req, res) => {
   try {
     const today = new Date();
@@ -246,23 +247,8 @@ exports.postOrderDetails = async (req, res) => {
 };
 exports.getCategory = async (req, res) => {
   try {
-    // Get distinct categories from the products
-    const distinctCategories = await Product.distinct('category');
-
-    // Create an empty object to store products grouped by category
-    const productsByCategory = {};
-
-    // Loop through each distinct category
-    for (const category of distinctCategories) {
-      // Find products in the current category
-      const productsInCategory = await Product.find({ category });
-
-      // Add the products to the object with the category as the key
-      productsByCategory[category] = productsInCategory;
-    }
-
-    // Render the 'category' template and pass the products grouped by category
-    res.render('./admin/category', { productsByCategory });
+    const categorys = await Category.find()
+    res.render('./admin/category', { categorys });
   } catch (error) {
     console.error(error);
     res.status(500).send('Internal Server Error');
@@ -319,4 +305,23 @@ exports.viewCouponUsedUsers = async (req, res)=>{
   }catch(err){
     console.log("Error finding the coupon code", err);
   } 
+}
+
+exports.getAddCategory = (req, res) =>{
+  res.render('./admin/addCategory');
+}
+
+exports.postaddCategory = (req, res) =>{
+  const {addcategory} = req.body;
+  const newCategory = new Category({
+    category : addcategory
+  })
+  newCategory.save()
+  .then(()=>{
+    res.redirect('/viewcategory')
+  })
+  .catch((err)=>{
+    console.log("Error occoured adding category", err);
+  })
+
 }

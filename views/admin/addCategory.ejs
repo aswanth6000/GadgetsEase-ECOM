@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category Upload</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Upload Category</h1>
+        <form action="/upload-category" method="post">
+            <div class="form-group">
+                <label for="category">Category Name:</label>
+                <input type="text" class="form-control" id="category" name="addcategory" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Upload Category</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -76,12 +76,12 @@
                 </tr>
             </thead>
             <tbody>
-                <% for (const category in productsByCategory) { %>
+                <% for (const category of categorys) { %>
                 <tr class="align-middle">
                     <td>
                         <div class="table-profile">
                             <div>
-                                <div class="h6 mb-0 lh-1"><%= category %></div>
+                                <div class="h6 mb-0 lh-1"><%= category.category %></div>
                             </div>
                         </div>
                     </td>
