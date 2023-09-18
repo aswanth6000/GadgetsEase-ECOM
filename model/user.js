@@ -8,15 +8,6 @@ const userSchema = new mongoose.Schema({
     email: String,
     verified: Boolean,
     profileImage: String,
-    cart: [
-        {
-            product: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'Product',
-            },
-            quantity: Number,
-        },
-    ],
     status: {
         type: String,
         default: 'active',

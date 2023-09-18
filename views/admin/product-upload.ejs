@@ -55,7 +55,7 @@
                     <img id="image-preview" src="" alt="Preview" class="img-fluid">
                 </div>
                 <input type="hidden" class="cropped-image" name="croppedImages[]" value="">
-<input type="hidden" class="cropped-image" name="croppedImages[]" value="">
+                <input type="hidden" class="cropped-image" name="croppedImages[]" value="">
 
                 <!-- Add this hidden input to store the cropped image data -->
                 <input type="hidden" id="cropped-image" name="croppedImage">
@@ -113,65 +113,6 @@
     <script>
         // Function to handle image file input change event
         document.getElementById('selectedImages').addEventListener('change', function(e) {
-            const imagePreview = document.getElementById('image-preview');
-            imagePreview.innerHTML = ''; // Clear previous previews
-            
-            const files = e.target.files;
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                const imgContainer = document.createElement('div');
-                imgContainer.className = 'mb-2';
-    
-                const img = document.createElement('img');
-                img.src = URL.createObjectURL(file);
-                img.style.maxWidth = '100px'; // Adjust the size as needed
-    
-                const removeBtn = document.createElement('button');
-                removeBtn.type = 'button';
-                removeBtn.className = 'btn btn-danger btn-sm ml-2';
-                removeBtn.textContent = 'Remove';
-                
-                // Handle remove button click event
-                removeBtn.addEventListener('click', function() {
-                    imgContainer.remove(); // Remove the image container
-                });
-    
-                imgContainer.appendChild(img);
-                imgContainer.appendChild(removeBtn);
-                imagePreview.appendChild(imgContainer);
-            }
-        });
-    
-        // Function to handle video file input change event
-        document.getElementById('selectedVideo').addEventListener('change', function(e) {
-            const videoPreview = document.getElementById('video-preview');
-            videoPreview.innerHTML = ''; // Clear previous previews
-    
-            const file = e.target.files[0];
-            const videoContainer = document.createElement('div');
-            videoContainer.className = 'mb-2';
-    
-            const video = document.createElement('video');
-            video.src = URL.createObjectURL(file);
-            video.controls = true;
-            video.style.maxWidth = '100%'; // Adjust the size as needed
-    
-            const removeBtn = document.createElement('button');
-            removeBtn.type = 'button';
-            removeBtn.className = 'btn btn-danger btn-sm ml-2';
-            removeBtn.textContent = 'Remove';
-            
-            // Handle remove button click event
-            removeBtn.addEventListener('click', function() {
-                videoContainer.remove(); // Remove the video container
-            });
-    
-            videoContainer.appendChild(video);
-            videoContainer.appendChild(removeBtn);
-            videoPreview.appendChild(videoContainer);
-        });
-
-        document.getElementById('selectedImages').addEventListener('change', function(e) {
         const imagePreviewContainer = document.getElementById('image-preview-container');
         const files = e.target.files;
 
@@ -214,6 +155,34 @@
             imagePreviewContainer.appendChild(imgContainer);
         }
     });
+        // Function to handle video file input change event
+        document.getElementById('selectedVideo').addEventListener('change', function(e) {
+            const videoPreview = document.getElementById('video-preview');
+            videoPreview.innerHTML = ''; // Clear previous previews
+    
+            const file = e.target.files[0];
+            const videoContainer = document.createElement('div');
+            videoContainer.className = 'mb-2';
+    
+            const video = document.createElement('video');
+            video.src = URL.createObjectURL(file);
+            video.controls = true;
+            video.style.maxWidth = '100%'; // Adjust the size as needed
+    
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'btn btn-danger btn-sm ml-2';
+            removeBtn.textContent = 'Remove';
+            
+            // Handle remove button click event
+            removeBtn.addEventListener('click', function() {
+                videoContainer.remove(); // Remove the video container
+            });
+    
+            videoContainer.appendChild(video);
+            videoContainer.appendChild(removeBtn);
+            videoPreview.appendChild(videoContainer);
+        });
     </script>
 </body>
 </html>

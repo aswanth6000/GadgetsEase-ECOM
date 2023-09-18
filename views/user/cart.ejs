@@ -2,298 +2,291 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cart</title>
-    <style>
-        @media (min-width: 1025px) {
-            .h-custom {
-                height: 100vh !important;
-            }
-        }
-    </style>
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
-    <!-- MDB -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.1/mdb.min.css" rel="stylesheet" />
-    <style>
-        input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cart</title>
+  <style>
+    @media (min-width: 1025px) {
+      .h-custom {
+        height: 100vh !important;
+      }
+    }
+  </style>
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+  <!-- MDB -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.1/mdb.min.css" rel="stylesheet" />
+  <style>
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  </style>
 </head>
 
 <body>
-    <section class="h-100 h-custom" style="background-color: #eee;">
-        <div class="container py-5 h-100">
-            <div class="row d-flex justify-content-center align-items-center h-100">
-                <div class="col">
-                    <div class="card">
-                        <div class="card-body p-4">
+  <section class="h-100 h-custom" style="background-color: #eee;">
+    <div class="container py-5 h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col">
+          <div class="card">
+            <div class="card-body p-4">
 
-                            <div class="row">
+              <div class="row">
 
-                                <div class="col-lg-7">
-                                    <h5 class="mb-3"><a href="#!" class="text-body"><i
-                                                class="fas fa-long-arrow-alt-left me-2"></i>Continue shopping</a></h5>
-                                    <hr>
+                <div class="col-lg-7">
+                  <h5 class="mb-3"><a href="#!" class="text-body"><i
+                        class="fas fa-long-arrow-alt-left me-2"></i>Continue shopping</a></h5>
+                  <hr>
 
-                                    <div class="d-flex justify-content-between align-items-center mb-4">
-                                        <div>
-                                            <p class="mb-1">Shopping cart</p>
-                                            <p class="mb-0">You have <%= user.cart.length %> items in your cart</p>
-                                        </div>
-                                        <div>
-                                            <p class="mb-0"><span class="text-muted">Sort by:</span> <a href="#!"
-                                                    class="text-body" id="his">price <i class="fas fa-angle-down mt-1"></i></a>
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <% if (user.cart.length === 0) { %>
-                                        <style>
-                                            .text-muted, #his{
-                                                display: none;
-                                            }
-                                        </style>
-                                        <!-- If cart is empty, show Lottie animation -->
-                                        <!-- You should replace 'your-lottie-animation.json' with the actual path to your Lottie animation JSON file -->
-                                        <div id="empty-cart-animation"></div>
-                                        <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.8/lottie.min.js"></script>
-                                        <script>
-                                            // Initialize Lottie animation
-                                            const animationContainer = document.getElementById('empty-cart-animation');
-                                            const animation = lottie.loadAnimation({
-                                                container: animationContainer,
-                                                renderer: 'svg',
-                                                loop: true,
-                                                autoplay: true,
-                                                path: './animation_lmc25fgv.json', // Replace with the path to your Lottie animation JSON file
-                                            });
-                                        </script>
-                                        <% } %>
-                                    <% for (let i = 0; i < user.cart.length; i++) { %>
-                                        <div class="card rounded-3 mb-4">
-                                            <div class="card-body p-4">
-                                              <div class="row d-flex justify-content-between align-items-center">
-                                                <div class="col-md-2 col-lg-2 col-xl-2">
-                                                  <img
-                                                    src="/uploads/images/<%= user.cart[i].product.productImages[2] %>"
-                                                    class="img-fluid rounded-3" alt="Cotton T-shirt">
-                                                </div>
-                                                <div class="col-md-3 col-lg-3 col-xl-3">
-                                                  <p class="lead fw-normal mb-2"><%= user.cart[i].product.name %></p>
-                                                  <p><span class="text-muted">Size: </span>M <span class="text-muted">Color: </span>Grey</p>
-                                                </div>
-                                                <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
-                                                  <button class="btn btn-link px-2"
-                                                    onclick="decrementQuantity('<%= user.cart[i].product._id %>')">
-                                                    <i class="fas fa-minus"></i>
-                                                  </button>
-                                  
-                                                  <input   id="quantity_<%= user.cart[i].product._id %>"
-                                                  min="0"
-                                                  name="quantity"
-                                                  value="<%= user.cart[i].quantity %>"
-                                                  max="2"
-                                                  type="number"
-                                                  style="width: 40px;"
-                                                  data-product-id="<%= user.cart[i].product._id %>" />
-                                  
-                                                  <button class="btn btn-link px-2"
-                                                  onclick="incrementQuantity('<%= user.cart[i].product._id %>')">
-                                                    <i class="fas fa-plus"></i>
-                                                  </button>
-                                                </div>
-                                                <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
-                                                  <h5 class="mb-0">₹<%= user.cart[i].product.discountPrice %></h5>
-                                                </div>
-                                                <div class="col-md-1 col-lg-1 col-xl-1 text-end">
-                                                    <form action="/removeItemFromCart/<%= user.cart[i].product._id %>" method="post">
-                                                    <button type="submit" class="text-danger" style="background: none;
+                  <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                      <p class="mb-1">Shopping cart</p>
+                      <p class="mb-0">You have <%= user.cart.length %> items in your cart</p>
+                    </div>
+                    <div>
+                      <p class="mb-0"><span class="text-muted">Sort by:</span> <a href="#!" class="text-body"
+                          id="his">price <i class="fas fa-angle-down mt-1"></i></a>
+                      </p>
+                    </div>
+                  </div>
+                  <% if (user.cart.length === 0) { %>
+                  <style>
+                    .text-muted,
+                    #his {
+                      display: none;
+                    }
+                  </style>
+                  <!-- If cart is empty, show Lottie animation -->
+                  <!-- You should replace 'your-lottie-animation.json' with the actual path to your Lottie animation JSON file -->
+                  <div id="empty-cart-animation"></div>
+                  <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.8/lottie.min.js"></script>
+                  <script>
+                    // Initialize Lottie animation
+                    const animationContainer = document.getElementById('empty-cart-animation');
+                    const animation = lottie.loadAnimation({
+                      container: animationContainer,
+                      renderer: 'svg',
+                      loop: true,
+                      autoplay: true,
+                      path: './animation_lmc25fgv.json', // Replace with the path to your Lottie animation JSON file
+                    });
+                  </script>
+                  <% } %>
+                  <% for (let i = 0; i < cart.length; i++) { %>
+                  <div class="card rounded-3 mb-4">
+                    <div class="card-body p-4">
+                      <div class="row d-flex justify-content-between align-items-center">
+                        <div class="col-md-2 col-lg-2 col-xl-2">
+                          <img src="/uploads/images/<%= cart[i].product.productImages[2] %>" class="img-fluid rounded-3"
+                            alt="Cotton T-shirt">
+                        </div>
+                        <div class="col-md-3 col-lg-3 col-xl-3">
+                          <p class="lead fw-normal mb-2"><%= cart[i].product.name %></p>
+                          <p><span class="text-muted">Size: </span>M <span class="text-muted">Color: </span>Grey</p>
+                        </div>
+                        <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
+                          <button class="btn btn-link px-2" onclick="decrementQuantity('<%= cart[i].product._id %>')">
+                            <i class="fas fa-minus"></i>
+                          </button>
+
+                          <input id="quantity_<%= cart[i].product._id %>" min="0" name="quantity"
+                            value="<%= cart[i].quantity %>" max="2" type="number" style="width: 40px;"
+                            data-product-id="<%= cart[i].product._id %>" />
+
+                          <button class="btn btn-link px-2" onclick="incrementQuantity('<%= cart[i].product._id %>')">
+                            <i class="fas fa-plus"></i>
+                          </button>
+                        </div>
+                        <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+                          <h5 class="mb-0">₹<%= cart[i].product.discountPrice %></h5>
+                        </div>
+                        <div class="col-md-1 col-lg-1 col-xl-1 text-end">
+                          <form action="/removeItemFromCart/<%= cart[i].product._id %>" method="post">
+                            <button type="submit" class="text-danger" style="background: none;
                                                     color: inherit;
                                                     border: none;
                                                     padding: 0;
                                                     font: inherit;
                                                     cursor: pointer;
-                                                    outline: inherit;"><i class="fas fa-trash fa-lg" onclick="return confirm('Are you sure to delete <%=user.cart[i].product.name%>');"></i></button>
-                                                </form>
-                                                </div>
-                                              </div>
-                                            </div>
-                                          </div>
-                                        <% } %>
-                                </div>
-                                <% if (user.cart.length === 0) { %>
-                                    <div class="col-lg-5" id="cartDetails">
-    
-                                        <div class="card bg-primary text-white rounded-3">
-                                            <div class="card-body">
-                                                <div class="d-flex justify-content-between align-items-center mb-4">
-                                                    <h5 class="mb-0">Cart details</h5>
-                                                    <img src="/uploads/images/<%=user.profileImage%>"
-                                                        class="img-fluid rounded-3" style="width: 45px;" alt="Avatar">
-                                                </div>
-    
-                                                </form>
-    
-                                                <hr class="my-4">
-    
-                                                <div class="d-flex justify-content-between">
-                                                    <p class="mb-2">Subtotal</p>
-                                                    <p class="mb-2">₹0</p>
-                                                </div>
-    
-                                                <div class="d-flex justify-content-between">
-                                                    <p class="mb-2">Shipping</p>
-                                                    <p class="mb-2">₹0</p>
-                                                </div>
-    
-                                                <div class="d-flex justify-content-between mb-4">
-                                                    <p class="mb-2">Total(Incl. taxes)</p>
-                                                    <p class="mb-2">₹0</p>
-                                                </div>
-    
-                                                <button type="button" class="btn btn-info btn-block btn-lg">
-                                                    <div class="d-flex justify-content-between">
-                                                        <span>₹0</span>
-                                                        <span>Back to shop <i
-                                                                class="fas fa-long-arrow-alt-right ms-2"></i></span>
-                                                    </div>
-                                                </button>
-    
-                                            </div>
-                                        </div>
-    
-                                    </div>
-
-                                    <% }else{ %>
-                                        <div class="col-lg-5" id="cartDetails">
-    
-                                            <div class="card bg-primary text-white rounded-3">
-                                                <div class="card-body">
-                                                    <div class="d-flex justify-content-between align-items-center mb-4">
-                                                        <h5 class="mb-0">Cart details</h5>
-                                                        <img src="/uploads/images/<%=user.profileImage%>"
-                                                            class="img-fluid rounded-3" style="width: 45px;" alt="Avatar">
-                                                    </div>
-        
-                                                    </form>
-        
-                                                    <hr class="my-4">
-        
-                                                    <div class="d-flex justify-content-between">
-                                                        <p class="mb-2">Subtotal</p>
-                                                        <p class="mb-2">₹<%= subtotal %></p>
-                                                    </div>
-        
-                                                    <div class="d-flex justify-content-between">
-                                                        <p class="mb-2">Shipping</p>
-                                                        <p class="mb-2">₹100.00</p>
-                                                    </div>
-        
-                                                    <div class="d-flex justify-content-between mb-4">
-                                                        <p class="mb-2">Total(Incl. taxes)</p>
-                                                        <p class="mb-2">₹<%= subtotalwship %></p>
-                                                    </div>
-        
-                                                    <a href="/checkout">
-                                                      <button type="button" class="btn btn-info btn-block btn-lg">
-                                                        <div class="d-flex justify-content-between">
-                                                            <span>₹<%= subtotalwship %></span>
-                                                            <span>Checkout <i
-                                                                    class="fas fa-long-arrow-alt-right ms-2"></i></span>
-                                                        </div>
-                                                    </button>
-                                                    </a>
-        
-                                                </div>
-                                            </div>
-        
-                                        </div>
-
-                                    <% } %>
-
-                            </div>
-
+                                                    outline: inherit;"><i class="fas fa-trash fa-lg"
+                                onclick="return confirm('Are you sure to delete <%=cart[i].product.name%>');"></i></button>
+                          </form>
                         </div>
+                      </div>
                     </div>
+                  </div>
+                  <% } %>
                 </div>
+                <% if (cart.length === 0) { %>
+                <div class="col-lg-5" id="cartDetails">
+
+                  <div class="card bg-primary text-white rounded-3">
+                    <div class="card-body">
+                      <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="mb-0">Cart details</h5>
+                        <img src="/uploads/images/<%=user.profileImage%>" class="img-fluid rounded-3"
+                          style="width: 45px;" alt="Avatar">
+                      </div>
+
+                      </form>
+
+                      <hr class="my-4">
+
+                      <div class="d-flex justify-content-between">
+                        <p class="mb-2">Subtotal</p>
+                        <p class="mb-2">₹0</p>
+                      </div>
+
+                      <div class="d-flex justify-content-between">
+                        <p class="mb-2">Shipping</p>
+                        <p class="mb-2">₹0</p>
+                      </div>
+
+                      <div class="d-flex justify-content-between mb-4">
+                        <p class="mb-2">Total(Incl. taxes)</p>
+                        <p class="mb-2">₹0</p>
+                      </div>
+
+                      <button type="button" class="btn btn-info btn-block btn-lg">
+                        <div class="d-flex justify-content-between">
+                          <span>₹0</span>
+                          <span>Back to shop <i class="fas fa-long-arrow-alt-right ms-2"></i></span>
+                        </div>
+                      </button>
+
+                    </div>
+                  </div>
+
+                </div>
+
+                <% }else{ %>
+                <div class="col-lg-5" id="cartDetails">
+
+                  <div class="card bg-primary text-white rounded-3">
+                    <div class="card-body">
+                      <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="mb-0">Cart details</h5>
+                        <img src="/uploads/images/<%=user.profileImage%>" class="img-fluid rounded-3"
+                          style="width: 45px;" alt="Avatar">
+                      </div>
+
+                      </form>
+
+                      <hr class="my-4">
+
+                      <div class="d-flex justify-content-between">
+                        <p class="mb-2">Subtotal</p>
+                        <p class="mb-2">₹<%= subtotal %></p>
+                      </div>
+
+                      <div class="d-flex justify-content-between">
+                        <p class="mb-2">Shipping</p>
+                        <p class="mb-2">₹100.00</p>
+                      </div>
+
+                      <div class="d-flex justify-content-between mb-4">
+                        <p class="mb-2">Total(Incl. taxes)</p>
+                        <p class="mb-2">₹<%= subtotalWithShipping %></p>
+                      </div>
+
+                      <a href="/checkout">
+                        <button type="button" class="btn btn-info btn-block btn-lg">
+                          <div class="d-flex justify-content-between">
+                            <span>₹<%= subtotalWithShipping %></span>
+                            <span>Checkout <i class="fas fa-long-arrow-alt-right ms-2"></i></span>
+                          </div>
+                        </button>
+                      </a>
+
+                    </div>
+                  </div>
+
+                </div>
+
+                <% } %>
+
+              </div>
+
             </div>
+          </div>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 </body>
 <!-- MDB -->
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.1/mdb.min.js"></script>
 <script>
-// Function to update quantity via AJAX
-function updateQuantity(productId, newQuantity) {
-  fetch(`/updateQuantity/${productId}`, {
-    method: 'PUT', // Use PUT request to update the quantity
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ quantity: newQuantity }),
-  })
-    .then((response) => {
-      if (response.ok) {
-        console.log('Quantity updated successfully.');
-      } else {
-        console.error('Error updating quantity.');
-      }
+  // Function to update quantity via AJAX
+  function updateQuantity(productId, newQuantity) {
+    fetch(`/updateQuantity/${productId}`, {
+      method: 'PUT', // Use PUT request to update the quantity
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ quantity: newQuantity }),
     })
-    .catch((error) => {
-      console.error('Error:', error);
-    });
-}
-
-function decrementQuantity(productId) {
-  const quantityInput = document.getElementById(`quantity_${productId}`);
-  const newQuantity = parseInt(quantityInput.value) - 1;
-  if (newQuantity >= 1) {
-    quantityInput.value = newQuantity;
-    updateQuantity(productId, newQuantity);
-  } else {
-    removeItemFromCart(productId);
-  }
-}
-
-function incrementQuantity(productId) {
-  const quantityInput = document.getElementById(`quantity_${productId}`);
-  const newQuantity = parseInt(quantityInput.value) + 1;
-  if (newQuantity <= 2) {
-  quantityInput.value = newQuantity;
-  updateQuantity(productId, newQuantity);
-  }
-}
-// Function to remove an item from the cart and database via AJAX
-function removeItemFromCart(productId) {
-  fetch(`/removeItemFromCart/${productId}`, {
-    method: 'DELETE', // Use DELETE request to remove the item
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
-    .then((response) => {
-      if (response.ok) {
-        // Item removed successfully, you can also update the UI here if needed
-        console.log('Item removed from cart successfully.');
-        // You might want to remove the item's HTML from the page as well
-        const itemToRemove = document.getElementById(`cart_item_${productId}`);
-        if (itemToRemove) {
-          itemToRemove.remove();
+      .then((response) => {
+        if (response.ok) {
+          console.log('Quantity updated successfully.');
+        } else {
+          console.error('Error updating quantity.');
         }
-      } else {
-        console.error('Error removing item from cart.');
-      }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  }
+
+  function decrementQuantity(productId) {
+    const quantityInput = document.getElementById(`quantity_${productId}`);
+    const newQuantity = parseInt(quantityInput.value) - 1;
+    if (newQuantity >= 1) {
+      quantityInput.value = newQuantity;
+      updateQuantity(productId, newQuantity);
+    } else {
+      removeItemFromCart(productId);
+    }
+  }
+
+  function incrementQuantity(productId) {
+    const quantityInput = document.getElementById(`quantity_${productId}`);
+    const newQuantity = parseInt(quantityInput.value) + 1;
+    if (newQuantity <= 2) {
+      quantityInput.value = newQuantity;
+      updateQuantity(productId, newQuantity);
+    }
+  }
+  // Function to remove an item from the cart and database via AJAX
+  function removeItemFromCart(productId) {
+    fetch(`/removeItemFromCart/${productId}`, {
+      method: 'DELETE', // Use DELETE request to remove the item
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
-    .catch((error) => {
-      console.error('Error:', error);
-    });
-}
+      .then((response) => {
+        if (response.ok) {
+          // Item removed successfully, you can also update the UI here if needed
+          console.log('Item removed from cart successfully.');
+          // You might want to remove the item's HTML from the page as well
+          const itemToRemove = document.getElementById(`cart_item_${productId}`);
+          if (itemToRemove) {
+            itemToRemove.remove();
+          }
+        } else {
+          console.error('Error removing item from cart.');
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  }
 
 </script>
+
 </html>
