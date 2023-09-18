@@ -117,8 +117,9 @@ exports.getProductCount = async (req, res) => {
     }
 };
 
-exports.getAddProducts = (req, res) => {
-    res.render('./admin/product-upload');
+exports.getAddProducts = async(req, res) => {
+  const categorys = await Category.find()
+    res.render('./admin/product-upload',{categorys});
 }
 
 exports.geteditProducts = async (req, res) => {
