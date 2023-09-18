@@ -22,6 +22,8 @@ async function loginUser(req, email, password) {
             return { success : false, message : "User is blocked by admin"}
         }
         req.session.user = user;
+        const userm = await User.findById(req.session.user._id);
+        req.session.user.status = userm.status
         return { success: true, message: "Login successful" };
     } catch (error) {
         console.error('Error during login:', error);

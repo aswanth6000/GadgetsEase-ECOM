@@ -55,7 +55,9 @@ exports.viewUser = async (req,res)=>{
 
 exports.blockuser = async (req, res) => {
     const userId = req.params.userId;
-  
+    if(req.session.user){
+      res.session.user.status = 'blocked'
+    }
     await User.findByIdAndUpdate(userId, { status: 'blocked' })
       .then(() => {
         res.redirect('/admin/viewuser');
@@ -67,7 +69,9 @@ exports.blockuser = async (req, res) => {
   };
 exports.unblockuser = async (req, res) => {
     const userId = req.params.userId;
-  
+    if(req.session.user){
+      res.session.user.status = 'active'
+    }
     await User.findByIdAndUpdate(userId, { status: 'active' })
       .then(() => {
         res.redirect('/admin/viewuser');

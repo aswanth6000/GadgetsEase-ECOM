@@ -1,10 +1,17 @@
 const isAuthenticated = (req, res, next) => {
   const user = req.session.user;
-    if (req.session.user && user !== 'blocked') {
-        next();
-    } else {
-        res.redirect('/login'); 
-    }
+  if (req.session.user && req.session.user.status === 'blocked') {
+    // User is blocked, log them out and redirect to login page
+    req.session.destroy((err) => {
+        if (err) {
+            console.error('Error destroying session:', err);
+        }
+        return res.redirect('/login');
+    });
+} else {
+    // User is active, continue to the next middleware
+    next();
+}
 };
 
 const restrictLogin =(req, res, next)=> {
