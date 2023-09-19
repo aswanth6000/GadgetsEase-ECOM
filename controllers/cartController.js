@@ -128,6 +128,7 @@ exports.addtocart = async (req, res) => {
 
         // Check if the user has an existing cart
         const existingCart = await Cart.findOne({ user: userId });
+        const newCart = {}
 
         if (existingCart) {
             // Check if the product already exists in the cart
@@ -148,7 +149,7 @@ exports.addtocart = async (req, res) => {
             await existingCart.save();
         } else {
             // If the user doesn't have an existing cart, create a new one
-            const newCart = new Cart({
+            newCart = new Cart({
                 user: userId,
                 items: [{ product: productId, quantity: qty }],
                 total: qty,

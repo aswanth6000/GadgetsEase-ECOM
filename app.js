@@ -5,7 +5,7 @@ const session = require('express-session')
 const nocache = require('nocache')
 const http = require('http')
 const server = http.createServer(app);
-const socketIo = require('socket.io');
+require('dotenv').config();
 app.set('view engine', 'ejs')
 
 app.use(express.static(__dirname + "/public"))
@@ -32,8 +32,9 @@ server.listen(PORT, () => {
     console.log(`Server running on ${PORT}`);
 });
 
-// Database 
-mongoose.connect('mongodb://localhost:27017/GadgetsEaseUser', {
+// Database
+const dbUrl = `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`; 
+mongoose.connect(dbUrl, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });

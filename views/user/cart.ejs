@@ -86,7 +86,7 @@
                         </div>
                         <div class="col-md-3 col-lg-3 col-xl-3">
                           <p class="lead fw-normal mb-2"><%= cart[i].product.name %></p>
-                          <p><span class="text-muted">Size: </span>M <span class="text-muted">Color: </span>Grey</p>
+                          <p><span class="text-muted">Color: </span><%= cart[i].product.productColor %></p>
                         </div>
                         <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
                           <button class="btn btn-link px-2" onclick="decrementQuantity('<%= cart[i].product._id %>')">
