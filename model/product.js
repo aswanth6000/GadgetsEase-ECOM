@@ -17,7 +17,7 @@ const productSchema = new mongoose.Schema({
     productImages: [String],
     video : String,
     productColor: String,
-    ratings: [ratingSchema], // Use the ratingSchema as an array of ratings
+    ratings: [ratingSchema],
     ram: String,
     rom: String,
     expandable: String,

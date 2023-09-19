@@ -10,6 +10,7 @@ const paypal = require('paypal-rest-sdk')
 const {PAYPAL_MODE, PAYPAL_CLIENT_KEY, PAYPAL_SECRET_KEY} = process.env;
 const session = require('express-session')
 const Coupon = require('../model/coupon')
+const Cart = require('../model/cart')
 
 
 const calculateSubtotal = (cart) => {
@@ -20,28 +21,41 @@ const calculateSubtotal = (cart) => {
     return subtotal;
   };
 
-
-exports.getCheckout = async (req, res) => {
+  exports.getCheckout = async (req, res) => {
     const userId = req.session.user._id;
     try {
-      const userp = User.findById(userId);
-      const [user, addresses] = await Promise.all([
-        User.findById(userId).populate('cart.product').exec(),
-        Address.find({ user: userId }).exec(),
-      ]);
-      if (!user) {
-        return res.status(404).json({ error: 'User not found.' });
-      }
-      const cart = user.cart;
-      const subtotal = calculateSubtotal(cart);
-      const subtotalWithShipping = subtotal + 100;
-      const outOfStockError = cart.some(item => item.product.quantity <= 0);
-      res.render('./user/checkout', { user, cart, subtotal, subtotalWithShipping, addresses, userp, outOfStockError });
+        const user = await User.findById(userId).exec();
+        if (!user) {
+            return res.status(404).json({ error: 'User not found.' });
+        }
+
+        const cart = await Cart.findOne({ user: userId })
+            .populate('items.product') // Populate the 'product' field within 'items'
+            .exec();
+
+        const addresses = await Address.find({ user: userId }).exec();
+
+        if (!cart) {
+            return res.status(404).json({ error: 'Cart not found.' });
+        }
+
+        const subtotal = calculateSubtotal(cart.items);
+        const subtotalWithShipping = subtotal + 100;
+        const outOfStockError = cart.items.some(item => item.product.quantity <= 0);
+
+        res.render('./user/checkout', {
+            user,
+            cart: cart.items, // Send the 'items' array from the cart
+            subtotal,
+            subtotalWithShipping,
+            addresses,
+            outOfStockError,
+        });
     } catch (err) {
-      console.error('Error fetching user data and addresses:', err);
-      res.status(500).json({ error: 'An error occurred while fetching user data and addresses.' });
+        console.error('Error fetching user data and addresses:', err);
+        res.status(500).json({ error: 'An error occurred while fetching user data and addresses.' });
     }
-  }
+};
 
  let order;
   exports.postCheckout = async (req, res) => {

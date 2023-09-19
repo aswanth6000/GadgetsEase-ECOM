@@ -250,6 +250,7 @@ exports.postOrderDetails = async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
 exports.getCategory = async (req, res) => {
   try {
     const categorys = await Category.find()

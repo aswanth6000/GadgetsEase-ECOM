@@ -9,7 +9,6 @@ const isAuthenticated = (req, res, next) => {
         return res.redirect('/login');
     });
 } else {
-    // User is active, continue to the next middleware
     next();
 }
 };
