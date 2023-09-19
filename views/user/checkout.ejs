@@ -107,16 +107,16 @@
 							<h3 class="title">Your Order</h3>
 						</div>
 						<div class="order-summary">
-							<% if (user.cart.length !== 0) { %>
+							<% if (cart.length !== 0) { %>
 								<div class="order-col">
 									<div><strong>PRODUCT</strong></div>
 									<div><strong>TOTAL</strong></div>
 								</div>
-								<% for (let i = 0; i < user.cart.length; i++) { %>
+								<% for (let i = 0; i < cart.length; i++) { %>
 							<div class="order-products">
 								<div class="order-col">
-									<div><span style="color:#7dc49d; font-weight: 800;"><%= user.cart[i].quantity %> x </span><%= user.cart[i].product.name %></div>
-									<div>₹<%= user.cart[i].product.discountPrice %></div>
+									<div><span style="color:#7dc49d; font-weight: 800;"><%= cart[i].quantity %> x </span><%= cart[i].product.name %></div>
+									<div>₹<%= cart[i].product.discountPrice %></div>
 								</div>
 							</div>
 							<% } %>

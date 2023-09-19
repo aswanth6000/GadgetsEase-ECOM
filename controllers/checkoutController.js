@@ -30,7 +30,10 @@ const calculateSubtotal = (cart) => {
         }
 
         const cart = await Cart.findOne({ user: userId })
-            .populate('items.product') // Populate the 'product' field within 'items'
+            .populate({
+                path: 'items.product',
+                model: 'Product',
+            })
             .exec();
 
         const addresses = await Address.find({ user: userId }).exec();
@@ -39,13 +42,17 @@ const calculateSubtotal = (cart) => {
             return res.status(404).json({ error: 'Cart not found.' });
         }
 
-        const subtotal = calculateSubtotal(cart.items);
+        // Extract the items array from the cart
+        const cartItems = cart.items || [];
+
+        const subtotal = calculateSubtotal(cartItems); // Pass cartItems, not cart
         const subtotalWithShipping = subtotal + 100;
-        const outOfStockError = cart.items.some(item => item.product.quantity <= 0);
+        const outOfStockError = cartItems.some(item => item.product.quantity <= 0); // Pass cartItems, not cart
+        console.log("555",user,cartItems, subtotal, subtotalWithShipping, addresses, outOfStockError);
 
         res.render('./user/checkout', {
             user,
-            cart: cart.items, // Send the 'items' array from the cart
+            cart: cartItems, // Send the extracted 'cartItems' array
             subtotal,
             subtotalWithShipping,
             addresses,
@@ -56,6 +63,7 @@ const calculateSubtotal = (cart) => {
         res.status(500).json({ error: 'An error occurred while fetching user data and addresses.' });
     }
 };
+
 
  let order;
   exports.postCheckout = async (req, res) => {
