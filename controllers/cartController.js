@@ -32,8 +32,9 @@ exports.getcart = async (req, res) => {
         const cart = userCart.items;
         const subtotal = calculateSubtotal(cart);
         const subtotalWithShipping = subtotal + 100;
+        const outOfStockError = cart.some(item => cart.quantity < item.quantity); 
 
-        res.render('./user/cart', { user: req.session.user, cart, subtotal, subtotalWithShipping });
+        res.render('./user/cart', { user: req.session.user, cart, subtotal, subtotalWithShipping, outOfStockError });
     } catch (err) {
         console.error('Error fetching user cart:', err);
         res.status(500).json({ error: 'An error occurred while fetching user cart.' });

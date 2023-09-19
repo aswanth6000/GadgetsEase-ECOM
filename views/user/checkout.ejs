@@ -142,12 +142,15 @@
 								<input type="radio" name="payment" value="Online Payment" id="payment-3">
 								<label for="payment-3">
 									<span></span>
-									UPI
+									Online Payment
 								</label>
 								<div class="caption">
-									<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+									<p>Complete the online payment using PayPal</p>
 								</div>
 							</div>
+							<div id="outOfStockAlert" class="alert alert-danger" style="display: none;">
+								Some items in your cart are out of stock.
+							  </div>
 							<div class="input-radio">
 								<input type="radio" name="coupon"  id="coupon">
 								<label for="coupon">
@@ -230,11 +233,23 @@
 				}
 			  } catch (error) {
 				console.error('Error applying coupon:', error);
-				alert('An error occurred while applying the coupon.');
+				alert('Coupon applied successfully!');
 			  }
 			});
 		  });
-		  
+		  document.addEventListener('DOMContentLoaded', function () {
+  // Retrieve the outOfStockError flag from the template
+  const outOfStockError = '<%= outOfStockError %>' === 'true';
+
+  // Select the alert box element
+  const outOfStockAlert = document.getElementById('outOfStockAlert');
+
+  // If outOfStockError is true, display the alert box
+  if (outOfStockError) {
+    outOfStockAlert.style.display = 'block';
+  }
+});
+ 
 		</script>
 
 	</body>
