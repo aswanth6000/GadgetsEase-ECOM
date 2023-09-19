@@ -156,7 +156,7 @@
 								</label>
 								<div class="caption">
 									<div class="form-group">
-										<input class="input" type="text" name="first-name" placeholder="Enter your coupon code" id="couponCodeInput">
+										<input class="input" type="text" name="couponCode" placeholder="Enter your coupon code" id="couponCodeInput">
 										<button class="btn btn-primary" style="background-color: crimson;" id="applyCouponButton"> Apply</button>
 									</div>
 								</div>
@@ -184,44 +184,56 @@
 		<script src="/js/validation.js"></script>
 		<script>
 		document.addEventListener('DOMContentLoaded', async function () {
-  const applyCouponButton = document.getElementById('applyCouponButton');
-  const couponCodeInput = document.getElementById('couponCodeInput');
-  const orderTotalElement = document.getElementById('orderTotal'); // Add this line
-
-  applyCouponButton.addEventListener('click', async function () {
-    const couponCode = couponCodeInput.value;
-
-    try {
-      // Send a POST request to the server to apply the coupon
-      const response = await fetch('/applyCoupon', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ couponCode }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Coupon application failed');
-      }
-
-      const data = await response.json();
-
-      if (data.error) {
-        // Handle error messages returned by the server
-        alert(data.error);
-      } else {
-        // Update the order total with the discounted total
-        const discountedTotal = data.discountedTotal;
-        orderTotalElement.innerText = `₹${discountedTotal}`; // Update the DOM here
-        alert('Coupon applied successfully!');
-      }
-    } catch (error) {
-      console.error('Error applying coupon:', error);
-      alert('An error occurred while applying the coupon.');
-    }
-  });
-});
+			const applyCouponButton = document.getElementById('applyCouponButton');
+			const couponCodeInput = document.getElementById('couponCodeInput');
+			const orderTotalElement = document.getElementById('order-total');
+		  
+			applyCouponButton.addEventListener('click', async function (event) {
+				event.preventDefault();
+			  const couponCode = couponCodeInput.value;
+		  
+			  try {
+				const response = await fetch('/applyCoupon', {
+				  method: 'POST',
+				  headers: {
+					'Content-Type': 'application/json',
+				  },
+				  body: JSON.stringify({ couponCode }),
+				});
+		  
+				if (!response.ok) {
+				  throw new Error('Coupon application failed');
+				}
+		  
+				const data = await response.json();
+		  
+				if (data.error) {
+				  alert(data.error);
+				} else {
+				  const discountedTotal = data.discountedTotal;
+				  orderTotalElement.innerText = `₹${discountedTotal}`;
+		  
+				  // Send the updated subtotal value to the server
+				  const updatedSubtotalResponse = await fetch('/updateSubtotal', {
+					method: 'POST',
+					headers: {
+					  'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({ subtotal: discountedTotal }),
+				  });
+		  
+				  if (!updatedSubtotalResponse.ok) {
+					throw new Error('Subtotal update failed');
+				  }
+		  
+				  alert('Coupon applied successfully!');
+				}
+			  } catch (error) {
+				console.error('Error applying coupon:', error);
+				alert('An error occurred while applying the coupon.');
+			  }
+			});
+		  });
 		  
 		</script>
 

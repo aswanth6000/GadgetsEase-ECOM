@@ -131,6 +131,7 @@
           <th>Cooupon Code</th>
           <th>Limit</th>
           <th>Discount</th>
+          <th>Type</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -147,6 +148,9 @@
             </td>
             <td>
                 <p class="fw-normal mb-1"><%= coupon.discount %></p>
+            </td>
+            <td>
+                <p class="fw-normal mb-1"><%= coupon.type %></p>
             </td>
             <td>
                 <a href="/admin/editproduct/<%=coupon._id%>"><button type="button" class="btn btn-link btn-sm btn-rounded">

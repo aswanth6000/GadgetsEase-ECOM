@@ -285,12 +285,13 @@ exports.getCoupon = (req, res)=>{
 }
 
 exports.postAddCoupon = async (req, res) =>{
-  const {couponCode, discount, expiryDate, limit} = req.body;
+  const {couponCode, discount, expiryDate, limit, DiscountType} = req.body;
   try{
     const newCoupon = new Coupon ({
       code : couponCode,
       discount : discount,
       limit : limit,
+      type : DiscountType,
       expiry : expiryDate
     })
     await Coupon.insertMany(newCoupon);
