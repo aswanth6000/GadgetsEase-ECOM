@@ -66,8 +66,9 @@ exports.postCheckout = async (req, res) => {
 
   const userId = req.session.user._id;
   const {address, payment, couponCode} = req.body
-
-  try {
+  if(payment === "Cash on delivery"){
+  
+    try {
       const user = await User.findById(userId);
       const cart = await Cart.findOne({ user: userId }).populate({
           path: 'items.product',
@@ -101,8 +102,7 @@ exports.postCheckout = async (req, res) => {
           await product.save();
       }
       if(couponCode){
-        totalAmount = applyCoup(couponCode,totalAmount, userId)
-        console.log('coupon code : ', totalAmount);
+        totalAmount = await applyCoup(couponCode,totalAmount, userId)
       }
 
       const order = new Order({
@@ -122,6 +122,16 @@ exports.postCheckout = async (req, res) => {
       await order.save();
 
       await Cart.deleteOne({ user: userId })
+      const orderItems = cartItems.map((cartItem) => ({
+        name: cartItem.product.name, 
+        quantity: cartItem.quantity,
+        price: cartItem.product.discountPrice,
+      }));
+
+      const userEmail = user.email;
+      const userName = user.username;
+      const orderId = order._id;
+      functionHelper.sendOrderConfirmationEmail(userEmail, userName, orderId, orderItems);
 
       await session.commitTransaction();
       session.endSession();
@@ -138,6 +148,10 @@ exports.postCheckout = async (req, res) => {
 
       res.status(500).json({ error: 'An error occurred while placing the order.' });
   }
+  }else if (payment === "Online Payment"){
+
+  }
+
 };
 
 
@@ -158,9 +172,9 @@ async function applyCoup(couponCode,discountedTotal, userId){
         return res.status(400).json({ error: 'You have already used this coupon.' });
       }
       if (coupon.type === 'percentage') {
-        discountedTotal = calculateDiscountedTotal(subtotal, coupon.discount);
+        discountedTotal = calculateDiscountedTotal(discountedTotal, coupon.discount);
       } else if (coupon.type === 'fixed') {
-        discountedTotal = subtotal - coupon.discount;
+        discountedTotal = discountedTotal - coupon.discount;
       }
       coupon.limit--
       coupon.usersUsed.push(userId);
