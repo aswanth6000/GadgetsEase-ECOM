@@ -60,144 +60,116 @@ exports.getCheckout = async (req, res) => {
     }
 };
 
-let order;
-
 exports.postCheckout = async (req, res) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
   const userId = req.session.user._id;
+  const {address, payment} = req.body
 
-  const user = await User.findById(userId);
-  const cart = await Cart.findOne({ user: userId })
-    .populate({
-      path: 'items.product',
-      model: 'Product',
-    })
-    .exec();
-
-  const cartItems = cart.items || [];
   try {
-    const { address, payment, couponCode } = req.body;
-    console.log(payment);
-  
-    if (payment === 'Cash on Delivery') {
-      if (!user) {
-        throw new Error('User not found.');
-      }
-      const subtotal = calculateSubtotal(cartItems);
-      const subtotalWithShipping = subtotal + 100;
-      const orderedProducts = [];
-  
-      for (const cartItem of cartItems) {
-        const product = cartItem.product;
-  
-        if (!product) {
-          throw new Error('Product not found.');
-        }
-  
-        if (product.quantity < cartItem.quantity) {
-          throw new Error('Not enough quantity in stock.');
-        }
-  
-        product.quantity -= cartItem.quantity;
-        const itemTotal = subtotalWithShipping
-        console.log("Item Total : ", itemTotal);
-  
-        await product.save();
-  
-        orderedProducts.push({
-          product: product.name,
-          quantity: cartItem.quantity,
-          price: product.price,
-        });
-      }
-      // Apply the coupon if provided
-      let discountedTotal = totalAmount;
-      if (couponCode) {
-        const coupon = await Coupon.findOne({ code: couponCode });
-  
-        if (!coupon) {
-          return res.status(404).json({ error: 'Coupon not found.' });
-        }
-  
-        const currentDate = new Date();
-        if (coupon.expiryDate && currentDate > coupon.expiryDate) {
-          return res.status(400).json({ error: 'Coupon has expired.' });
-        }
-  
-        if (coupon.usersUsed.length >= coupon.limit) {
-          return res.status(400).json({ error: 'Coupon limit reached.' });
-        }
-  
-        if (coupon.usersUsed.includes(userId)) {
-          return res.status(400).json({ error: 'You have already used this coupon.' });
-        }
-  
-        if (coupon.type === 'percentage') {
-          discountedTotal = calculateDiscountedTotal(totalAmount, coupon.discount);
-        } else if (coupon.type === 'fixed') {
-          discountedTotal = totalAmount - coupon.discount;
-        }
-  
-        // Add coupon details to the order
-        orderedProducts.push({
-          product: null, // You can specify a special product for the coupon if needed
-          quantity: 1,
-          price: discountedTotal, // Use a negative value to represent the discount
-        });
-        coupon.limit--
-        coupon.usersUsed.push(userId);
-        await coupon.save();
-      }
-      const order = new Order({
-        user: userId,
-        address: address,
-        orderDate: new Date(),
-        status: 'Paid',
-        paymentMethod: payment,
-        items: orderedProducts,
-        totalAmount: discountedTotal, // Use the discounted total
+      // Find the user, cart, and other required data
+      const user = await User.findById(userId);
+      const cart = await Cart.findOne({ user: userId }).populate({
+          path: 'items.product',
+          model: 'Product',
       });
-      await order.save();
-      user.cart = [];
-    await user.save();
 
-    const userName = user.username;
-    const orderId = order._id;
-    const userEmail = user.email;
-    functionHelper.sendOrderConfirmationEmail(userEmail, userName, orderId, orderedProducts);
-    res.redirect('/orderPlaced')
-    } else if (payment === 'Online Payment') {
-      res.render('./user/login')
-    }
-    await session.commitTransaction();
-    session.endSession();
-    res.status(200).json({ message: 'Order placed successfully.', order: order });
-  } catch (error) {
-    console.error('Error placing the order:', error);
-
-    if (session) {
-      await session.abortTransaction();
-      session.endSession();
-    }
-
-    if (user && order) {
-      order.status = 'Failed';
-      await order.save();
-
-      for (const cartItem of cartItems) {
-        const product = await Product.findById(cartItem.product);
-        if (product) {
-          product.quantity += cartItem.quantity;
-          await product.save();
-        }
+      if (!user || !cart) {
+          throw new Error('User or cart not found.');
       }
-    }
 
-    res.status(500).json({ error: 'An error occurred while placing the order.' });
+      const cartItems = cart.items || [];
+      let totalAmount = 0;
+
+      // Iterate through cart items to calculate subtotal and update product quantities
+      for (const cartItem of cartItems) {
+          const product = cartItem.product;
+
+          if (!product) {
+              throw new Error('Product not found.');
+          }
+
+          if (product.quantity < cartItem.quantity) {
+              throw new Error('Not enough quantity in stock.');
+          }
+
+          product.quantity -= cartItem.quantity;
+
+          const shippingCost = 100;
+          const itemTotal = product.price * cartItem.quantity + shippingCost;
+          totalAmount += itemTotal;
+
+          await product.save();
+      }
+
+      // Create a new order
+      const order = new Order({
+          user: userId,
+          address: address, // Assuming address is passed in the request body
+          orderDate: new Date(),
+          status: 'Pending', // You can change this status as needed
+          paymentMethod: payment, // Set the payment method
+          totalAmount: totalAmount, // Use the calculated totalAmount
+          items: cartItems.map(cartItem => ({
+              product: cartItem.product._id,
+              quantity: cartItem.quantity,
+              price: cartItem.product.price, // Use the product price
+          })),
+      });
+
+      await order.save();
+
+      // Clear the user's cart
+      user.cart = [];
+      await user.save();
+
+      // Commit the transaction
+      await session.commitTransaction();
+      session.endSession();
+
+      // Send order confirmation email and handle any other post-checkout tasks
+      res.redirect('/orderPlaced')
+  } catch (error) {
+      console.error('Error placing the order:', error);
+
+      // Handle any errors here, such as rolling back the transaction
+      if (session) {
+          await session.abortTransaction();
+          session.endSession();
+      }
+
+      res.status(500).json({ error: 'An error occurred while placing the order.' });
   }
 };
+
+
+async function applyCoup(couponCode,discountedTotal, userId){
+  const coupon = await Coupon.findOne({code : couponCode})
+      if (!coupon) {
+        return res.status(404).json({ error: 'Coupon not found.' });
+      }
+      const currentDate = new Date();
+      if (coupon.expiryDate && currentDate > coupon.expiryDate) {
+        return res.status(400).json({ error: 'Coupon has expired.' });
+      }
+      if (coupon.usersUsed.length >= coupon.limit) {
+        return res.status(400).json({ error: 'Coupon limit reached.' });
+      }
+
+      if (coupon.usersUsed.includes(userId)) {
+        return res.status(400).json({ error: 'You have already used this coupon.' });
+      }
+      if (coupon.type === 'percentage') {
+        discountedTotal = calculateDiscountedTotal(subtotal, coupon.discount);
+      } else if (coupon.type === 'fixed') {
+        discountedTotal = subtotal - coupon.discount;
+      }
+      coupon.limit--
+      coupon.usersUsed.push(userId);
+      await coupon.save();
+      return discountedTotal;
+}
 
 
   

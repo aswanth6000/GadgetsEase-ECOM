@@ -21,13 +21,13 @@ const calculateSubtotal = (cart) => {
 
 exports.getcart = async (req, res) => {
     const userId = req.session.user._id;
+   
 
     try {
         const userCart = await Cart.findOne({ user: userId }).populate('items.product');
+    
 
-        if (!userCart) {
-            return res.status(404).json({ error: 'User cart not found.' });
-        }
+
 
         const cart = userCart.items;
         const subtotal = calculateSubtotal(cart);
@@ -129,7 +129,7 @@ exports.addtocart = async (req, res) => {
 
         // Check if the user has an existing cart
         const existingCart = await Cart.findOne({ user: userId });
-        const newCart = {}
+        let newCart = {}
 
         if (existingCart) {
             // Check if the product already exists in the cart
