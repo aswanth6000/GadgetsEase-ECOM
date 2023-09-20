@@ -18,21 +18,23 @@ const calculateSubtotal = (cart) => {
     }
     return subtotal;
   };
-
-exports.getcart = async (req, res) => {
+  exports.getcart = async (req, res) => {
     const userId = req.session.user._id;
-   
 
     try {
         const userCart = await Cart.findOne({ user: userId }).populate('items.product');
-    
 
-
-
-        const cart = userCart.items;
+        const cart = userCart ? userCart.items : []; // Use an empty array if userCart is null
         const subtotal = calculateSubtotal(cart);
         const subtotalWithShipping = subtotal + 100;
-        const outOfStockError = cart.some(item => cart.quantity < item.quantity); 
+        
+        // Define outOfStockError and set it to false by default
+        let outOfStockError = false;
+
+        // Check if the cart is not empty and any item is out of stock
+        if (cart.length > 0) {
+            outOfStockError = cart.some(item => item.product.quantity < item.quantity);
+        }
 
         res.render('./user/cart', { user: req.session.user, cart, subtotal, subtotalWithShipping, outOfStockError });
     } catch (err) {
@@ -40,6 +42,7 @@ exports.getcart = async (req, res) => {
         res.status(500).json({ error: 'An error occurred while fetching user cart.' });
     }
 };
+
 exports.updateQuantity = async (req, res) => {
   const userId = req.session.user._id;
   const productId = req.params.productId;

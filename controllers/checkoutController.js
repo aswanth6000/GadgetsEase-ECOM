@@ -65,10 +65,9 @@ exports.postCheckout = async (req, res) => {
   session.startTransaction();
 
   const userId = req.session.user._id;
-  const {address, payment} = req.body
+  const {address, payment, couponCode} = req.body
 
   try {
-      // Find the user, cart, and other required data
       const user = await User.findById(userId);
       const cart = await Cart.findOne({ user: userId }).populate({
           path: 'items.product',
@@ -82,7 +81,6 @@ exports.postCheckout = async (req, res) => {
       const cartItems = cart.items || [];
       let totalAmount = 0;
 
-      // Iterate through cart items to calculate subtotal and update product quantities
       for (const cartItem of cartItems) {
           const product = cartItem.product;
 
@@ -97,38 +95,37 @@ exports.postCheckout = async (req, res) => {
           product.quantity -= cartItem.quantity;
 
           const shippingCost = 100;
-          const itemTotal = product.price * cartItem.quantity + shippingCost;
+          const itemTotal = product.discountPrice * cartItem.quantity + shippingCost;
           totalAmount += itemTotal;
 
           await product.save();
       }
+      if(couponCode){
+        totalAmount = applyCoup(couponCode,totalAmount, userId)
+        console.log('coupon code : ', totalAmount);
+      }
 
-      // Create a new order
       const order = new Order({
           user: userId,
-          address: address, // Assuming address is passed in the request body
+          address: address,
           orderDate: new Date(),
-          status: 'Pending', // You can change this status as needed
-          paymentMethod: payment, // Set the payment method
-          totalAmount: totalAmount, // Use the calculated totalAmount
+          status: 'Pending',
+          paymentMethod: payment,
+          totalAmount: totalAmount,
           items: cartItems.map(cartItem => ({
               product: cartItem.product._id,
               quantity: cartItem.quantity,
-              price: cartItem.product.price, // Use the product price
+              price: cartItem.product.discountPrice, 
           })),
       });
 
       await order.save();
 
-      // Clear the user's cart
-      user.cart = [];
-      await user.save();
+      await Cart.deleteOne({ user: userId })
 
-      // Commit the transaction
       await session.commitTransaction();
       session.endSession();
 
-      // Send order confirmation email and handle any other post-checkout tasks
       res.redirect('/orderPlaced')
   } catch (error) {
       console.error('Error placing the order:', error);
