@@ -60,11 +60,15 @@
               <i class="bx bx-grid-alt nav_icon"></i>
               <span class="nav_name">Dashboard</span>
             </a>
+            <a href="/viewBanner" class="nav_link active">
+              <i class='bx bx-border-all'></i>
+              <span class="nav_name">Banner</span>
+          </a>
             <a href="/admin/viewuser" class="nav_link">
               <i class="bx bx-user nav_icon"></i>
               <span class="nav_name">Users</span>
             </a>
-            <a href="/admin/viewproducts" class="nav_link active">
+            <a href="/admin/viewproducts" class="nav_link">
                 <i class='bx bx-package nav_icon' ></i>
               <span class="nav_name">Products</span>
             </a>
@@ -121,61 +125,50 @@
           </select>
       </div>
         <div class="addproduct">
-          <a href="/admin/addproduct"><button type="button" class="btn btn-primary">
-            <i class="fa-solid fa-plus"></i> Add Product
+          <a href="/bannerForm"><button type="button" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i> Add Banner
           </button></a>
         </div>
       </div>
       <thead class="bg-light">
         <tr>
           <th>Name</th>
-          <th>Price</th>
-          <th>Status</th>
-          <th>Color</th>
+          <th>Title</th>
+          <th>Link URL</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        <% products.forEach(product => { %>
-        <tr>
-            <td>
-                <div class="d-flex align-items-center">
-                    <img
-                        src="/uploads/images/<%= product.productImages[3] %>"
-                        alt="product image"
-                        style="width: 45px; height: 45px"
-                        class="rounded-circle"
-                    />
-                    <div class="ms-3">
-                        <p class="fw-bold mb-1"><%= product.name %></p>
-                        <p class="text-muted mb-0"><%= product.category %></p>
-                    </div>
-                </div>
-            </td>
-            <td>
-                <p class="fw-normal mb-1"><%= product.price %></p>
-                <p class="text-muted mb-0"><%= product.discountPrice %></p>
-            </td>
-            <td>
-                <% if (product.quantity !== null && product.quantity > 0) { %>
-                    <span class="badge badge-success rounded-pill d-inline">In Stock <%=product.quantity%> left</span>
-                <% } else { %>
-                    <span class="badge badge-danger rounded-pill d-inline">Out of Stock 0 left</span>
-                <% } %>
-            </td>
-            <td><%= product.productColor %></td> 
-            <td>
-                <a href="/admin/editproduct/<%=product._id%>"><button type="button" class="btn btn-link btn-sm btn-rounded">
-                  Edit
-              </button></a>
-              <form action="/admin/deleteproduct/<%=product._id%>" method="POST">
-                <button type="submit" class="btn btn-link btn-sm btn-rounded" onclick="return confirm('Are you sure you want to delete this address?');">Delete</button>
-            </form>
-            </td>
-        </tr>
-        <% }); %>
     </tbody>
     
+    <% banner.forEach(banners => { %>
+      <tr>
+          <td>
+              <div class="d-flex align-items-center">
+                  <img
+                      src="/uploads/images/<%= banners.image_url %>"
+                      alt="product image"
+                      style="width: 45px; height: 45px"
+                      class="rounded-circle"
+                  />
+              </div>
+          </td>
+          <td>
+              <p class="fw-normal mb-1"><%= banners.title %></p>
+          </td>
+          <td>
+              <p class="fw-normal mb-1"><%= banners.link_url %></p>
+          </td>
+          <td>
+              <a href="/admin/editproduct/<%=banners._id%>"><button type="button" class="btn btn-link btn-sm btn-rounded">
+                Edit
+            </button></a>
+            <form action="/deletebanner/<%=banners._id%>" method="POST">
+              <button type="submit" class="btn btn-link btn-sm btn-rounded" onclick="return confirm('Are you sure you want to delete this banner?');">Delete</button>
+          </form>
+          </td>
+      </tr>
+      <% }); %>
       </tbody>
     </table>
     <!--Container Main end-->

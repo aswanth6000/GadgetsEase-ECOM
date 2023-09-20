@@ -10,19 +10,35 @@ const Cart = require('../model/cart');
 const Banner = require('../model/banner')
 
 // GET ROUTES
-exports.getbanner = (req, res)=>{
-    res.render('./admin/bannerManagement')
+exports.getbanner = async (req, res)=>{
+    const banner = await Banner.find()
+    res.render('./admin/bannerManagement', {banner})
+}
+
+exports.deletebanner = async (req, res) =>{
+    const bannerId = req.params.bannerId;
+    const banner = await Banner.findByIdAndRemove(bannerId);
+    await banner.save()
+    res.redirect('/viewBanner')
+
 }
 
 exports.getbannerForm = (req, res)=>{
-    res.render('./admin.bannerForm')
+    res.render('./admin/bannerForm')
 }
 
 exports.postBanner = async (req, res)=>{
     try{
-        const {title, image_url, link_url, is_active} = req.body;
+        const {title, link_url } = req.body;
+        const image_url = req.file.filename
+        const banner = new Banner({
+            title : title,
+            image_url : image_url,
+            link_url : link_url,
+        })
+        await banner.save()
     }catch(err){
         console.log("Error while updating the banner",err);
     }
-    res.redirect('/bannerForm')
+    res.redirect('/viewBanner')
 }

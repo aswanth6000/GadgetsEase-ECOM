@@ -45,4 +45,7 @@ router.post('/admin/editproduct/:productId', multerHelper.upload.fields([{ name:
 router.post('/addCoupon',adminController.postAddCoupon)
 router.post('/admin/deleteproduct/:productId',adminController.deleteProduct)
 
+// BANNER ROUTES
+router.post('/postBanner',isAdminLoggedIn,multerHelper.upload.single('image_url'),bannerController.postBanner);
+router.post('/deletebanner/:bannerId',isAdminLoggedIn,bannerController.deletebanner)
 module.exports = router
