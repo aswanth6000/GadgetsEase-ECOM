@@ -8,6 +8,7 @@ const nocache = require('nocache');
 const {isAdminLoggedIn} = require('../../middleware/loginAuth')
 app.use(nocache())
 const userController = require('../../controllers/userControllers')
+const bannerController = require('../../controllers/bannercontroller')
 
 router.get('/adminhome',isAdminLoggedIn,adminController.adminhome)
 router.get('/admin/viewuser',isAdminLoggedIn,adminController.viewUser)
@@ -28,6 +29,9 @@ router.get('/getAddCoupon',isAdminLoggedIn,adminController.getCoupon)
 router.get('/viewCoupon',isAdminLoggedIn,adminController.viewCoupon)
 router.get('/viewCouponUsers/:couponId', isAdminLoggedIn,adminController.viewCouponUsedUsers)
 
+// BANNER ROUTES
+router.get('/viewBanner',isAdminLoggedIn,bannerController.getbanner);
+router.get('/bannerForm',isAdminLoggedIn, bannerController.getbannerForm)
 
 // POST Routes
 router.post('/upload-category',isAdminLoggedIn,adminController.postaddCategory)

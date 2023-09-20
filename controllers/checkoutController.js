@@ -400,7 +400,12 @@ async function applyCoup(couponCode,discountedTotal, userId){
   exports.cancelOrder = async (req, res) => {
     try{
       const orderId = req.params.orderId;
-      const canclledOrder = await Order.findByIdAndUpdate(orderId, { status: 'cancelled' }, { new: true });
+      const canclledOrder = await Order.findById(orderId);
+      if(canclledOrder.paymentMethod === 'Online Payment'){
+        const canclledOrder = await Order.findByIdAndUpdate(orderId, { status: 'cancel requested' }, { new: true });
+      }else if(canclledOrder.paymentMethod === 'Cash on delivery'){
+        const canclledOrder = await Order.findByIdAndUpdate(orderId, { status: 'cancelled' }, { new: true });
+      }
       if (!canclledOrder) {
         return res.status(404).json({ error: 'Order not found.' });
     }

@@ -214,14 +214,6 @@
 										<option value="1">Position</option>
 									</select>
 								</label>
-
-								<label>
-									Show:
-									<select class="input-select">
-										<option value="0">20</option>
-										<option value="1">50</option>
-									</select>
-								</label>
 							</div>
 							<ul class="store-grid">
 								<li class="active"><i class="fa fa-th"></i></li>
@@ -236,8 +228,11 @@
 							<% store.forEach(product => { %>
 							<div class="col-md-4 col-xs-6">
 								<div class="product">
-									<div class="product-img">
-										<img src="/uploads/images/<%= product.productImages[0] %>" alt="">
+									<div class="product-img" style="width: 100%;
+									height: 49%;">
+										<img src="/uploads/images/<%= product.productImages[0] %>" alt="" style="width: 218px;
+										height: 203px;
+										object-fit: cover;">
 										<div class="product-label">
 											<% const discountPercentage = ((product.price - product.discountPrice) / product.price) * 100; %>
 											<span class="sale">-<%= discountPercentage.toFixed(0) %>%</span>

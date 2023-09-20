@@ -171,7 +171,7 @@ z-index: 0
                       </div>
                       <div class="card-footer p-4">
                           <div class="d-flex justify-content-between">
-                            <% if (order.status !== 'cancelled' && order.status !== 'refund-initiated'&& order.status !== 'return requested'  ) { %>
+                            <% if (order.status !== 'cancelled' && order.status !== 'refund-initiated'&& order.status !== 'return requested' && order.status !== 'cancel requested'  ) { %>
                                 <% if (order.status === 'delivered') {%>
                                     <h5 class="fw-normal mb-0">
                                         <a href="/returnOrder/<%= order._id %>" onclick="return confirm('Are you sure you want to Return <%= order.items[0].product.name  %>');">Return</a>
