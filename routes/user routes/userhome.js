@@ -29,8 +29,8 @@ router.get('/viewOrders/:userId',isAuthenticated, checkoutController.getOrderDet
 router.get('/cart',isAuthenticated,cartController.getcart)
 router.get('/cartLength',isAuthenticated,cartController.getCartLength)
 
-// CATEGORY
-router.get('/category',isAuthenticated,userOp.getCategory)
+// STORE
+router.get('/store/:category', isAuthenticated, userOp.getStore)
 
 
 
@@ -53,7 +53,7 @@ router.put('/updateQuantity/:productId',cartController.updateQuantity)
 
 // CHECKOUT
 router.post('/postCheckout/:userId',checkoutController.postCheckout)
-
+router.post('/createPayment',isAuthenticated,checkoutController.createPayment)
 
 // COUPON
 router.post('/applyCoupon', checkoutController.applyCoupon)

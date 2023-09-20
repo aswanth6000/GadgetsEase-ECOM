@@ -7,11 +7,16 @@ const Order = require('../model/order')
 const Address = require('../model/addresses')
 const Transaction = require('../model/transaction')
 const paypal = require('paypal-rest-sdk')
-const {PAYPAL_MODE, PAYPAL_CLIENT_KEY, PAYPAL_SECRET_KEY} = process.env;
+const {PAYPAL_CLIENT_KEY, PAYPAL_SECRET_KEY, PAYPAL_MODE} = process.env;
 const session = require('express-session')
 const Coupon = require('../model/coupon')
 const Cart = require('../model/cart')
 
+paypal.configure({
+  'mode':  PAYPAL_MODE, //sandbox or live
+  'client_id':PAYPAL_CLIENT_KEY ,
+  'client_secret': PAYPAL_SECRET_KEY
+});
 
 const calculateSubtotal = (cart) => {
     let subtotal = 0;
@@ -149,11 +154,136 @@ exports.postCheckout = async (req, res) => {
       res.status(500).json({ error: 'An error occurred while placing the order.' });
   }
   }else if (payment === "Online Payment"){
+    try {
+      const user = await User.findById(userId);
+      const cart = await Cart.findOne({ user: userId }).populate({
+          path: 'items.product',
+          model: 'Product',
+      });
 
+      if (!user || !cart) {
+          throw new Error('User or cart not found.');
+      }
+
+      const cartItems = cart.items || [];
+      let totalAmount = 0;
+
+      for (const cartItem of cartItems) {
+          const product = cartItem.product;
+
+          if (!product) {
+              throw new Error('Product not found.');
+          }
+
+          if (product.quantity < cartItem.quantity) {
+              throw new Error('Not enough quantity in stock.');
+          }
+
+          product.quantity -= cartItem.quantity;
+
+          const shippingCost = 100;
+          const itemTotal = product.discountPrice * cartItem.quantity + shippingCost;
+          totalAmount += itemTotal;
+
+          await product.save();
+      }
+      if(couponCode){
+        totalAmount = await applyCoup(couponCode,totalAmount, userId)
+      }
+
+      const order = new Order({
+          user: userId,
+          address: address,
+          orderDate: new Date(),
+          status: 'Pending',
+          paymentMethod: payment,
+          totalAmount: totalAmount,
+          items: cartItems.map(cartItem => ({
+              product: cartItem.product._id,
+              quantity: cartItem.quantity,
+              price: cartItem.product.discountPrice, 
+          })),
+      });
+     
+      await order.save();
+
+      await Cart.deleteOne({ user: userId })
+      const orderItems = cartItems.map((cartItem) => ({
+        name: cartItem.product.name, 
+        quantity: cartItem.quantity,
+        price: cartItem.product.discountPrice,
+      }));
+
+      const userEmail = user.email;
+      const userName = user.username;
+      const orderId = order._id;
+      functionHelper.sendOrderConfirmationEmail(userEmail, userName, orderId, orderItems);
+      res.render('./user/paymentPage',{order,user})
+      await session.commitTransaction();
+      session.endSession();
+
+      // res.redirect('/orderPlaced')
+  } catch (error) {
+      console.error('Error placing the order:', error);
+
+      // Handle any errors here, such as rolling back the transaction
+      if (session) {
+          await session.abortTransaction();
+          session.endSession();
+      }
+
+      res.status(500).json({ error: 'An error occurred while placing the order.' });
+  }
+    
   }
 
 };
 
+exports.createPayment = async (req, res) => {
+  try {
+    // Get the customer's payment information.
+    const { amount, currency, name, email, phone } = req.body;
+
+    // Create a PayPal payment object.
+    const createPaymentJson = {
+      intent: 'sale',
+      payer: {
+        payment_method: 'paypal',
+      },
+      redirect_urls: {
+        return_url: 'http://localhost:8000/orderPlaced', // Replace with your success URL
+        cancel_url: 'http://localhost:8000/cart', // Replace with your cancel URL
+      },
+      transactions: [
+        {
+          amount: {
+            total: amount,
+            currency: 'USD',
+          },
+          description: 'Payment for a product or service.',
+        },
+      ],
+    };
+    paypal.payment.create(createPaymentJson, function (error, payment) {
+      if (error) {
+        console.error('Error creating PayPal payment:', error);
+        throw new Error('Error creating PayPal payment.');
+      } else {
+        for (let i = 0; i < payment.links.length; i++) {
+          if (payment.links[i].rel === 'approval_url') {
+            // Redirect the customer to the PayPal checkout page.
+            res.redirect(payment.links[i].href);
+            return;
+          }
+        }
+        throw new Error('No PayPal approval URL found.');
+      }
+    });
+  } catch (error) {
+    console.error('Error creating PayPal payment:', error);
+    res.status(500).json({ error: 'An error occurred while creating the PayPal payment.' });
+  }
+};
 
 async function applyCoup(couponCode,discountedTotal, userId){
   const coupon = await Coupon.findOne({code : couponCode})

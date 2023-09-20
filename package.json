@@ -23,7 +23,9 @@
     "nodemailer": "^6.9.5",
     "paypal-rest-sdk": "^1.8.1",
     "socket.io": "^4.7.2",
-    "twilio": "^4.16.0"
+    "stripe": "^13.6.0",
+    "twilio": "^4.16.0",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

@@ -5,15 +5,7 @@ const functionHelper = require('../helpers/functionHelper')
 const Order = require('../model/order')
 const Address = require('../model/addresses')
 const Transaction = require('../model/transaction')
-const paypal = require('paypal-rest-sdk')
-const {PAYPAL_MODE, PAYPAL_CLIENT_KEY, PAYPAL_SECRET_KEY} = process.env;
 
-
-paypal.configure({
-    'mode': PAYPAL_MODE, //sandbox or live
-    'client_id': PAYPAL_CLIENT_KEY,
-    'client_secret': PAYPAL_SECRET_KEY
-  });
 
 exports.getIndex = async(req, res)=>{
     try{
@@ -152,9 +144,6 @@ exports.postEditAddress = async (req, res) => {
 }
 
 
-exports.getCategory = async (req, res)=>{
-    res.render('./user/store')
-}
 
 exports.getWithdraw = async (req,res)=>{
   const userp = req.session.user;
@@ -236,4 +225,11 @@ exports.updateProfile = async (req, res)=>{
   }
 
   res.redirect(`/profile/${userId}`);
+}
+
+exports.getStore = async (req, res)=>{
+  const user = await User.findById(req.session.user._id);
+  const category = req.params.category;
+  const store = await Product.find({category : category})
+  res.render('./user/store', {store, user});
 }
