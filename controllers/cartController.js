@@ -33,8 +33,17 @@ const calculateSubtotal = (cart) => {
 
         // Check if the cart is not empty and any item is out of stock
         if (cart.length > 0) {
-            outOfStockError = cart.some(item => item.product.quantity < item.quantity);
+            for (const cartItem of cart) {
+                const product = cartItem.product;
+                console.log(product);
+        
+                if (product.quantity < cartItem.quantity) {
+                    outOfStockError = true;
+                    break; // Exit the loop as soon as an out-of-stock item is found
+                }
+            }
         }
+        console.log(outOfStockError);
 
         res.render('./user/cart', { user: req.session.user, cart, subtotal, subtotalWithShipping, outOfStockError });
     } catch (err) {
@@ -130,26 +139,20 @@ exports.addtocart = async (req, res) => {
         const productId = req.params.productId;
         const { qty } = req.body;
 
-        // Check if the user has an existing cart
         const existingCart = await Cart.findOne({ user: userId });
         let newCart = {}
 
         if (existingCart) {
-            // Check if the product already exists in the cart
             const existingCartItem = existingCart.items.find(item => item.product.toString() === productId);
 
             if (existingCartItem) {
-                // If the product exists in the cart, update the quantity
                 existingCartItem.quantity += qty;
             } else {
-                // If the product is not in the cart, add it
                 existingCart.items.push({ product: productId, quantity: qty });
             }
 
-            // Calculate the total based on the cart items
             existingCart.total = existingCart.items.reduce((total, item) => total + (item.quantity || 0), 0);
 
-            // Save the updated cart
             await existingCart.save();
         } else {
             // If the user doesn't have an existing cart, create a new one

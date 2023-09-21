@@ -121,9 +121,6 @@
                   </div>
                   <% } %>
                 </div>
-                <div id="outOfStockAlert" class="alert alert-danger" style="display: none;">
-                  Some items in your cart are out of stock.
-                </div>
                 <% if (cart.length === 0) { %>
                 <div class="col-lg-5" id="cartDetails">
 
@@ -195,7 +192,10 @@
                         <p class="mb-2">Total(Incl. taxes)</p>
                         <p class="mb-2">₹<%= subtotalWithShipping %></p>
                       </div>
+                      <% if(outOfStockError) {%>
 
+                        <p style="color: red;">Some items in your cart is Out of stock</p>
+                      <% }else{ %>                   
                       <a href="/checkout">
                         <button type="button" class="btn btn-info btn-block btn-lg">
                           <div class="d-flex justify-content-between">
@@ -204,7 +204,7 @@
                           </div>
                         </button>
                       </a>
-
+                      <% } %>
                     </div>
                   </div>
 
@@ -292,7 +292,7 @@
 
   document.addEventListener('DOMContentLoaded', function () {
   // Retrieve the outOfStockError flag from the template
-  const outOfStockError = '<%= outOfStockError %>' === true;
+  const outOfStockError = '<%= outOfStockError %>' === false;
 
   // Select the alert box element
   const outOfStockAlert = document.getElementById('outOfStockAlert');

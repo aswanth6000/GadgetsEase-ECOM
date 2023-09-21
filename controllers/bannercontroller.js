@@ -47,7 +47,6 @@ exports.postBanner = async (req, res)=>{
 exports.getEditBanner = async (req, res) =>{
     const bannerId = req.params.bannerId;
     const banner = await Banner.findById(bannerId);
-    console.log(banner);
     res.render('./admin/editBanner',{banner})
 }
 
