@@ -5,13 +5,15 @@ const functionHelper = require('../helpers/functionHelper')
 const Order = require('../model/order')
 const Address = require('../model/addresses')
 const Transaction = require('../model/transaction')
+const Banner = require('../model/banner')
 
 
 exports.getIndex = async(req, res)=>{
     try{
         const user = req.session.user;
         const products = await Product.find()
-        res.render('./user/index',{user,products})
+        const banner = Banner.find()
+        res.render('./user/index',{user,products, banner})
     }catch(error){
         console.log("Error",error);
     }
@@ -40,8 +42,10 @@ exports.viewproduct = async (req,res)=>{
 exports.getUserHome = async(req, res)=>{
     try{
         const user = req.session.user;
-        const products = await Product.find()
-        res.render('./user/index',{user,products})
+        const products = await Product.find();
+        const banner = await Banner.find()
+        console.log(banner);
+        res.render('./user/index',{user,products,banner})
     }catch(error){
         console.log("Error while fetching products",error);
     }

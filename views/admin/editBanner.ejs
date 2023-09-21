@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banner Management</title>
+    <!-- Add Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Banner Management</h2>
+        <form enctype="multipart/form-data" action="/postEditBanner" method="post">
+            <div class="form-group">
+                <label for="title">Banner Title</label>
+                <input type="text" class="form-control" id="title" name="title" placeholder="Banner Title" value="<%= banner.title %>">
+            </div>
+            <div class="form-group">
+                <label for="image_url">Image Upload</label>
+                <input type="file" class="form-control-file" id="image_url" name="image_url" value="<%= banner.image_url %>">
+            </div>
+            <div class="form-group">
+                <label for="link_url">Link URL</label>
+                <input type="text" class="form-control" id="link_url" name="link_url" value=" <%= banner.link_url %>" placeholder="Link URL">
+            </div>
+            <div class="form-group">
+                <label for="position">Position</label>
+                <input type="text" class="form-control" id="position" name="position" value=" <%= banner.position %>" placeholder="Link URL">
+            </div>
+            <button type="submit" class="btn btn-primary">Edit Banner</button>
+        </form>
+    </div>
+
+    <!-- Add Bootstrap JS and jQuery (for Bootstrap features) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

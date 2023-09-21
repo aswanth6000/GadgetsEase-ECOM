@@ -29,16 +29,46 @@ exports.getbannerForm = (req, res)=>{
 
 exports.postBanner = async (req, res)=>{
     try{
-        const {title, link_url } = req.body;
+        const {title, link_url, position } = req.body;
         const image_url = req.file.filename
         const banner = new Banner({
             title : title,
             image_url : image_url,
             link_url : link_url,
+            position : position
         })
         await banner.save()
     }catch(err){
         console.log("Error while updating the banner",err);
     }
     res.redirect('/viewBanner')
+}
+
+exports.getEditBanner = async (req, res) =>{
+    const bannerId = req.params.bannerId;
+    const banner = await Banner.findById(bannerId);
+    console.log(banner);
+    res.render('./admin/editBanner',{banner})
+}
+
+exports.postEditBanner = async (req, res) => {
+    const bannerId = req.params.bannerId;
+    const {title, link_url, position} = req.body;
+    try{
+        const banner = Product.findById(bannerId);
+        banner.title = title,
+        banner.link_url = link_url,
+        banner.position = position
+
+        if (req.file.filename) {
+            const newImages = req.file.filename
+            banner.image_url = banner.image_url.concat(newImages);
+        }
+
+        await banner.save()
+        res.redirect('/viewBanner')
+    }catch(err){
+        console.log("Error while editing banner", err);
+    }
+
 }

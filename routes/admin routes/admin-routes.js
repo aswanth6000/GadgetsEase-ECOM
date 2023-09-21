@@ -32,6 +32,7 @@ router.get('/viewCouponUsers/:couponId', isAdminLoggedIn,adminController.viewCou
 // BANNER ROUTES
 router.get('/viewBanner',isAdminLoggedIn,bannerController.getbanner);
 router.get('/bannerForm',isAdminLoggedIn, bannerController.getbannerForm)
+router.get('/editBanner/:bannerId',isAdminLoggedIn, bannerController.getEditBanner)
 
 // POST Routes
 router.post('/upload-category',isAdminLoggedIn,adminController.postaddCategory)
@@ -47,5 +48,7 @@ router.post('/admin/deleteproduct/:productId',adminController.deleteProduct)
 
 // BANNER ROUTES
 router.post('/postBanner',isAdminLoggedIn,multerHelper.upload.single('image_url'),bannerController.postBanner);
+router.post('/postEditBanner',isAdminLoggedIn,multerHelper.upload.single('image_url'),bannerController.postEditBanner);
 router.post('/deletebanner/:bannerId',isAdminLoggedIn,bannerController.deletebanner)
+
 module.exports = router
