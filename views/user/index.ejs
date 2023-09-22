@@ -171,11 +171,13 @@
 			<!-- /container -->
 		</div>
 		<!-- /SECTION -->
-
-		<!-- HOT DEAL SECTION -->
-		<div class="banner" style="height: 20%;width: 100%;">
-			<a href="<%= banner.link_url %>"><img src="/uploads/images/<%= banner.image_url %>" style="height: 20%;width: 100%;" alt=""></a>
-		</div>
+		<% banner.forEach(bannerItem => { %>
+			<% if (bannerItem.position === 'first') { %>
+			  <div class="banner" style="height: 20%; width: 100%;">
+				<a href="<%= bannerItem.link_url %>"><img src="/uploads/images/<%= bannerItem.image_url %>" style="height: 20%; width: 100%;" alt=""></a>
+			  </div>
+			<% } %>
+		  <% }); %>
 		<!-- /HOT DEAL SECTION -->
 
 		<!-- SECTION -->

@@ -1,7 +1,5 @@
 const isAuthenticated = (req, res, next) => {
-  const user = req.session.user;
   if (req.session.user && req.session.user.status === 'blocked') {
-    // User is blocked, log them out and redirect to login page
     req.session.destroy((err) => {
         if (err) {
             console.error('Error destroying session:', err);

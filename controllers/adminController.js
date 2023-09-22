@@ -67,6 +67,7 @@ exports.blockuser = async (req, res) => {
         res.status(500).send('Internal Server Error');
       });
   };
+
 exports.unblockuser = async (req, res) => {
     const userId = req.params.userId;
     if(req.session.user){

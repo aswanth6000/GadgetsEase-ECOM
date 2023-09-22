@@ -12,7 +12,7 @@ exports.getIndex = async(req, res)=>{
     try{
         const user = req.session.user;
         const products = await Product.find()
-        const banner = Banner.find()
+        const banner = await Banner.find()
         res.render('./user/index',{user,products, banner})
     }catch(error){
         console.log("Error",error);
@@ -44,7 +44,6 @@ exports.getUserHome = async(req, res)=>{
         const user = req.session.user;
         const products = await Product.find();
         const banner = await Banner.find()
-        console.log(banner);
         res.render('./user/index',{user,products,banner})
     }catch(error){
         console.log("Error while fetching products",error);

@@ -24,14 +24,12 @@ const calculateSubtotal = (cart) => {
     try {
         const userCart = await Cart.findOne({ user: userId }).populate('items.product');
 
-        const cart = userCart ? userCart.items : []; // Use an empty array if userCart is null
+        const cart = userCart ? userCart.items : []; 
         const subtotal = calculateSubtotal(cart);
         const subtotalWithShipping = subtotal + 100;
         
-        // Define outOfStockError and set it to false by default
         let outOfStockError = false;
 
-        // Check if the cart is not empty and any item is out of stock
         if (cart.length > 0) {
             for (const cartItem of cart) {
                 const product = cartItem.product;
@@ -39,7 +37,7 @@ const calculateSubtotal = (cart) => {
         
                 if (product.quantity < cartItem.quantity) {
                     outOfStockError = true;
-                    break; // Exit the loop as soon as an out-of-stock item is found
+                    break;
                 }
             }
         }
