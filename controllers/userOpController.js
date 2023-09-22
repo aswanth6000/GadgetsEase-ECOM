@@ -13,7 +13,8 @@ exports.getIndex = async(req, res)=>{
         const user = req.session.user;
         const products = await Product.find()
         const banner = await Banner.find()
-        res.render('./user/index',{user,products, banner})
+        const topSelling = await Product.find().sort({ quantity : -1 }).limit(10)
+        res.render('./user/index',{user,products, banner, topSelling})
     }catch(error){
         console.log("Error",error);
     }
@@ -44,7 +45,8 @@ exports.getUserHome = async(req, res)=>{
         const user = req.session.user;
         const products = await Product.find();
         const banner = await Banner.find()
-        res.render('./user/index',{user,products,banner})
+        const topSelling = await Product.find().sort({ quantity : -1 }).limit(10)
+        res.render('./user/index',{user,products,banner, topSelling})
     }catch(error){
         console.log("Error while fetching products",error);
     }
@@ -235,4 +237,8 @@ exports.getStore = async (req, res)=>{
   const category = req.params.category;
   const store = await Product.find({category : category})
   res.render('./user/store', {store, user});
+}
+
+exports.orderDetails = async (req, res) =>{
+  res.render('./user/orderDetails')
 }

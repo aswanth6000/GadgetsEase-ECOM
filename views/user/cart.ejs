@@ -192,9 +192,12 @@
                         <p class="mb-2">Total(Incl. taxes)</p>
                         <p class="mb-2">₹<%= subtotalWithShipping %></p>
                       </div>
+                      <% if(outOfStockError || maxQuantityErr) {%>
                       <% if(outOfStockError) {%>
-
                         <p style="color: red;">Some items in your cart is Out of stock</p>
+                        <% }else if(maxQuantityErr){ %>
+                          <p style="color: red;">Max quantity is limited to two </p>
+                        <% } %>
                       <% }else{ %>                   
                       <a href="/checkout">
                         <button type="button" class="btn btn-info btn-block btn-lg">

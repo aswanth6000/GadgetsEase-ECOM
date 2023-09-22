@@ -173,7 +173,7 @@
 		<!-- /SECTION -->
 		<% banner.forEach(bannerItem => { %>
 			<% if (bannerItem.position === 'first') { %>
-			  <div class="banner" style="height: 20%; width: 100%;">
+			  <div class="banner" style="height: 20%; width: 100%;margin-top: 5%;">
 				<a href="<%= bannerItem.link_url %>"><img src="/uploads/images/<%= bannerItem.image_url %>" style="height: 20%; width: 100%;" alt=""></a>
 			  </div>
 			<% } %>
@@ -385,84 +385,19 @@
 
 						<div class="products-widget-slick" data-nav="#slick-nav-3">
 							<div>
+								<% topSelling.forEach(product =>{ %>
 								<!-- product widget -->
-								<div class="product-widget">
-									<div class="product-img">
-										<img src="./img/product07.png" alt="">
+									<div class="product-widget">
+										<div class="product-img">
+											<img style="height: 70px;width: 53px;object-fit: cover;" src="/uploads/images/<%= product.productImages[3] %>" alt="">
+										</div>
+										<div class="product-body">
+											<p class="product-category"><%= product.category %></p>
+											<h3 class="product-name"><a href="#"><%= product.name %></a></h3>
+											<h4 class="product-price">₹<%=product.discountPrice %><del class="product-old-price">₹<%=product.price %></del></h4>
+										</div>
 									</div>
-									<div class="product-body">
-										<p class="product-category">Category</p>
-										<h3 class="product-name"><a href="#">product name goes here</a></h3>
-										<h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-									</div>
-								</div>
-								<!-- /product widget -->
-
-								<!-- product widget -->
-								<div class="product-widget">
-									<div class="product-img">
-										<img src="./img/product08.png" alt="">
-									</div>
-									<div class="product-body">
-										<p class="product-category">Category</p>
-										<h3 class="product-name"><a href="#">product name goes here</a></h3>
-										<h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-									</div>
-								</div>
-								<!-- /product widget -->
-
-								<!-- product widget -->
-								<div class="product-widget">
-									<div class="product-img">
-										<img src="./img/product09.png" alt="">
-									</div>
-									<div class="product-body">
-										<p class="product-category">Category</p>
-										<h3 class="product-name"><a href="#">product name goes here</a></h3>
-										<h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-									</div>
-								</div>
-								<!-- product widget -->
-							</div>
-
-							<div>
-								<!-- product widget -->
-								<div class="product-widget">
-									<div class="product-img">
-										<img src="./img/product01.png" alt="">
-									</div>
-									<div class="product-body">
-										<p class="product-category">Category</p>
-										<h3 class="product-name"><a href="#">product name goes here</a></h3>
-										<h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-									</div>
-								</div>
-								<!-- /product widget -->
-
-								<!-- product widget -->
-								<div class="product-widget">
-									<div class="product-img">
-										<img src="./img/product02.png" alt="">
-									</div>
-									<div class="product-body">
-										<p class="product-category">Category</p>
-										<h3 class="product-name"><a href="#">product name goes here</a></h3>
-										<h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-									</div>
-								</div>
-								<!-- /product widget -->
-
-								<!-- product widget -->
-								<div class="product-widget">
-									<div class="product-img">
-										<img src="./img/product03.png" alt="">
-									</div>
-									<div class="product-body">
-										<p class="product-category">Category</p>
-										<h3 class="product-name"><a href="#">product name goes here</a></h3>
-										<h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-									</div>
-								</div>
+									<% }) %>
 								<!-- product widget -->
 							</div>
 						</div>

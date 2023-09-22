@@ -38,6 +38,9 @@ router.get('/wallet/:userId',userOp.getWallet)
 router.get('/withdraw',userOp.getWithdraw)
 router.get('/returnOrder/:orderId',isAuthenticated,userOp.returnOrder)
 
+
+router.get('/orderDetails/:orderId', isAuthenticated, userOp.orderDetails)
+
 // POST Routes
 router.post('/updateProfile/:userId', updateProfile = multerHelper.upload.single('profileImage'), userOp.updateProfile);
 

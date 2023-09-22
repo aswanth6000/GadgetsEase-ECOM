@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+.track-line {
+height: 2px !important;
+background-color: #488978;
+opacity: 1;
+}
+
+.dot {
+height: 10px;
+width: 10px;
+margin-left: 3px;
+margin-right: 3px;
+margin-top: 0px;
+background-color: #488978;
+border-radius: 50%;
+display: inline-block
+}
+
+.big-dot {
+height: 25px;
+width: 25px;
+margin-left: 0px;
+margin-right: 0px;
+margin-top: 0px;
+background-color: #488978;
+border-radius: 50%;
+display: inline-block;
+}
+
+.big-dot i {
+font-size: 12px;
+}
+
+.card-stepper {
+z-index: 0
+}
+    </style>
+</head><body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Order Details</h1>
+        <section >
+            <div class="container py-5 h-100">
+                <div class="row d-flex justify-content-center align-items-center h-100">
+                    <div class="col">
+                        <div class="card card-stepper" style="border-radius: 10px;">
+                            <div class="card-body p-4">
+                                <!-- Order Information -->
+                                <div class="mb-4">
+                                    <h3>Order Information</h3>
+                                    <ul>
+                                        <li><strong>Order Number:</strong> #123456</li>
+                                        <li><strong>Order Date:</strong> January 21, 2023</li>
+                                        <li><strong>Order Time:</strong> 02:34 PM</li>
+                                    </ul>
+                                </div>
+                                
+                                <!-- Shipping Address -->
+                                <div class="mb-4">
+                                    <h3>Shipping Address</h3>
+                                    <p>
+                                        John Doe<br>
+                                        123 Main Street<br>
+                                        City, State ZIP<br>
+                                        Country
+                                    </p>
+                                </div>
+                                
+                                <!-- Payment Details -->
+                                <div class="mb-4">
+                                    <h3>Payment Details</h3>
+                                    <p>
+                                        <strong>Payment Method:</strong> Credit Card<br>
+                                        <strong>Payment time:</strong> 02:36<br>
+                                        <strong>Payment status:</strong> $100.00
+                                    </p>
+                                </div>
+
+                                <!-- Order Tracking -->
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex flex-column">
+                                        <span class="lead fw-normal">Your order has been delivered</span>
+                                        <span class="text-muted small">by DHFL on January 21, 2023</span>
+                                    </div>
+                                    <div>
+                                        <button class="btn btn-outline-primary" type="button">Track order details</button>
+                                    </div>
+                                </div>
+                                <hr class="my-4">
+                                
+                                <!-- Order Progress Tracking -->
+                                <div class="d-flex flex-row justify-content-between align-items-center align-content-center">
+                                    <span class="dot"></span>
+                                    <hr class="flex-fill track-line"><span class="dot"></span>
+                                    <hr class="flex-fill track-line"><span class="dot"></span>
+                                    <hr class="flex-fill track-line"><span class="dot"></span>
+                                    <hr class="flex-fill track-line"><span class="d-flex justify-content-center align-items-center big-dot dot">
+                                        <i class="fa fa-check text-white"></i></span>
+                                </div>
+
+                                <!-- Order Status Timeline -->
+                                <div class="d-flex flex-row justify-content-between align-items-center">
+                                    <div class="d-flex flex-column align-items-start"><span>15 Mar</span><span>Order placed</span></div>
+                                    <div class="d-flex flex-column justify-content-center"><span>15 Mar</span><span>Order placed</span></div>
+                                    <div class="d-flex flex-column justify-content-center align-items-center"><span>15 Mar</span><span>Order Dispatched</span></div>
+                                    <div class="d-flex flex-column align-items-center"><span>15 Mar</span><span>Out for delivery</span></div>
+                                    <div class="d-flex flex-column align-items-end"><span>15 Mar</span><span>Delivered</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

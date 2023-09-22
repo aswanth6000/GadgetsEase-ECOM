@@ -33,7 +33,6 @@ const calculateSubtotal = (cart) => {
         if (cart.length > 0) {
             for (const cartItem of cart) {
                 const product = cartItem.product;
-                console.log(product);
         
                 if (product.quantity < cartItem.quantity) {
                     outOfStockError = true;
@@ -41,9 +40,20 @@ const calculateSubtotal = (cart) => {
                 }
             }
         }
-        console.log(outOfStockError);
+        let maxQuantityErr = false;
+        if (cart.length > 0) {
+            for (const cartItem of cart) {
+                const product = cartItem.product;
+        
+                if (cartItem.quantity > 2) {
+                    maxQuantityErr = true;
+                    break;
+                }
+            }
+        }
 
-        res.render('./user/cart', { user: req.session.user, cart, subtotal, subtotalWithShipping, outOfStockError });
+
+        res.render('./user/cart', { user: req.session.user, cart, subtotal, subtotalWithShipping, outOfStockError, maxQuantityErr });
     } catch (err) {
         console.error('Error fetching user cart:', err);
         res.status(500).json({ error: 'An error occurred while fetching user cart.' });
@@ -144,9 +154,9 @@ exports.addtocart = async (req, res) => {
             const existingCartItem = existingCart.items.find(item => item.product.toString() === productId);
 
             if (existingCartItem) {
-                existingCartItem.quantity += qty;
+                existingCartItem.quantity += parseInt(qty, 10);
             } else {
-                existingCart.items.push({ product: productId, quantity: qty });
+                existingCart.items.push({ product: productId, quantity: parseInt(qty, 10) });
             }
 
             existingCart.total = existingCart.items.reduce((total, item) => total + (item.quantity || 0), 0);
@@ -156,8 +166,8 @@ exports.addtocart = async (req, res) => {
             // If the user doesn't have an existing cart, create a new one
             newCart = new Cart({
                 user: userId,
-                items: [{ product: productId, quantity: qty }],
-                total: qty,
+                items: [{ product: productId, quantity: parseInt(qty, 10) }],
+                total: parseInt(qty, 10),
             });
 
             // Save the new cart
@@ -167,7 +177,7 @@ exports.addtocart = async (req, res) => {
         req.session.cartLength = (existingCart || newCart).items.length;
         const cartLength = req.session.cartLength;
 
-        res.json({ message: 'Product added to cart', cartLength });
+        res.redirect('/viewproduct/'+productId)
     } catch (error) {
         console.error('Error adding product to cart:', error);
         res.status(500).json({ error: 'Internal Server Error' });

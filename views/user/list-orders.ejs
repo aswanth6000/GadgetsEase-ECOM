@@ -136,7 +136,7 @@ z-index: 0
                       <div class="card-body p-4">
                           <div class="d-flex flex-row mb-4 pb-2">
                               <div class="flex-fill">
-                                  <h5 class="bold"><%= order.items[0].product.name %></h5>
+                                  <a href="/orderDetails/<%= order._id %>"><h5 class="bold"><%= order.items[0].product.name %></h5></a>
                                   <!-- Dynamic quantity -->
                                   <p class="text-muted"> Qty: <%= order.items[0].quantity %> item</p>
                                   <!-- Dynamic price -->

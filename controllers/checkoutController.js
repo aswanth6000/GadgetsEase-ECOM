@@ -51,6 +51,7 @@ exports.getCheckout = async (req, res) => {
         const subtotal = calculateSubtotal(cartItems);
         const subtotalWithShipping = subtotal + 100;
         const outOfStockError = cartItems.some(item => cart.quantity < item.quantity); 
+        const maxQuantityErr = cartItems.some(item => cart.quantity > 2 ); 
         res.render('./user/checkout', {
             user,
             cart: cartItems, 
@@ -58,6 +59,7 @@ exports.getCheckout = async (req, res) => {
             subtotalWithShipping,
             addresses,
             outOfStockError,
+            maxQuantityErr
         });
     } catch (err) {
         console.error('Error fetching user data and addresses:', err);
