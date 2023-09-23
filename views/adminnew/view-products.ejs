@@ -31,7 +31,8 @@
                             <div class="form-row">
                               <div class="form-group col-auto">
                                 <label for="search" class="sr-only">Search</label>
-                                <input type="text" class="form-control" id="search" value="" placeholder="Search">
+                                <input type="text" class="form-control" id="searchInput" placeholder="Search">
+                                <button type="button" id="searchButton" class="btn ml-2 btn-success">Search<span class="fe fe-chevron-right fe-16 ml-2"></span></button>
                               </div>
                               <div class="form-group col-auto ml-3">
                                 <label class="my-1 mr-2 sr-only" for="inlineFormCustomSelectPref">Status</label>
@@ -116,129 +117,6 @@
             </div> <!-- .col-12 -->
           </div> <!-- .row -->
         </div> <!-- .container-fluid -->
-        <div class="modal fade modal-notif modal-slide" tabindex="-1" role="dialog" aria-labelledby="defaultModalLabel" aria-hidden="true">
-          <div class="modal-dialog modal-sm" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="defaultModalLabel">Notifications</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <div class="list-group list-group-flush my-n3">
-                  <div class="list-group-item bg-transparent">
-                    <div class="row align-items-center">
-                      <div class="col-auto">
-                        <span class="fe fe-box fe-24"></span>
-                      </div>
-                      <div class="col">
-                        <small><strong>Package has uploaded successfull</strong></small>
-                        <div class="my-0 text-muted small">Package is zipped and uploaded</div>
-                        <small class="badge badge-pill badge-light text-muted">1m ago</small>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="list-group-item bg-transparent">
-                    <div class="row align-items-center">
-                      <div class="col-auto">
-                        <span class="fe fe-download fe-24"></span>
-                      </div>
-                      <div class="col">
-                        <small><strong>Widgets are updated successfull</strong></small>
-                        <div class="my-0 text-muted small">Just create new layout Index, form, table</div>
-                        <small class="badge badge-pill badge-light text-muted">2m ago</small>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="list-group-item bg-transparent">
-                    <div class="row align-items-center">
-                      <div class="col-auto">
-                        <span class="fe fe-inbox fe-24"></span>
-                      </div>
-                      <div class="col">
-                        <small><strong>Notifications have been sent</strong></small>
-                        <div class="my-0 text-muted small">Fusce dapibus, tellus ac cursus commodo</div>
-                        <small class="badge badge-pill badge-light text-muted">30m ago</small>
-                      </div>
-                    </div> <!-- / .row -->
-                  </div>
-                  <div class="list-group-item bg-transparent">
-                    <div class="row align-items-center">
-                      <div class="col-auto">
-                        <span class="fe fe-link fe-24"></span>
-                      </div>
-                      <div class="col">
-                        <small><strong>Link was attached to menu</strong></small>
-                        <div class="my-0 text-muted small">New layout has been attached to the menu</div>
-                        <small class="badge badge-pill badge-light text-muted">1h ago</small>
-                      </div>
-                    </div>
-                  </div> <!-- / .row -->
-                </div> <!-- / .list-group -->
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary btn-block" data-dismiss="modal">Clear All</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="modal fade modal-shortcut modal-slide" tabindex="-1" role="dialog" aria-labelledby="defaultModalLabel" aria-hidden="true">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="defaultModalLabel">Shortcuts</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body px-5">
-                <div class="row align-items-center">
-                  <div class="col-6 text-center">
-                    <div class="squircle bg-success justify-content-center">
-                      <i class="fe fe-cpu fe-32 align-self-center text-white"></i>
-                    </div>
-                    <p>Control area</p>
-                  </div>
-                  <div class="col-6 text-center">
-                    <div class="squircle bg-primary justify-content-center">
-                      <i class="fe fe-activity fe-32 align-self-center text-white"></i>
-                    </div>
-                    <p>Activity</p>
-                  </div>
-                </div>
-                <div class="row align-items-center">
-                  <div class="col-6 text-center">
-                    <div class="squircle bg-primary justify-content-center">
-                      <i class="fe fe-droplet fe-32 align-self-center text-white"></i>
-                    </div>
-                    <p>Droplet</p>
-                  </div>
-                  <div class="col-6 text-center">
-                    <div class="squircle bg-primary justify-content-center">
-                      <i class="fe fe-upload-cloud fe-32 align-self-center text-white"></i>
-                    </div>
-                    <p>Upload</p>
-                  </div>
-                </div>
-                <div class="row align-items-center">
-                  <div class="col-6 text-center">
-                    <div class="squircle bg-primary justify-content-center">
-                      <i class="fe fe-users fe-32 align-self-center text-white"></i>
-                    </div>
-                    <p>Users</p>
-                  </div>
-                  <div class="col-6 text-center">
-                    <div class="squircle bg-primary justify-content-center">
-                      <i class="fe fe-settings fe-32 align-self-center text-white"></i>
-                    </div>
-                    <p>Settings</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </main> <!-- main -->
     </div> <!-- .wrapper -->
     <script>
@@ -265,34 +143,6 @@
     </script>
 
 <script>
-  document.addEventListener("DOMContentLoaded", function (event) {
-    const showNavbar = (toggleId, navId, bodyId, headerId) => {
-      const toggle = document.getElementById(toggleId),
-        nav = document.getElementById(navId),
-        bodypd = document.getElementById(bodyId),
-        headerpd = document.getElementById(headerId);
-
-      // Validate that all variables exist
-      if (toggle && nav && bodypd && headerpd) {
-        toggle.addEventListener("click", () => {
-          // show navbar
-          nav.classList.toggle("show");
-          // change icon
-          toggle.classList.toggle("bx-x");
-          // add padding to body
-          bodypd.classList.toggle("body-pd");
-          // add padding to header
-          headerpd.classList.toggle("body-pd");
-        });
-      }
-    };
-
-    showNavbar("header-toggle", "nav-bar", "body-pd", "header");
-
-    /*===== LINK ACTIVE =====*/
-
-
-  });
 
   function updateProductCounts() {
   fetch('/admin/getProductCount') // Use the correct API endpoint
@@ -313,51 +163,49 @@
 }
 updateProductCounts()
 document.addEventListener("DOMContentLoaded", function (event) {
-  // ... Your existing code ...
 
-  // Add an event listener to the search button
   document.getElementById("searchButton").addEventListener("click", function () {
       searchProducts();
   });
 
-  // Define a function to filter the table rows
   function searchProducts() {
-      const searchInput = document.getElementById("searchInput").value.toLowerCase();
-      const tableRows = document.querySelectorAll("tbody tr");
+        const searchInput = document.getElementById("searchInput").value.toLowerCase();
+        const tableRows = document.querySelectorAll("tbody tr");
 
-      tableRows.forEach((row) => {
-          const productName = row.querySelector("td:first-child p.fw-bold").textContent.toLowerCase();
-          if (productName.includes(searchInput)) {
-              row.style.display = "";
-          } else {
-              row.style.display = "none";
-          }
-      });
-  }
+        tableRows.forEach((row) => {
+            const productName = row.querySelector("td:nth-child(2)").textContent.toLowerCase(); // Adjust the column index
+            if (productName.includes(searchInput)) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    }
 });
-document.getElementById("filterDropdown").addEventListener("change", function () {
+document.getElementById("inlineFormCustomSelectPref").addEventListener("change", function () {
 filterProducts();
 });
 
 function filterProducts() {
-const selectedOption = document.getElementById("filterDropdown").value;
-const tableRows = document.querySelectorAll("tbody tr");
+        const selectedOption = document.getElementById("inlineFormCustomSelectPref").value;
+        const tableRows = document.querySelectorAll("tbody tr");
 
-tableRows.forEach((row) => {
-  const statusBadge = row.querySelector("td:nth-child(3) span");
-  const quantity = parseInt(statusBadge.textContent.match(/\d+/)); // Extract the quantity value
+        tableRows.forEach((row) => {
+            const statusBadge = row.querySelector("td:nth-child(6) span"); // Adjust the column index
+            const quantity = parseInt(statusBadge.textContent.match(/\d+/)); // Extract the quantity value
 
-  if (selectedOption === "all") {
-    row.style.display = "";
-  } else if (selectedOption === "inStock" && quantity > 0) {
-    row.style.display = "";
-  } else if (selectedOption === "outOfStock" && quantity === 0) {
-    row.style.display = "";
-  } else {
-    row.style.display = "none";
-  }
-});
-}
+            if (selectedOption === "all") {
+                row.style.display = "";
+            } else if (selectedOption === "inStock" && quantity > 0) {
+                row.style.display = "";
+            } else if (selectedOption === "outOfStock" && quantity === 0) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    }
+
 // ... Your existing code ...
 
 </script>
