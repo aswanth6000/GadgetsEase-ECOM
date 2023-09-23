@@ -6,7 +6,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="favicon.ico">
-    <title>Gadget Ease | View Products</title>
+    <title>Gadget Ease | View Coupon</title>
   </head>
   <body class="vertical  light  ">
     <div class="wrapper">
@@ -22,7 +22,7 @@
               <div class="row">
                 <!-- Striped rows -->
                 <div class="col-md-12 my-4">
-                  <h2 class="h4 mb-1">Categories</h2>
+                  <h2 class="h4 mb-1">Coupon Details</h2>
                   <div class="card shadow">
                     <div class="card-body">
                       <div class="toolbar row mb-3">
@@ -34,12 +34,20 @@
                                 <input type="text" class="form-control" id="searchInput" placeholder="Search">
                                 <button type="button" id="searchButton" class="btn ml-2 btn-success">Search<span class="fe fe-chevron-right fe-16 ml-2"></span></button>
                               </div>
+                              <div class="form-group col-auto ml-3">
+                                <label class="my-1 mr-2 sr-only" for="inlineFormCustomSelectPref">Status</label>
+                                <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
+                                  <option value="all" selected>All Products</option>
+                                  <option value="inStock">In Stock</option>
+                                  <option value="outOfStock">Out of Stock</option>
+                                </select>
+                              </div>
                             </div>
                           </form>
                         </div>
                         <div class="col ml-auto">
                           <div class="dropdown float-right">
-                            <a href="/admin/addproduct"><button class="btn btn-primary float-right ml-3" type="button">Add more +</button></a>
+                            <a href="/getAddCoupon"><button class="btn btn-primary float-right ml-3" type="button">Add more +</button></a>
                           </div>
                         </div>
                       </div>
@@ -48,28 +56,32 @@
                         <thead>
                           <tr role="row">
                             <th>No</th>
-                            <th>Categories</th>
+                            <th>Coupon Code</th>
+                            <th>Limit</th>
+                            <th>Discount</th>
+                            <th>Type</th>
                             <th>Action</th>
                           </tr>
                         </thead>
                         <tbody>
-                            <% let index = 0; %>
-                            <% for (const category of categorys) { %>
+                            <% coupons.forEach((coupon, index) => { %>
                           <tr>
                             <td><%= index + 1 %></td>
-                            <td><%= category.category %></td>
+                            <td><%= coupon.code %></td>
+                            <td><%= coupon.limit %></td>
+                            <td><%= coupon.discount %></td>
+                            <td><%= coupon.type %></td>
                             <td><button class="btn btn-sm dropdown-toggle more-horizontal" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="text-muted sr-only">Action</span>
                               </button>
                               <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" href="/listcategory/<%= category.category %>">View Products</a>
-                                <a class="dropdown-item" href="/addcategory">Add Category</a>
+                                <a class="dropdown-item" href="/admin/editproduct/<%=coupon._id%>">Edit</a>
+                                <a class="dropdown-item" href="/viewCouponUsers/<%=coupon._id%>">View users</a>
                                 <a class="dropdown-item" href="#">Assign</a>
                               </div>
                             </td>
                           </tr>
-                          <% index++; %>
-                          <% }; %>
+                          <% }); %>
                         </tbody>
                       </table>
                       <nav aria-label="Table Paging" class="mb-0 text-muted">

@@ -50,7 +50,7 @@ exports.getUsersCount = async (req, res) => {
 
 exports.viewUser = async (req,res)=>{
     const user = await User.find().sort({ createdDate: -1 });
-    res.render('./admin/viewUser',{user});
+    res.render('./adminnew/viewUsers',{user});
 }
 
 exports.blockuser = async (req, res) => {
@@ -255,7 +255,7 @@ exports.postOrderDetails = async (req, res) => {
 exports.getCategory = async (req, res) => {
   try {
     const categorys = await Category.find()
-    res.render('./admin/category', { categorys });
+    res.render('./adminnew/viewCategory', { categorys });
   } catch (error) {
     console.error(error);
     res.status(500).send('Internal Server Error');
@@ -276,7 +276,7 @@ exports.listCategory = async (req, res) => {
 exports.viewCoupon =async (req, res)=>{
   try{
     const coupons = await Coupon.find()
-    res.render('./admin/viewCoupon',{coupons})
+    res.render('./adminnew/viewCoupon',{coupons})
   }catch(err){
     console.log("Error occoured while fetching coupons", err);
   }

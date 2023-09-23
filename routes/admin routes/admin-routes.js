@@ -36,9 +36,9 @@ router.get('/editBanner/:bannerId',isAdminLoggedIn, bannerController.getEditBann
 
 // POST Routes
 router.post('/upload-category',isAdminLoggedIn,adminController.postaddCategory)
-router.post('/admin/blockuser/:userId',isAdminLoggedIn,adminController.blockuser)
+router.get('/admin/blockuser/:userId',isAdminLoggedIn,adminController.blockuser)
 router.post('/postOrderDetails/:orderId',isAdminLoggedIn,adminController.postOrderDetails)
-router.post('/admin/unblockuser/:userId',isAdminLoggedIn,adminController.unblockuser)
+router.get('/admin/unblockuser/:userId',isAdminLoggedIn,adminController.unblockuser)
 router.post('/admin/addproduct',addproducts = multerHelper.upload.fields([{ name: 'productImages', maxCount: 5 }, { name: 'video', maxCount: 1 }]),adminController.addProduct)
 
 router.post('/admin/editproduct/:productId', multerHelper.upload.fields([{ name: 'productImages', maxCount: 5 }, { name: 'video', maxCount: 1 }]),adminController.editProduct);

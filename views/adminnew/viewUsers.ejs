@@ -6,7 +6,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="favicon.ico">
-    <title>Gadget Ease | View Products</title>
+    <title>Gadget Ease | View Users</title>
   </head>
   <body class="vertical  light  ">
     <div class="wrapper">
@@ -22,7 +22,7 @@
               <div class="row">
                 <!-- Striped rows -->
                 <div class="col-md-12 my-4">
-                  <h2 class="h4 mb-1">Categories</h2>
+                  <h2 class="h4 mb-1">Users Details</h2>
                   <div class="card shadow">
                     <div class="card-body">
                       <div class="toolbar row mb-3">
@@ -33,6 +33,14 @@
                                 <label for="search" class="sr-only">Search</label>
                                 <input type="text" class="form-control" id="searchInput" placeholder="Search">
                                 <button type="button" id="searchButton" class="btn ml-2 btn-success">Search<span class="fe fe-chevron-right fe-16 ml-2"></span></button>
+                              </div>
+                              <div class="form-group col-auto ml-3">
+                                <label class="my-1 mr-2 sr-only" for="inlineFormCustomSelectPref">Status</label>
+                                <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
+                                  <option value="all" selected>All Users</option>
+                                  <option value="inStock">Blocked Users</option>
+                                  <option value="outOfStock">Active Users</option>
+                                </select>
                               </div>
                             </div>
                           </form>
@@ -48,28 +56,51 @@
                         <thead>
                           <tr role="row">
                             <th>No</th>
-                            <th>Categories</th>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Phone Number</th>
+                            <th>Email</th>
+                            <th>Status</th>
                             <th>Action</th>
                           </tr>
                         </thead>
                         <tbody>
-                            <% let index = 0; %>
-                            <% for (const category of categorys) { %>
+                            <% user.forEach((user, index) => { %>
                           <tr>
                             <td><%= index + 1 %></td>
-                            <td><%= category.category %></td>
+                            <td>
+                              <div class="avatar avatar-md">
+                                <img src="/uploads/images/<%= user.profileImage %>" alt="..."  style="    width: 100px; /* Set your desired width */
+                                height: 100px; 
+                                object-fit: cover;
+                                object-position: center; 
+                                border: 2px solid #fff; 
+                                border-radius: 50%;">
+                              </div>
+                            </td>
+                            <td><%= user.username %></td>
+                            <td><%= user.phoneNumber %></td>
+                            <td><%= user.email %></td>
+                            <% if(user.status === 'active'){ %>
+                            <td><span class="badge badge-success"><%=user.status%></span></td>
+                            <% }else {%>
+                            <td><span class="badge badge-danger"><%=user.status%></span></td>
+                            <% } %>
                             <td><button class="btn btn-sm dropdown-toggle more-horizontal" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="text-muted sr-only">Action</span>
                               </button>
                               <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" href="/listcategory/<%= category.category %>">View Products</a>
-                                <a class="dropdown-item" href="/addcategory">Add Category</a>
+                                <% if(user.status === 'active'){ %>
+                                <a class="dropdown-item" href="/admin/blockuser/<%=user._id%>">Block</a>
+                                <% }else {%>
+                                    <a class="dropdown-item" href="/admin/unblockuser/<%=user._id%>">UnBlock</a>
+                                <% } %>
+                                <a class="dropdown-item" href="/admin/deleteuser/<%=user._id%>">Remove</a>
                                 <a class="dropdown-item" href="#">Assign</a>
                               </div>
                             </td>
                           </tr>
-                          <% index++; %>
-                          <% }; %>
+                          <% }); %>
                         </tbody>
                       </table>
                       <nav aria-label="Table Paging" class="mb-0 text-muted">
@@ -144,7 +175,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
         const tableRows = document.querySelectorAll("tbody tr");
 
         tableRows.forEach((row) => {
-            const productName = row.querySelector("td:nth-child(2)").textContent.toLowerCase(); // Adjust the column index
+            const productName = row.querySelector("td:nth-child(3)").textContent.toLowerCase(); // Adjust the column index
             if (productName.includes(searchInput)) {
                 row.style.display = "";
             } else {

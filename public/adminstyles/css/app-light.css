@@ -1755,6 +1755,7 @@ textarea.form-control {
   @media (min-width: 576px) {
     .form-inline label {
       display: flex;
+      flex-wrap: nowrap;
       align-items: center;
       justify-content: center;
       margin-bottom: 0; }
@@ -1763,7 +1764,9 @@ textarea.form-control {
       flex: 0 0 auto;
       flex-flow: row wrap;
       align-items: center;
-      margin-bottom: 0; }
+      margin-bottom: 0; 
+      flex-wrap: nowrap;
+    }
     .form-inline .form-control {
       display: inline-block;
       width: auto;
