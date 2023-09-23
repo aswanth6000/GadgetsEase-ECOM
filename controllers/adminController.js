@@ -23,7 +23,7 @@ exports.adminhome = async (req, res) => {
       })
       .sort({ orderDate: -1 });
 
-    res.render('./admin/admin-dash', { orders, orderCounts });
+    res.render('./adminnew/dashboard-sales', { orders, orderCounts });
   } catch (error) {
     console.error('Error fetching order details:', error);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -98,7 +98,7 @@ exports.viewproducts = async (req, res) => {
         }
 
         // Render an HTML template with the filtered products
-        res.render('./admin/view-products', { products }); // Replace 'your_template' with the actual template name
+        res.render('./adminnew/view-products', { products }); // Replace 'your_template' with the actual template name
     } catch (error) {
         console.error('Error fetching products:', error);
         res.status(500).json({ error: 'Internal Server Error' });
