@@ -20,6 +20,10 @@ router.get('/admin/getusersCount',isAdminLoggedIn,adminController.getUsersCount)
 router.get('/logout',userController.logout)
 router.get('/order-details/:orderId',adminController.orderDetails)
 
+// TICKETS
+router.get('/viewTickets', isAdminLoggedIn, adminController.getTickets)
+router.get('/viewTicketDetails/:ticketId', isAdminLoggedIn, adminController.getviewticketdetails)
+
  
 router.get('/viewcategory',adminController.getCategory)
 router.get('/listcategory/:category',adminController.listCategory)

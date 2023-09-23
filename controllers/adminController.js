@@ -5,6 +5,7 @@ const Transaction = require('../model/transaction');
 const Coupon = require('../model/coupon')
 const Address = require('../model/addresses')
 const Category = require('../model/category')
+const Ticket = require('../model/ticket')
 exports.adminhome = async (req, res) => {
   try {
     const today = new Date();
@@ -404,5 +405,24 @@ exports.editProduct = async(req, res)=>{
     // Handle errors, e.g., show an error page or send an error response
     console.error('Error editing product:', err);
     res.status(500).send('Internal Server Error'); // Replace with your error handling logic
+  }
+}
+
+exports.getTickets = async (req, res)=>{
+  try{
+    const tickets = await Ticket.find().sort({ createdAt: -1 });
+    res.render('./adminnew/support-tickets', {tickets})
+  }catch(err){
+    console.log("Error while getting tickets",err);
+  }
+}
+
+exports.getviewticketdetails = async (req, res)=>{
+  const ticketId = req.params.ticketId;
+  try{
+    const ticketDetails = await Ticket.findById(ticketId).populate('user')
+    res.render('./adminnew/view-support-tickets', {ticketDetails})
+  }catch(err){
+    console.log("Error while fetching ticket", err);
   }
 }
