@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+    <title>Gadget Ease | View Products</title>
+  </head>
+  <body class="vertical  light  ">
+    <div class="wrapper">
+
+      <%- include('../partials/admin-nav') %>
+
+      <main role="main" class="main-content">
+        <div class="container-fluid">
+          <div class="row justify-content-center">
+            <div class="col-12">
+              <div class="row">
+                <!-- Small table -->
+              <div class="row">
+                <!-- Striped rows -->
+                <div class="col-md-12 my-4">
+                  <h2 class="h4 mb-1">Products Details</h2>
+                  <div class="card shadow">
+                    <div class="card-body">
+                      <div class="toolbar row mb-3">
+                        <div class="col">
+                          <form class="form-inline">
+                            <div class="form-row">
+                              <div class="form-group col-auto">
+                                <label for="search" class="sr-only">Search</label>
+                                <input type="text" class="form-control" id="searchInput" placeholder="Search">
+                                <button type="button" id="searchButton" class="btn ml-2 btn-success">Search<span class="fe fe-chevron-right fe-16 ml-2"></span></button>
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+                        <div class="col ml-auto">
+                          <div class="dropdown float-right">
+                            <a href="/bannerForm"><button class="btn btn-primary float-right ml-3" type="button">Add more +</button></a>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- table -->
+                      <table class="table table-bordered">
+                        <thead>
+                          <tr role="row">
+                            <th>Image</th>
+                            <th>Title</th>
+                            <th>Link URL</th>
+                            <th>Position</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            <% banner.forEach(banners => { %>
+                          <tr>
+                            <td>
+                              <div class="avatar avatar-md">
+                                <img src="/uploads/images/<%= banners.image_url %>" alt="..."  style="    width: 100px; /* Set your desired width */
+                                height: 100px; 
+                                object-fit: cover;
+                                object-position: center; 
+                                border: 2px solid #fff; 
+                                border-radius: 50%;">
+                              </div>
+                            </td>
+                            <td><%= banners.title %></td>
+                            <td><%= banners.link_url %></td>
+                            <td><%= banners.position %></td>
+                            <td><button class="btn btn-sm dropdown-toggle more-horizontal" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="text-muted sr-only">Action</span>
+                              </button>
+                              <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item" href="/editBanner/<%=banners._id%>">Edit</a>
+                                <a class="dropdown-item" href="/deletebanner/<%=banners._id%>">Remove</a>
+                              </div>
+                            </td>
+                          </tr>
+                          <% }); %>
+                        </tbody>
+                      </table>
+                      <nav aria-label="Table Paging" class="mb-0 text-muted">
+                        <ul class="pagination justify-content-end mb-0">
+                          <!-- <li class="page-item"><a class="page-link" href="#">Previous</a></li> -->
+                          <li class="page-item"><a class="page-link" href="#">1</a></li>
+                          <li class="page-item"><a class="page-link" href="#">2</a></li>
+                          <li class="page-item"><a class="page-link" href="#">3</a></li>
+                          <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                        </ul>
+                      </nav>
+                    </div>
+                  </div>
+                </div> <!-- simple table -->
+              </div> <!-- end section -->
+            </div> <!-- .col-12 -->
+          </div> <!-- .row -->
+        </div> <!-- .container-fluid -->
+      </main> <!-- main -->
+    </div> <!-- .wrapper -->
+    <script>
+      $('#dataTable-1').DataTable(
+      {
+        autoWidth: true,
+        "lengthMenu": [
+          [16, 32, 64, -1],
+          [16, 32, 64, "All"]
+        ]
+      });
+    </script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-56159088-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+
+      function gtag()
+      {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', 'UA-56159088-1');
+    </script>
+
+<script>
+
+  function updateProductCounts() {
+  fetch('/admin/getProductCount') // Use the correct API endpoint
+      .then(response => response.json())
+      .then(data => {
+          const totalProductsCount = data.totalProductsCount;
+          const inStockProductsCount = data.inStockProductsCount;
+          const outOfStockProductsCount = data.outOfStockProductsCount;
+
+          // Update the HTML elements with the counts
+          document.getElementById("totalProductsCount").textContent = totalProductsCount;
+          document.getElementById("inStockProductsCount").textContent = inStockProductsCount;
+          document.getElementById("outOfStockProductsCount").textContent = outOfStockProductsCount;
+      })
+      .catch(error => {
+          console.error('Error fetching product counts:', error);
+      });
+}
+updateProductCounts()
+document.addEventListener("DOMContentLoaded", function (event) {
+
+  document.getElementById("searchButton").addEventListener("click", function () {
+      searchProducts();
+  });
+
+  function searchProducts() {
+        const searchInput = document.getElementById("searchInput").value.toLowerCase();
+        const tableRows = document.querySelectorAll("tbody tr");
+
+        tableRows.forEach((row) => {
+            const productName = row.querySelector("td:nth-child(2)").textContent.toLowerCase(); // Adjust the column index
+            if (productName.includes(searchInput)) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    }
+});
+document.getElementById("inlineFormCustomSelectPref").addEventListener("change", function () {
+filterProducts();
+});
+
+function filterProducts() {
+        const selectedOption = document.getElementById("inlineFormCustomSelectPref").value;
+        const tableRows = document.querySelectorAll("tbody tr");
+
+        tableRows.forEach((row) => {
+            const statusBadge = row.querySelector("td:nth-child(6) span"); // Adjust the column index
+            const quantity = parseInt(statusBadge.textContent.match(/\d+/)); // Extract the quantity value
+
+            if (selectedOption === "all") {
+                row.style.display = "";
+            } else if (selectedOption === "inStock" && quantity > 0) {
+                row.style.display = "";
+            } else if (selectedOption === "outOfStock" && quantity === 0) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    }
+
+// ... Your existing code ...
+
+</script>
+  </body>
+</html>

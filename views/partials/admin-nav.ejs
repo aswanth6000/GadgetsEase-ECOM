@@ -31,9 +31,6 @@
         <button type="button" class="navbar-toggler text-muted mt-2 p-0 mr-3 collapseSidebar">
           <i class="fe fe-menu navbar-toggler-icon"></i>
         </button>
-        <form class="form-inline mr-auto searchform text-muted">
-          <input class="form-control mr-sm-2 bg-transparent border-0 pl-4 text-muted" type="search" placeholder="Type something..." aria-label="Search">
-        </form>
         <ul class="nav">
           <li class="nav-item">
             <a class="nav-link text-muted my-2" href="#" id="modeSwitcher" data-mode="light">
@@ -159,6 +156,16 @@
                 <a class="nav-link pl-3" href="/admin/viewuser"><span class="ml-1">View Users</span></a>
                 <a class="nav-link pl-3" href="./contacts-grid.html"><span class="ml-1">Contact Grid</span></a>
                 <a class="nav-link pl-3" href="./contacts-new.html"><span class="ml-1">New Contact</span></a>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a href="#support" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">
+                <i class="fe fe-compass fe-16"></i>
+                <span class="ml-3 item-text">Help Desk</span>
+              </a>
+              <ul class="collapse list-unstyled pl-4 w-100" id="support">
+                <a class="nav-link pl-3" href="/viewTickets"><span class="ml-1">Tickets</span></a>
+                <a class="nav-link pl-3" href="./support-ticket-detail.html"><span class="ml-1">Chat</span></a>
               </ul>
             </li>
 

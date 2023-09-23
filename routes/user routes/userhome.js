@@ -32,7 +32,9 @@ router.get('/cartLength',isAuthenticated,cartController.getCartLength)
 // STORE
 router.get('/store/:category', isAuthenticated, userOp.getStore)
 
-
+// SUPPORT
+router.get('/support',isAuthenticated, userOp.getSupport)
+router.get('/raiseTicket/:ticketId', isAuthenticated, userOp.getRaiseTicketForm)
 
 router.get('/wallet/:userId',userOp.getWallet)
 router.get('/withdraw',userOp.getWithdraw)
@@ -62,6 +64,10 @@ router.post('/createPayment',isAuthenticated,checkoutController.createPayment)
 router.post('/applyCoupon', checkoutController.applyCoupon)
 
 router.post('/withdraw/:userId',userOp.postWithdraw)
+
+// TICKET
+router.post('/create-ticket', isAuthenticated, userOp.postTicket);
+
 
 
 module.exports = router

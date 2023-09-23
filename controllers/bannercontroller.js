@@ -12,7 +12,7 @@ const Banner = require('../model/banner')
 // GET ROUTES
 exports.getbanner = async (req, res)=>{
     const banner = await Banner.find()
-    res.render('./admin/bannerManagement', {banner})
+    res.render('./adminnew/viewBanner', {banner})
 }
 
 exports.deletebanner = async (req, res) =>{

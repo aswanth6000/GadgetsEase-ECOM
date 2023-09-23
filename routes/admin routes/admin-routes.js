@@ -20,7 +20,7 @@ router.get('/admin/getusersCount',isAdminLoggedIn,adminController.getUsersCount)
 router.get('/logout',userController.logout)
 router.get('/order-details/:orderId',adminController.orderDetails)
 
-
+ 
 router.get('/viewcategory',adminController.getCategory)
 router.get('/listcategory/:category',adminController.listCategory)
 router.get('/addCategory',isAdminLoggedIn,adminController.getAddCategory)

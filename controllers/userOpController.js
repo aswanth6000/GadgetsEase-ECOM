@@ -6,6 +6,7 @@ const Order = require('../model/order')
 const Address = require('../model/addresses')
 const Transaction = require('../model/transaction')
 const Banner = require('../model/banner')
+const Ticket = require('../model/ticket')
 
 
 exports.getIndex = async(req, res)=>{
@@ -241,4 +242,36 @@ exports.getStore = async (req, res)=>{
 
 exports.orderDetails = async (req, res) =>{
   res.render('./user/orderDetails')
+}
+
+exports.getSupport = async (req, res)=>{
+  const userId = req.session.user._id
+  try{
+    const user = await User.findById(userId)
+    res.render('./user/support-center', {user})
+  }catch(err){
+    console.log("Error occoured", err);
+  }
+}
+
+exports.getRaiseTicketForm = (req, res)=>{
+  res.render('./user/ticketForm')
+}
+
+exports.postTicket = async (req, res)=>{
+  const userId = req.session.user._id
+  const {title, description, priority} = req.body;
+  console.log(title, description, priority, userId);
+  try{
+    const ticket = new Ticket({
+      user : userId,
+      title : title,
+      description : description,
+      priority : priority
+    })
+    await ticket.save()
+    res.redirect('/userhome')
+  }catch(err){
+    console.log("Error while sending ticket : ", err);
+  }
 }
