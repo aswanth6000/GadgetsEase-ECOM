@@ -13,6 +13,9 @@ const orderSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  deliveryDate: {
+    type: Date,
+  },
   status: {
     type: String,
     default: 'pending',

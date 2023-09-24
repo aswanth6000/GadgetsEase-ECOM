@@ -214,6 +214,9 @@ exports.postOrderDetails = async (req, res) => {
     const newStatus = req.body.orderStatus;
 
     const updatedOrder = await Order.findByIdAndUpdate(orderId, { status: newStatus }, { new: true });
+    if(newStatus === 'delivered'){
+      const deliveryDate = await Order.findByIdAndUpdate(orderId, {deliveryDate : Date.now()}, { new: true})
+    }
 
     if (!updatedOrder) {
       return res.status(404).json({ error: 'Order not found.' });
@@ -221,6 +224,16 @@ exports.postOrderDetails = async (req, res) => {
 
     if (newStatus === 'refund-initiated') {
       const user = await User.findById(updatedOrder.user);
+
+      for (const item of updatedOrder.items) {
+        const product = await Product.findById(item.product);
+
+        // Increase the product quantity by the item quantity
+        product.quantity += item.quantity;
+
+        // Save the updated product information
+        await product.save();
+      }
 
       // Calculate the total refund amount based on the items in the order
       const refundAmount = updatedOrder.items.reduce((total, item) => {
