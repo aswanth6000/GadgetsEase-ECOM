@@ -426,3 +426,19 @@ exports.getviewticketdetails = async (req, res)=>{
     console.log("Error while fetching ticket", err);
   }
 }
+
+exports.editTicketStatus = async (req, res)=>{
+  try{
+    const {ticketId, newStatus} = req.body;
+    const updateTicket = await Ticket.findByIdAndUpdate(ticketId,
+      {status : newStatus, updatedAt : Date.now()},
+      {new : true}
+    )
+    if(!updateTicket){
+      console.log("ticket not found");
+    }
+    res.json(updateTicket)
+  }catch(err){
+    console.log("Error while updating edit status : ", err);
+  }
+}

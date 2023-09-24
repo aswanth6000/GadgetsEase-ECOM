@@ -55,4 +55,7 @@ router.post('/postBanner',isAdminLoggedIn,multerHelper.upload.single('image_url'
 router.post('/postEditBanner',isAdminLoggedIn,multerHelper.upload.single('image_url'),bannerController.postEditBanner);
 router.post('/deletebanner/:bannerId',isAdminLoggedIn,bannerController.deletebanner)
 
+
+// TICKETS
+router.post('/editTicketStatus', isAdminLoggedIn, adminController.editTicketStatus)
 module.exports = router

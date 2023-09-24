@@ -70,14 +70,15 @@
                         </dd>
                         <dt class="col-sm-2 mb-3 text-muted">Status</dt>
                         <dd class="col-sm-4 mb-3">
-                          <span class="dot dot-md bg-warning mr-2"></span> <%= ticketDetails.status %> <div class="dropdown d-inline">
+                          <span class="dot dot-md bg-warning mr-2"></span> <%= ticketDetails.status %>
+                          <div class="dropdown d-inline">
                             <button class="btn btn-sm p-0 dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                               <span class="sr-only">Change status</span>
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                              <a class="dropdown-item" href="#">Closed</a>
-                              <a class="dropdown-item" href="#">In Progress</a>
-                              <a class="dropdown-item" href="#">Open</a>
+                              <a class="dropdown-item" href="#" data-status="Closed">Closed</a>
+                              <a class="dropdown-item" href="#" data-status="In Progress">In Progress</a>
+                              <a class="dropdown-item" href="#" data-status="Open">Open</a>
                             </div>
                           </div>
                         </dd>
@@ -335,6 +336,51 @@
       }
       gtag('js', new Date());
       gtag('config', 'UA-56159088-1');
+    </script>
+    <script>
+      // Add an event listener to the dropdown items
+$(".dropdown-item").on("click", function (e) {
+  e.preventDefault(); // Prevent the default link behavior
+
+  const newStatus = $(this).data("status"); // Get the new status from the data-status attribute
+
+  // Send an HTTP request to update the status in the database
+  $.ajax({
+    url: "/editTicketStatus", // Replace with your server route for updating ticket status
+    method: "POST",
+    data: {
+      ticketId: "<%= ticketDetails._id %>", // Replace with the actual ticket ID
+      newStatus: newStatus,
+    },
+    success: function (response) {
+      // Handle success, you can update the UI or show a success message
+      console.log("Ticket status updated successfully:", response);
+
+      // Update the displayed status on the page
+      $(".dot").removeClass().addClass("dot dot-md " + getStatusColor(newStatus));
+      $(".dropdown-toggle").dropdown("toggle"); // Close the dropdown
+    },
+    error: function (error) {
+      // Handle error, show an error message, etc.
+      console.error("Error updating ticket status:", error);
+    },
+  });
+});
+
+// Function to get the color class based on the status (customize as needed)
+function getStatusColor(status) {
+  switch (status) {
+    case "Closed":
+      return "bg-danger";
+    case "In Progress":
+      return "bg-primary";
+    case "Open":
+      return "bg-warning";
+    default:
+      return "";
+  }
+}
+
     </script>
   </body>
 </html>

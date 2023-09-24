@@ -100,10 +100,10 @@
                     <thead>
                       <tr>
                         <th>ID</th>
-                        <th></th>
                         <th>Subject</th>
                         <th>Create At</th>
                         <th>Status</th>
+                        <th>Priority</th>
                         <th>Updated At</th>
                         <th>Action</th>
                       </tr>
@@ -112,7 +112,6 @@
                         <% tickets.forEach(ticket => { %>
                       <tr>
                         <td class="text-muted small"><%= ticket._id.toString().substring(0,4) %></td>
-                        <td class="text-center"><span class="dot dot-lg bg-secondary mr-2"></span></td>
                         <th scope="col"><%= ticket.title %></th>
                         <td class="text-muted small"><%= ticket.createdAt.toDateString() %></td>
                         <td>
@@ -132,6 +131,7 @@
                           <% } %>
                         </td>
                         <td class="text-muted small"><%= ticket.priority %></td>
+                        <td class="text-muted small"><%= ticket.updatedAt.toDateString() %></td>
                         <td><button class="btn btn-sm dropdown-toggle more-horizontal" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="text-muted sr-only">Action</span>
                           </button>
