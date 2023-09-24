@@ -411,7 +411,15 @@ exports.editProduct = async(req, res)=>{
 exports.getTickets = async (req, res)=>{
   try{
     const tickets = await Ticket.find().sort({ createdAt: -1 });
-    res.render('./adminnew/support-tickets', {tickets})
+    const inProgressTicket = await Ticket.countDocuments({status : 'In Progress'});
+    const closedTicket = await Ticket.countDocuments({status : 'Closed'});
+    const openTicket = await Ticket.countDocuments({status : 'Open'});
+    const ticketCounts = ({
+      inProgress : inProgressTicket,
+      closed : closedTicket,
+      open : openTicket 
+    })
+    res.render('./adminnew/support-tickets', {tickets, ticketCounts})
   }catch(err){
     console.log("Error while getting tickets",err);
   }
@@ -430,6 +438,7 @@ exports.getviewticketdetails = async (req, res)=>{
 exports.editTicketStatus = async (req, res)=>{
   try{
     const {ticketId, newStatus} = req.body;
+    console.log("99999999999999",ticketId);
     const updateTicket = await Ticket.findByIdAndUpdate(ticketId,
       {status : newStatus, updatedAt : Date.now()},
       {new : true}
@@ -441,4 +450,16 @@ exports.editTicketStatus = async (req, res)=>{
   }catch(err){
     console.log("Error while updating edit status : ", err);
   }
+}
+
+exports.ticketcount = async (req, res)=>{
+  const inProgressTicket = await Ticket.countDocuments({status : 'In Progress'});
+  const closedTicket = await Ticket.countDocuments({status : 'Closed'});
+  const openTicket = await Ticket.countDocuments({status : 'Open'});
+  const ticketCounts = [
+    {label : "progressTicket", value : inProgressTicket},
+    {label : "closed", value : closedTicket},
+    {label : "open" , value: openTicket}
+  ];
+  res.json(ticketCounts)
 }

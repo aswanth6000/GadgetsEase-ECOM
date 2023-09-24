@@ -23,6 +23,7 @@ router.get('/order-details/:orderId',adminController.orderDetails)
 // TICKETS
 router.get('/viewTickets', isAdminLoggedIn, adminController.getTickets)
 router.get('/viewTicketDetails/:ticketId', isAdminLoggedIn, adminController.getviewticketdetails)
+router.get('/ticketCount', isAdminLoggedIn, adminController.ticketcount)
 
  
 router.get('/viewcategory',adminController.getCategory)
