@@ -330,7 +330,8 @@ exports.viewCouponUsedUsers = async (req, res)=>{
     .sort({ _id: -1 })
     .exec();    
     const users = coupon.usersUsed;
-    res.render('./admin/viewCouponUsers', {users});
+    console.log(users, coupon);
+    res.render('./admin/viewCouponUsers', {users, coupon});
   }catch(err){
     console.log("Error finding the coupon code", err);
   } 

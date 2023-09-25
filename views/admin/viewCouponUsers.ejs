@@ -14,7 +14,6 @@
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th>User ID</th>
                         <th>User Name</th>
                         <th>Email</th>
                         <th>Coupon Code</th>
@@ -25,12 +24,10 @@
                     <!-- Replace the following rows with actual user data -->
                     <% users.forEach(user =>{ %>
                     <tr>
-                        <td>1</td>
                         <td><%= user.username %></td>
                         <td><%= user.email %></td>
-                        <td><%= user.code %></td>
-                        <td><%= user.discount %></td>
-                        <td><%= user.username %></td>
+                        <td><%= coupon.code %></td>
+                        <td><%= coupon.discount %></td>
                     </tr>
                     <% }) %>
                     <!-- Add more rows as needed -->
