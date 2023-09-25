@@ -14,7 +14,12 @@ const productSchema = new mongoose.Schema({
     price: Number,
     discountPrice: Number,
     quantity: Number,
-    productImages: [String],
+    productImages: [
+        {
+          secure_url: String,
+          cloudinary_id: String,
+        },
+      ],
     video : String,
     productColor: String,
     ratings: [ratingSchema],

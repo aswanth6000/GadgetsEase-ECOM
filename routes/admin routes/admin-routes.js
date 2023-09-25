@@ -3,6 +3,7 @@ const app = express()
 const router = express.Router()
 const adminController = require('../../controllers/adminController')
 const multerHelper = require('../../helpers/functionHelper')
+const multerConfig = require('../../services/multer')
 const Product = require('../../model/product');
 const nocache = require('nocache');
 const {isAdminLoggedIn} = require('../../middleware/loginAuth')
@@ -44,7 +45,7 @@ router.post('/upload-category',isAdminLoggedIn,adminController.postaddCategory)
 router.get('/admin/blockuser/:userId',isAdminLoggedIn,adminController.blockuser)
 router.post('/postOrderDetails/:orderId',isAdminLoggedIn,adminController.postOrderDetails)
 router.get('/admin/unblockuser/:userId',isAdminLoggedIn,adminController.unblockuser)
-router.post('/admin/addproduct',addproducts = multerHelper.upload.fields([{ name: 'productImages', maxCount: 5 }]),adminController.addProduct)
+router.post('/admin/addproduct',multerConfig.array('productImages', 5),adminController.addProduct)
 
 router.post('/admin/editproduct/:productId', multerHelper.upload.fields([{ name: 'productImages', maxCount: 5 }]),adminController.editProduct);
 

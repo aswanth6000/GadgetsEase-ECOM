@@ -18,6 +18,7 @@ function generateOtp(){
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
+
 const sendOrderConfirmationEmail = (userEmail, userName, orderId, orderItems, ordertotalAmount) => {
     const emailHTML = emailTemplates.generateOrderConfirmation(userName, orderId, orderItems, ordertotalAmount);
   

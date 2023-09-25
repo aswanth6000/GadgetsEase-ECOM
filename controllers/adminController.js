@@ -12,6 +12,7 @@ const functionHelper = require('../helpers/functionHelper')
 const Category = require('../model/category')
 const Ticket = require('../model/ticket')
 
+
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
   api_key: process.env.CLOUD_API_KEY,
@@ -371,7 +372,6 @@ exports.postaddCategory = (req, res) =>{
 
 exports.addProduct = async (req, res) => {
   try {
-    // Extract product information from the request body
     const {
       name,
       category,
@@ -387,17 +387,15 @@ exports.addProduct = async (req, res) => {
       processor,
     } = req.body;
 
-    // Initialize an array to store Cloudinary URLs for product images
-    const productImages = [];
-
-    // Loop through each uploaded file and upload it to Cloudinary
-    for (const file of req.files['productImages']) {
-      console.log("555555555", file);
-      const result = await cloudinary.uploader.upload(file.path);
-      console.log(result);
-      productImages.push(result.secure_url);
-    }
-
+    const files = req.files;
+    const folderName = 'GadgetEaseUploads';
+    const productImages = await Promise.all(files.map(async (file) => {
+      const result = await cloudinary.uploader.upload(file.path,  { public_id: `${folderName}/${file.originalname}`});
+      return {
+        secure_url: result.secure_url,
+        cloudinary_id: result.public_id
+      };
+    }));
     // Create a new Product document with the extracted data
     const newProduct = new Product({
       name,
