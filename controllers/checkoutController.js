@@ -138,7 +138,8 @@ exports.postCheckout = async (req, res) => {
       const userEmail = user.email;
       const userName = user.username;
       const orderId = order._id;
-      functionHelper.sendOrderConfirmationEmail(userEmail, userName, orderId, orderItems);
+      const ordertotalAmount = totalAmount
+      functionHelper.sendOrderConfirmationEmail(userEmail, userName, orderId, orderItems, ordertotalAmount);
 
       await session.commitTransaction();
       session.endSession();
@@ -147,7 +148,6 @@ exports.postCheckout = async (req, res) => {
   } catch (error) {
       console.error('Error placing the order:', error);
 
-      // Handle any errors here, such as rolling back the transaction
       if (session) {
           await session.abortTransaction();
           session.endSession();

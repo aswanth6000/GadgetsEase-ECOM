@@ -33,8 +33,8 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-const sendOrderConfirmationEmail = (userEmail, userName, orderId, orderItems) => {
-    const emailHTML = emailTemplates.generateOrderConfirmation(userName, orderId, orderItems);
+const sendOrderConfirmationEmail = (userEmail, userName, orderId, orderItems, ordertotalAmount) => {
+    const emailHTML = emailTemplates.generateOrderConfirmation(userName, orderId, orderItems, ordertotalAmount);
   
     const mailOptions = {
       from: 'gadgetease.info@gmail.com',
@@ -51,9 +51,28 @@ const sendOrderConfirmationEmail = (userEmail, userName, orderId, orderItems) =>
       }
     });
   };
+const sendOrderStatusEmail = (userName, orderId, newStatus, userEmail) => {
+    const emailHTML = emailTemplates. generateOrderStatusUpdate(userName, orderId, newStatus, userEmail);
+  
+    const mailOptions = {
+      from: 'gadgetease.info@gmail.com',
+      to: userEmail,
+      subject: 'Order Status Updated',
+      html: emailHTML,
+    };
+  
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error(error);
+      } else {
+        console.log('Email sent: ' + info.response);
+      }
+    });
+  };
 
 module.exports = {
     generateOtp,
     upload,
-    sendOrderConfirmationEmail 
+    sendOrderConfirmationEmail,
+    sendOrderStatusEmail
 }

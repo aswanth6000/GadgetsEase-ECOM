@@ -4,6 +4,7 @@ const Order = require('../model/order')
 const Transaction = require('../model/transaction'); 
 const Coupon = require('../model/coupon')
 const Address = require('../model/addresses')
+const functionHelper = require('../helpers/functionHelper')
 const Category = require('../model/category')
 const Ticket = require('../model/ticket')
 exports.adminhome = async (req, res) => {
@@ -212,6 +213,8 @@ exports.postOrderDetails = async (req, res) => {
   try {
     const orderId = req.params.orderId;
     const newStatus = req.body.orderStatus;
+    const order = await Order.findById(orderId)
+    const userId = order.user
 
     const updatedOrder = await Order.findByIdAndUpdate(orderId, { status: newStatus }, { new: true });
     if(newStatus === 'delivered'){
@@ -257,6 +260,10 @@ exports.postOrderDetails = async (req, res) => {
       // Save the transaction record
       await transaction.save();
     }
+    const user = await User.findById(userId)
+    const userName = user.username;
+    const userEmail = user.email
+    functionHelper.sendOrderStatusEmail(userName, orderId, newStatus, userEmail);
 
     // Redirect to the admin dashboard or any other appropriate page
     res.redirect(`/adminhome`);

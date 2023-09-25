@@ -1,5 +1,6 @@
 const Mailgen = require('mailgen')
 const Product = require('../model/product')
+const Order = require('../model/order')
 
 const mailGenerator = new Mailgen({
   theme: 'default',
@@ -11,7 +12,7 @@ const mailGenerator = new Mailgen({
 }); 
 
 module.exports = {
-  generateOrderConfirmation: (userName, orderId, orderItems) => {
+  generateOrderConfirmation: (userName, orderId, orderItems, ordertotalAmount) => {
     const email = {
       body: {
         name: userName,
@@ -52,7 +53,7 @@ module.exports = {
       item: 'Grand Total',
       price: '', // Leave this empty for formatting
       quantity: '', // Leave this empty for formatting
-      total: `₹${grandTotal}`, // Display the grand total
+      total: `₹${ordertotalAmount}`, // Display the grand total
     });
 
     // Add a shipping time message
@@ -70,11 +71,11 @@ module.exports = {
 
     return mailGenerator.generate(email);
   },
-  generateOrderStatusUpdate: (userName, orderId, status) => {
+  generateOrderStatusUpdate: (userName, orderId, newStatus) => {
     const email = {
       body: {
         name: userName,
-        intro: `Your order ${orderId} has been updated to: ${status}.`,
+        intro: `Your order ${orderId} has been : ${newStatus}.`,
         action: {
           instructions: 'You can view your order details using the link below:',
           button: {
