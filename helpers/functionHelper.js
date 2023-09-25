@@ -15,23 +15,8 @@ function generateOtp(){
     return otp; 
 }
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-      if (file.mimetype.startsWith('image/')) {
-          cb(null, 'public/uploads/images');
-      } else if (file.mimetype.startsWith('video/')) {
-          cb(null, 'public/uploads/videos');
-      } else {
-          cb(new Error('Invalid file type'));
-      }
-  },
-  filename: (req, file, cb) => {
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-      cb(null, uniqueSuffix + '-' + file.originalname);
-  },
-});
-
-const upload = multer({ storage: storage });
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 const sendOrderConfirmationEmail = (userEmail, userName, orderId, orderItems, ordertotalAmount) => {
     const emailHTML = emailTemplates.generateOrderConfirmation(userName, orderId, orderItems, ordertotalAmount);
@@ -73,6 +58,7 @@ const sendOrderStatusEmail = (userName, orderId, newStatus, userEmail) => {
 module.exports = {
     generateOtp,
     upload,
+    storage,
     sendOrderConfirmationEmail,
     sendOrderStatusEmail
 }

@@ -44,9 +44,9 @@ router.post('/upload-category',isAdminLoggedIn,adminController.postaddCategory)
 router.get('/admin/blockuser/:userId',isAdminLoggedIn,adminController.blockuser)
 router.post('/postOrderDetails/:orderId',isAdminLoggedIn,adminController.postOrderDetails)
 router.get('/admin/unblockuser/:userId',isAdminLoggedIn,adminController.unblockuser)
-router.post('/admin/addproduct',addproducts = multerHelper.upload.fields([{ name: 'productImages', maxCount: 5 }, { name: 'video', maxCount: 1 }]),adminController.addProduct)
+router.post('/admin/addproduct',addproducts = multerHelper.upload.fields([{ name: 'productImages', maxCount: 5 }]),adminController.addProduct)
 
-router.post('/admin/editproduct/:productId', multerHelper.upload.fields([{ name: 'productImages', maxCount: 5 }, { name: 'video', maxCount: 1 }]),adminController.editProduct);
+router.post('/admin/editproduct/:productId', multerHelper.upload.fields([{ name: 'productImages', maxCount: 5 }]),adminController.editProduct);
 
 router.post('/addCoupon',adminController.postAddCoupon)
 router.post('/admin/deleteproduct/:productId',adminController.deleteProduct)

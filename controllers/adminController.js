@@ -1,5 +1,9 @@
 const Product = require('../model/product');
 const User = require('../model/user')
+const multer = require('multer');
+const cloudinary = require('cloudinary').v2;
+const path = require('path');
+require('dotenv').config();
 const Order = require('../model/order')
 const Transaction = require('../model/transaction'); 
 const Coupon = require('../model/coupon')
@@ -7,6 +11,16 @@ const Address = require('../model/addresses')
 const functionHelper = require('../helpers/functionHelper')
 const Category = require('../model/category')
 const Ticket = require('../model/ticket')
+
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_API_KEY,
+  api_secret: process.env.CLOUD_API_SECRET,
+});
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
 exports.adminhome = async (req, res) => {
   try {
     const today = new Date();
@@ -330,7 +344,6 @@ exports.viewCouponUsedUsers = async (req, res)=>{
     .sort({ _id: -1 })
     .exec();    
     const users = coupon.usersUsed;
-    console.log(users, coupon);
     res.render('./admin/viewCouponUsers', {users, coupon});
   }catch(err){
     console.log("Error finding the coupon code", err);
@@ -356,11 +369,36 @@ exports.postaddCategory = (req, res) =>{
 
 }
 
-exports.addProduct = async (req, res)=>{
+exports.addProduct = async (req, res) => {
   try {
-    const { name, category, price, discountPrice, quantity, productColor, ram, rom, expandable, frontCam, rearCam, processor } = req.body;
-    const productImages = req.files['productImages'].map(file => file.filename);
-    const video = req.files['video'][0].filename;
+    // Extract product information from the request body
+    const {
+      name,
+      category,
+      price,
+      discountPrice,
+      quantity,
+      productColor,
+      ram,
+      rom,
+      expandable,
+      frontCam,
+      rearCam,
+      processor,
+    } = req.body;
+
+    // Initialize an array to store Cloudinary URLs for product images
+    const productImages = [];
+
+    // Loop through each uploaded file and upload it to Cloudinary
+    for (const file of req.files['productImages']) {
+      console.log("555555555", file);
+      const result = await cloudinary.uploader.upload(file.path);
+      console.log(result);
+      productImages.push(result.secure_url);
+    }
+
+    // Create a new Product document with the extracted data
     const newProduct = new Product({
       name,
       category,
@@ -368,7 +406,6 @@ exports.addProduct = async (req, res)=>{
       discountPrice,
       quantity,
       productImages,
-      video,
       productColor,
       ram,
       rom,
@@ -377,22 +414,25 @@ exports.addProduct = async (req, res)=>{
       rearCam,
       processor,
     });
+
+    // Save the new product to the database
     await newProduct.save();
+
+    // Redirect to a success page or any other appropriate action
     res.redirect('/admin/viewproducts');
   } catch (error) {
     console.error('Error adding product:', error);
+    // Handle errors appropriately, e.g., send an error response
+    res.status(500).json({ error: 'Internal server error' });
   }
-}
-
+};
 exports.editProduct = async(req, res)=>{
   try {
     const productId = req.params.productId;
     const { name, category, price, discountPrice, quantity, productColor, ram, rom, expandable, frontCam, rearCam, processor } = req.body;
 
-    // Fetch the product from the database by ID
     const product = await Product.findById(productId);
 
-    // Update product details based on form data
     product.name = name;
     product.category = category;
     product.price = price;
@@ -406,26 +446,16 @@ exports.editProduct = async(req, res)=>{
     product.rearCam = rearCam;
     product.processor = processor;
 
-    // Handle uploaded product images
     if (req.files['productImages']) {
       const newImages = req.files['productImages'].map(file => file.filename);
       product.productImages = product.productImages.concat(newImages);
     }
-
-    // Handle uploaded product video
-    if (req.files['video'] && req.files['video'][0]) {
-      product.video = req.files['video'][0].filename;
-    }
-
-    // Save the updated product to the database
     await product.save();
 
-    // Redirect to a success page or send a success response
-    res.redirect('/admin/viewproducts'); // Replace with your success route
+    res.redirect('/admin/viewproducts'); 
   } catch (err) {
-    // Handle errors, e.g., show an error page or send an error response
     console.error('Error editing product:', err);
-    res.status(500).send('Internal Server Error'); // Replace with your error handling logic
+    res.status(500).send('Internal Server Error'); 
   }
 }
 
