@@ -7,6 +7,7 @@ const Address = require('../model/addresses')
 const Transaction = require('../model/transaction')
 const Banner = require('../model/banner')
 const Ticket = require('../model/ticket')
+const cloudinary = require('../config/cloudinaryConfig')
 
 
 exports.getIndex = async(req, res)=>{
@@ -191,7 +192,7 @@ exports.postWithdraw = async (req, res) => {
     const transaction = new Transaction({
       user: userId,
       amount,
-      type: 'debit',
+      type: 'debit', 
     });
     await transaction.save();
 
@@ -220,8 +221,11 @@ exports.updateProfile = async (req, res)=>{
   const userId = req.params.userId;
   const updatedData = req.body;
 
+  const folderName = 'GadgetEaseUploads';
+
   if (req.file) {
-    updatedData.profileImage = req.file.filename;
+    const result = await cloudinary.uploader.upload(req.file.path,  { public_id: `${folderName}/${req.file.originalname}`});
+    updatedData.profileImage = result.secure_url;
   }
 
   const user = await userHelper.updateProfile(userId, updatedData);

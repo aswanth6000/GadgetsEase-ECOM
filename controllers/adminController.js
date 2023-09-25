@@ -1,7 +1,7 @@
 const Product = require('../model/product');
 const User = require('../model/user')
 const multer = require('multer');
-const cloudinary = require('cloudinary').v2;
+const cloudinary = require('../config/cloudinaryConfig')
 const path = require('path');
 require('dotenv').config();
 const Order = require('../model/order')
@@ -12,15 +12,6 @@ const functionHelper = require('../helpers/functionHelper')
 const Category = require('../model/category')
 const Ticket = require('../model/ticket')
 
-
-cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.CLOUD_API_KEY,
-  api_secret: process.env.CLOUD_API_SECRET,
-});
-
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
 
 exports.adminhome = async (req, res) => {
   try {

@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const multerHelper = require('../../helpers/functionHelper')
 const userHelper = require('../../helpers/userHelper')
+const multerConfig = require('../../services/multer')
 const {isAuthenticated} = require('../../middleware/isUserAuth')
 const userOp = require('../../controllers/userOpController')
 const nocache = require('nocache') 
@@ -44,7 +45,7 @@ router.get('/returnOrder/:orderId',isAuthenticated,userOp.returnOrder)
 router.get('/orderDetails/:orderId', isAuthenticated, userOp.orderDetails)
 
 // POST Routes
-router.post('/updateProfile/:userId', updateProfile = multerHelper.upload.single('profileImage'), userOp.updateProfile);
+router.post('/updateProfile/:userId', updateProfile = multerConfig.single('profileImage'), userOp.updateProfile);
 
 
 // ADDRESS

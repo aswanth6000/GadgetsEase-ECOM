@@ -50,7 +50,7 @@ router.post('/admin/addproduct',multerConfig.array('productImages', 5),adminCont
 router.post('/admin/editproduct/:productId', multerHelper.upload.fields([{ name: 'productImages', maxCount: 5 }]),adminController.editProduct);
 
 router.post('/addCoupon',adminController.postAddCoupon)
-router.post('/admin/deleteproduct/:productId',adminController.deleteProduct)
+router.get('/admin/deleteproduct/:productId',adminController.deleteProduct)
 
 // BANNER ROUTES
 router.post('/postBanner',isAdminLoggedIn,multerHelper.upload.single('image_url'),bannerController.postBanner);

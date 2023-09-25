@@ -1,6 +1,7 @@
 const User = require('../model/user');
 const bcrypt = require('bcrypt')
 const Address = require('../model/addresses')
+const cloudinary = require('../config/cloudinaryConfig')
 
 async function getUserById(userId){
     try{
