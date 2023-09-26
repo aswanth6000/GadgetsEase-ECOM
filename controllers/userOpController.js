@@ -106,10 +106,10 @@ exports.getAddAddress = async(req,res)=>{
 }
 
 exports.removeAddress = async (req, res) => {
-    const userId = req.params.userId;
+  const userId = req.session.user._id
     const addressIndex = req.params.addressIndex;
 
-    const removeAddressResult = await userHelper.removeAddress(userId, addressIndex);
+    const removeAddressResult = await userHelper.removeAddress(addressIndex);
 
     if (!removeAddressResult.success) {
         return res.status(400).json({ errorMessage: removeAddressResult.message });

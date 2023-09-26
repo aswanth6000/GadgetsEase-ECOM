@@ -85,18 +85,17 @@ async function addAddress(userId, type, phone, houseName, name, street, city, st
       return { success: false, message: 'An error occurred while adding address' };
     }
   }
-async function removeAddress(userId, addressIndex) {
+  async function removeAddress(addressIndex) {
     try {
-        const user = await User.findById(userId);
-        if (!user) {
-            return { success: false, errorMessage: 'User not found' };
+        const address = await Address.findByIdAndRemove(addressIndex);
+
+        if (!address) {
+            // Address not found, return an error
+            return { success: false, errorMessage: 'Address not found' };
         }
 
-        if (addressIndex < 0 || addressIndex >= user.addresses.length) {
-            return { success: false, errorMessage: 'Invalid address index' };
-        }
-        user.addresses.splice(addressIndex, 1);
-        await user.save();
+        // No need to save here since the address is already removed by findByIdAndRemove
+
         return { success: true };
     } catch (error) {
         console.error('Error removing address:', error);
