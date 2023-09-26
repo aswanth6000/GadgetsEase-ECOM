@@ -47,13 +47,13 @@ router.post('/postOrderDetails/:orderId',isAdminLoggedIn,adminController.postOrd
 router.get('/admin/unblockuser/:userId',isAdminLoggedIn,adminController.unblockuser)
 router.post('/admin/addproduct',multerConfig.array('productImages', 5),adminController.addProduct)
 
-router.post('/admin/editproduct/:productId', multerHelper.upload.fields([{ name: 'productImages', maxCount: 5 }]),adminController.editProduct);
+router.post('/admin/editproduct/:productId',multerConfig.array('productImages', 5),adminController.editProduct);
 
 router.post('/addCoupon',adminController.postAddCoupon)
 router.get('/admin/deleteproduct/:productId',adminController.deleteProduct)
 
 // BANNER ROUTES
-router.post('/postBanner',isAdminLoggedIn,multerHelper.upload.single('image_url'),bannerController.postBanner);
+router.post('/postBanner',isAdminLoggedIn,multerConfig.single('image_url'),bannerController.postBanner);
 router.post('/postEditBanner',isAdminLoggedIn,multerHelper.upload.single('image_url'),bannerController.postEditBanner);
 router.post('/deletebanner/:bannerId',isAdminLoggedIn,bannerController.deletebanner)
 

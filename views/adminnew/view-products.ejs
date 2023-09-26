@@ -69,12 +69,12 @@
                           <tr>
                             <td>
                               <div class="avatar avatar-md">
-                                <img src="/uploads/images/<%= product.productImages[3] %>" alt="..."  style="    width: 100px; /* Set your desired width */
+                                <img src="<%= product.productImages[3].secure_url %>" alt="..."  style="    width: 100px; /* Set your desired width */
                                 height: 100px; 
-                                object-fit: cover;
+                                object-fit: contain;
                                 object-position: center; 
                                 border: 2px solid #fff; 
-                                border-radius: 50%;">
+                                ">
                               </div>
                             </td>
                             <td><%= product.name %></td>

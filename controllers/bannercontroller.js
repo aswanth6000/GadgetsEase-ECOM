@@ -8,6 +8,7 @@ const Transaction = require('../model/transaction')
 const paypal = require('paypal-rest-sdk')
 const Cart = require('../model/cart'); 
 const Banner = require('../model/banner')
+const cloudinary = require('../config/cloudinaryConfig')
 
 // GET ROUTES
 exports.getbanner = async (req, res)=>{
@@ -30,7 +31,9 @@ exports.getbannerForm = (req, res)=>{
 exports.postBanner = async (req, res)=>{
     try{
         const {title, link_url, position } = req.body;
-        const image_url = req.file.filename
+        const folderName = 'GadgetEaseUploads';
+        const result = await cloudinary.uploader.upload(req.file.path,  { public_id: `${folderName}/${req.file.originalname}`});
+        const image_url = result.secure_url
         const banner = new Banner({
             title : title,
             image_url : image_url,

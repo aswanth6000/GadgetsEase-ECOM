@@ -436,7 +436,15 @@ exports.editProduct = async(req, res)=>{
     product.processor = processor;
 
     if (req.files['productImages']) {
-      const newImages = req.files['productImages'].map(file => file.filename);
+      const files = req.files;
+      const folderName = 'GadgetEaseUploads';
+      const newImages = await Promise.all(files.map(async (file) => {
+        const result = await cloudinary.uploader.upload(file.path,  { public_id: `${folderName}/${file.originalname}`});
+        return {
+          secure_url: result.secure_url,
+          cloudinary_id: result.public_id
+        };
+      }));
       product.productImages = product.productImages.concat(newImages);
     }
     await product.save();

@@ -47,7 +47,7 @@
 						<div id="product-main-img">
 							<% product.productImages.forEach(image => { %>
 								<div class="product-preview" style="cursor: zoom-in;">
-									<img src="/uploads/images/<%= image %>" style="object-fit: contain;height: 500px;" alt="">
+									<img src="<%= image.secure_url %>" style="object-fit: contain;height: 500px;" alt="">
 								</div>
 							<% }); %>
 						</div>
@@ -59,7 +59,7 @@
 						<div id="product-imgs">
 							<% product.productImages.forEach(image => { %>
 								<div class="product-preview">
-									<img style="object-fit: contain;height: 100px;" src="/uploads/images/<%= image %>" alt="">
+									<img style="object-fit: contain;height: 100px;" src="<%= image.secure_url %>" alt="">
 								</div>
 							<% }); %>
 						</div>
