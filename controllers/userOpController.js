@@ -8,6 +8,7 @@ const Transaction = require('../model/transaction')
 const Banner = require('../model/banner')
 const Ticket = require('../model/ticket')
 const cloudinary = require('../config/cloudinaryConfig')
+const Coupon = require('../model/coupon')
 
 
 exports.getIndex = async(req, res)=>{
@@ -241,7 +242,7 @@ exports.getStore = async (req, res)=>{
   const user = await User.findById(req.session.user._id);
   const category = req.params.category;
   const store = await Product.find({category : category})
-  res.render('./user/store', {store, user});
+  res.render('./user/store', {store, user, category});
 }
 
 exports.orderDetails = async (req, res) =>{
@@ -279,3 +280,20 @@ exports.postTicket = async (req, res)=>{
     console.log("Error while sending ticket : ", err);
   }
 }            
+
+exports.getAvailableCoupons = async (req, res)=>{
+  try {
+    const currentDate = new Date();
+
+    const availableCoupons = await Coupon.find({
+      expiry: { $gt: currentDate }, 
+      limit: { $gt: 0 }, 
+    });
+
+    res.render('./user/availableCoupons', {availableCoupons})
+  } catch (error) {
+
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};

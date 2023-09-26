@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="" />
+    <title>Coupons Available</title>
+    <style>
+      body {
+        background-color: #eee;
+      }
+
+      .wrapper {
+        height: 100vh;
+      }
+
+      .card {
+        position: relative;
+        background-color: #7b1fa2;
+        padding: 10px;
+        width: 400px;
+        border: none;
+      }
+
+      .content {
+        z-index: 10;
+      }
+
+      .logo {
+        margin-bottom: 50px;
+      }
+
+      .off {
+        line-height: 0px;
+      }
+
+      .off h1 {
+        font-size: 80px;
+      }
+
+      .off span {
+        margin-right: 111px;
+      }
+
+      .plus {
+        font-size: 23px;
+      }
+
+      .code {
+        text-transform: uppercase;
+        padding: 10px;
+        background-color: #fff;
+        color: red;
+        font-size: 20px;
+      }
+
+      .cross-bg {
+        height: 100%;
+        width: 100%;
+        position: absolute;
+
+        background-color: #9c27b0;
+
+        left: 0px;
+        top: 0px;
+        opacity: 0.4;
+        clip-path: polygon(
+          50% 0%,
+          90% 20%,
+          100% 60%,
+          75% 100%,
+          25% 100%,
+          0% 60%,
+          10% 20%
+        );
+        z-index: 1;
+      }
+    </style>
+  </head>
+
+  <body>
+    <% availableCoupons.forEach(coupon=>{%>
+
+    <div class="wrapper d-flex justify-content-center align-items-center">
+      <div class="card">
+        <div class="cross-bg"></div>
+
+        <div class="content">
+          <div class="logo text-right">
+          </div>
+
+          <div class="text-center text-uppercase text-white off">
+              <span>Flat</span>
+              <% if(coupon.type === 'percentage') {%>
+            <h1 class="mt-0"><%= coupon.discount %>% OFF</h1>
+            <% }else{ %>
+                <h1 class="mt-0"><%= coupon.discount %> OFF</h1>
+                <% } %>
+          </div>
+
+          <div class="px-5 mb-3">
+            <div class="code text-center mt-4">
+                <div id="container">
+                    <p id="textToCopy"><%= coupon.code %></p>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <%}) %>
+
+  </body>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script>
+    const container = document.getElementById("container");
+const textToCopy = document.getElementById("textToCopy");
+const copyButton = document.getElementById("copyButton");
+
+// Add a click event listener to the text
+textToCopy.addEventListener("click", () => {
+    // Select the text within the container
+    const range = document.createRange();
+    range.selectNode(textToCopy);
+    window.getSelection().removeAllRanges(); // Clear previous selections
+    window.getSelection().addRange(range);
+
+    // Copy the selected text to the clipboard
+    document.execCommand("copy");
+
+    // Deselect the text
+    window.getSelection().removeAllRanges();
+
+    // Display a message indicating the text has been copied
+    alert("Coupon code copied to clipboard: " + textToCopy.textContent);
+});
+
+// Add a click event listener to the copy button
+copyButton.addEventListener("click", () => {
+    // Trigger a click event on the text element to copy its content
+    textToCopy.click();
+});
+  </script>
+</html>

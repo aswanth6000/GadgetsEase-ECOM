@@ -44,6 +44,10 @@ router.get('/returnOrder/:orderId',isAuthenticated,userOp.returnOrder)
 
 router.get('/orderDetails/:orderId', isAuthenticated, userOp.orderDetails)
 
+
+// COUPON
+router.get("/availableCoupons", isAuthenticated, userOp.getAvailableCoupons)
+
 // POST Routes
 router.post('/updateProfile/:userId', updateProfile = multerConfig.single('profileImage'), userOp.updateProfile);
 
