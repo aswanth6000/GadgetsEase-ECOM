@@ -128,6 +128,7 @@
 								<div><strong>TOTAL</strong></div>
 								<div><strong class="order-total" id="order-total">₹<%= subtotalWithShipping %></strong></div>
 							</div>
+							<div><p id="couponInfo" style="color: #7dc49d;"></p></div>
 							<% } %>
 						</div>
 						<div class="payment-method">
@@ -191,6 +192,7 @@
 			const applyCouponButton = document.getElementById('applyCouponButton');
 			const couponCodeInput = document.getElementById('couponCodeInput');
 			const orderTotalElement = document.getElementById('order-total');
+			const couponInfo = document.getElementById('couponInfo')
 		  
 			applyCouponButton.addEventListener('click', async function (event) {
 				event.preventDefault();
@@ -215,6 +217,10 @@
 				  alert(data.error);
 				} else {
 				  const discountedTotal = data.discountedTotal;
+				  const normalPrice = parseFloat(orderTotalElement.innerHTML.replace("₹", ""));
+				  const diffrence = (normalPrice - discountedTotal).toFixed(0);
+
+				  couponInfo.innerText = `Coupon Discount Applied ₹${diffrence} off`
 				  orderTotalElement.innerText = `₹${discountedTotal}`;
 		  
 				  // Send the updated subtotal value to the server
@@ -230,7 +236,7 @@
 					throw new Error('Subtotal update failed');
 				  }
 		  
-				  alert('Coupon applied successfully!');
+				  alert(errorMessage);
 				}
 			  } catch (error) {
 				console.error('Error applying coupon:', error);

@@ -443,21 +443,21 @@ exports.applyCoupon = async (req, res) => {
       const { couponCode } = req.body;
       const userId = req.session.user._id; 
       const coupon = await Coupon.findOne({ code: couponCode });
-  
+      let errorMessage;
       if (!coupon) {
-        return res.status(404).json({ error: 'Coupon not found.' });
+        return errorMessage = "Coupon not found"
       }
       const currentDate = new Date();
       if (coupon.expiryDate && currentDate > coupon.expiryDate) {
-        return res.status(400).json({ error: 'Coupon has expired.' });
+        return errorMessage = "Coupon Expired"
       }
   
       if (coupon.usersUsed.length >= coupon.limit) {
-        return res.status(400).json({ error: 'Coupon limit reached.' });
+        return errorMessage = "Coupon limit Reached"
       }
   
       if (coupon.usersUsed.includes(userId)) {
-        return res.status(400).json({ error: 'You have already used this coupon.' });
+        errorMessage = "You already used this coupon"
       }
       const cart = await Cart.findOne({ user: userId })
             .populate({
@@ -475,7 +475,7 @@ exports.applyCoupon = async (req, res) => {
       } else if (coupon.type === 'fixed') {
         discountedTotal = orderTotal - coupon.discount;
       }
-      return res.json({ discountedTotal });
+      return res.json({ discountedTotal, errorMessage});
     } catch (error) {
       console.error('Error applying coupon: server', error);
       return res.status(500).json({ error: 'An error occurred while applying the coupon.' });
