@@ -246,7 +246,12 @@ exports.getStore = async (req, res)=>{
 }
 
 exports.orderDetails = async (req, res) =>{
-  res.render('./user/orderDetails')
+  try{
+
+    res.render('./user/orderDetails')
+  }catch(err){
+    console.log("errror fetching order details",err);
+  }
 }
 
 exports.getSupport = async (req, res)=>{
