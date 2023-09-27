@@ -44,6 +44,8 @@ router.get('/returnOrder/:orderId',isAuthenticated,userOp.returnOrder)
 
 router.get('/orderDetails/:orderId', isAuthenticated, userOp.orderDetails)
 
+// SEARCH
+router.get('/search',userOp.getSearch)
 
 // COUPON
 router.get("/availableCoupons", isAuthenticated, userOp.getAvailableCoupons)

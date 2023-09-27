@@ -297,3 +297,15 @@ exports.getAvailableCoupons = async (req, res)=>{
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+exports.getSearch = async (req, res)=>{
+  const searchInput = req.query.searchInput;
+  const user = req.session.user
+  console.log(searchInput)
+  try{
+    const store = await Product.find({ name: { $regex: searchInput, $options: 'i' } })
+    res.render('./user/searchStore', {store, user})
+  }catch(err){
+    console.log("Search error", err);
+  }
+}
