@@ -34,17 +34,16 @@ module.exports = {
 
     // Calculate the grand total
     let grandTotal = 0;
-
     // Populate the table data with order items
     orderItems.forEach((item) => {
       const itemTotal = item.price * item.quantity;
       grandTotal += itemTotal;
-
+      console.log(item.image);
       email.body.table.data.push({
         item: item.name, // Assuming you have a 'name' field in your Product schema
         price: `₹${item.price}`,
         quantity: item.quantity,
-        total: `₹${itemTotal}`, // Add a column for the total amount per item
+        total: `₹${itemTotal}`,    // Add a column for the total amount per item
       });
     });
 

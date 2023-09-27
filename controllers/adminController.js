@@ -12,6 +12,37 @@ const functionHelper = require('../helpers/functionHelper')
 const Category = require('../model/category')
 const Ticket = require('../model/ticket')
 
+async function calculateDailyOrderCounts(startDate, endDate) {
+  try {
+    const dailyOrderCounts = [];
+
+    // Loop through each day in the date range
+    let currentDate = new Date(startDate);
+    while (currentDate <= endDate) {
+      // Calculate the next day
+      const nextDate = new Date(currentDate);
+      nextDate.setDate(nextDate.getDate() + 1);
+
+      // Query the database to count orders for the current day
+      const orderCount = await Order.countDocuments({
+        orderDate: { $gte: currentDate, $lt: nextDate },
+      });
+
+      // Push the daily order count to the result array
+      dailyOrderCounts.push({
+        date: currentDate.toISOString(), // Store date in ISO format
+        count: orderCount,
+      });
+
+      // Move to the next day
+      currentDate = nextDate;
+    }
+
+    return dailyOrderCounts;
+  } catch (error) {
+    throw error;
+  }
+}
 
 exports.adminhome = async (req, res) => {
   try {
@@ -19,6 +50,8 @@ exports.adminhome = async (req, res) => {
     const startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0);
     const endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59);
     const orderCounts = await countOrders(startDate, endDate);
+    const dailyOrderData = await calculateDailyOrderCounts(startDate, endDate);
+
     const orders = await Order.find()
       .populate('user')
       .populate({
@@ -31,7 +64,33 @@ exports.adminhome = async (req, res) => {
       })
       .sort({ orderDate: -1 });
 
-    res.render('./adminnew/dashboard-sales', { orders, orderCounts });
+      const categoryOrderCounts = await Order.aggregate([
+        {
+          $unwind: '$items',
+        },
+        {
+          $lookup: {
+            from: 'products', // Name of the products collection
+            localField: 'items.product',
+            foreignField: '_id',
+            as: 'product',
+          },
+        },
+        {
+          $unwind: '$product',
+        },
+        {
+          $group: {
+            _id: '$product.category', // Group by category
+            count: { $sum: 1 }, // Count orders per category
+          },
+        },
+      ]);
+      console.log(orderCounts);
+      const averageOrderCount = orderCounts.thisMonthOrders / 30;
+      console.log(averageOrderCount);
+
+    res.render('./adminnew/dashboard-sales', { orders, orderCounts,dailyOrderData, categoryOrderCounts, averageOrderCount });
   } catch (error) {
     console.error('Error fetching order details:', error);
     res.status(500).json({ error: 'Internal Server Error' });

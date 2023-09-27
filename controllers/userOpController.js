@@ -247,8 +247,11 @@ exports.getStore = async (req, res)=>{
 
 exports.orderDetails = async (req, res) =>{
   try{
-
-    res.render('./user/orderDetails')
+    const orderId = req.params.orderId
+    console.log(orderId);
+    const orders = await Order.findById(orderId)
+    console.log(orders);
+    res.render('./user/orderDetails',orders)
   }catch(err){
     console.log("errror fetching order details",err);
   }
