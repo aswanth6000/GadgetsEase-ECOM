@@ -484,14 +484,13 @@
     </script>
 
     <script>
-      // Get the daily order data from the server-side rendering
-const dailyOrderData = JSON.parse('<%- JSON.stringify(dailyOrderData) %>');
+
+const historicalData = JSON.parse('<%- JSON.stringify(historicalData) %>');
 
 // Prepare the data for the chart
-const labels = dailyOrderData.map((data) => data.date); // Dates for X-axis
-const orderCounts = dailyOrderData.map((data) => data.count); // Order counts for Y-axis
+const labels = historicalData.map((data) => data.date); // Dates for X-axis
+const orderCounts = historicalData.map((data) => data.count); // Order counts for Y-axis
 
-// Create the line chart
 const ctx = document.getElementById('dailyOrderChart').getContext('2d');
 const chart = new Chart(ctx, {
   type: 'line',

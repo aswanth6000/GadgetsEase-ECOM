@@ -11,6 +11,7 @@ const Address = require('../model/addresses')
 const functionHelper = require('../helpers/functionHelper')
 const Category = require('../model/category')
 const Ticket = require('../model/ticket')
+const paginate = require('mongoose-paginate-v2');
 
 async function calculateDailyOrderCounts(startDate, endDate) {
   try {
@@ -43,59 +44,116 @@ async function calculateDailyOrderCounts(startDate, endDate) {
     throw error;
   }
 }
-
 exports.adminhome = async (req, res) => {
   try {
     const today = new Date();
-    const startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0);
     const endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59);
-    const orderCounts = await countOrders(startDate, endDate);
-    const dailyOrderData = await calculateDailyOrderCounts(startDate, endDate);
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - 30);
 
-    const orders = await Order.find()
-      .populate('user')
-      .populate({
-        path: 'address', // Use the correct path
-        model: 'Address',
-      })
-      .populate({
-        path: 'items.product',
-        model: 'Product',
-      })
-      .sort({ orderDate: -1 });
+    const endDatee = new Date();
 
-      const categoryOrderCounts = await Order.aggregate([
-        {
-          $unwind: '$items',
-        },
-        {
-          $lookup: {
-            from: 'products', // Name of the products collection
-            localField: 'items.product',
-            foreignField: '_id',
-            as: 'product',
+    (async () => {
+      try {
+        const historicalData = await Order.aggregate([
+          {
+            $match: {
+              orderDate: {
+                $gte: startDate,
+                $lte: endDatee,
+              },
+            },
           },
-        },
-        {
-          $unwind: '$product',
-        },
-        {
-          $group: {
-            _id: '$product.category', // Group by category
-            count: { $sum: 1 }, // Count orders per category
+          {
+            $group: {
+              _id: {
+                year: { $year: '$orderDate' },
+                month: { $month: '$orderDate' },
+                day: { $dayOfMonth: '$orderDate' },
+              },
+              count: { $sum: 1 }, // Count orders per day
+            },
           },
-        },
-      ]);
-      console.log(orderCounts);
-      const averageOrderCount = orderCounts.thisMonthOrders / 30;
-      console.log(averageOrderCount);
+          {
+            $project: {
+              _id: 0, // Exclude the _id field from the result
+              date: {
+                $dateFromParts: {
+                  year: '$_id.year',
+                  month: '$_id.month',
+                  day: '$_id.day',
+                },
+              },
+              count: 1,
+            },
+          },
+          {
+            $sort: { date: 1 }, // Sort by date in ascending order
+          },
+        ]).exec();
 
-    res.render('./adminnew/dashboard-sales', { orders, orderCounts,dailyOrderData, categoryOrderCounts, averageOrderCount });
+        // Use historicalData for your chart or other purposes
+
+        // Now that you have historicalData, render the view here
+        const orderCounts = await countOrders(startDate, endDate);
+        const dailyOrderData = await calculateDailyOrderCounts(startDate, endDate);
+
+        const orders = await Order.find()
+          .populate('user')
+          .populate({
+            path: 'address', // Use the correct path
+            model: 'Address',
+          })
+          .populate({
+            path: 'items.product',
+            model: 'Product',
+          })
+          .sort({ orderDate: -1 });
+
+        const categoryOrderCounts = await Order.aggregate([
+          {
+            $unwind: '$items',
+          },
+          {
+            $lookup: {
+              from: 'products', // Name of the products collection
+              localField: 'items.product',
+              foreignField: '_id',
+              as: 'product',
+            },
+          },
+          {
+            $unwind: '$product',
+          },
+          {
+            $group: {
+              _id: '$product.category', // Group by category
+              count: { $sum: 1 }, // Count orders per category
+            },
+          },
+        ]);
+        const averageOrderCount = orderCounts.thisMonthOrders / 30;
+
+        // Render the view with all the data
+        res.render('./adminnew/dashboard-sales', {
+          orders,
+          orderCounts,
+          dailyOrderData,
+          categoryOrderCounts,
+          averageOrderCount,
+          historicalData,
+        });
+      } catch (error) {
+        console.error('Error inside async IIFE:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+      }
+    })();
   } catch (error) {
     console.error('Error fetching order details:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
 
 exports.getUsersCount = async (req, res) => {
     try{
@@ -257,7 +315,7 @@ exports.orderDetails = async (req, res) => {
     const orders = await Order.findById(orderId)
       .populate('user')
       .populate({
-        path: 'address', // Use the correct path
+        path: 'address',
         model: 'Address',
       })
       .populate({
