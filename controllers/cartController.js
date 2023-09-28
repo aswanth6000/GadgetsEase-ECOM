@@ -175,7 +175,6 @@ exports.addtocart = async (req, res) => {
         }
 
         req.session.cartLength = (existingCart || newCart).items.length;
-        const cartLength = req.session.cartLength;
 
         res.redirect('/viewproduct/'+productId)
     } catch (error) {

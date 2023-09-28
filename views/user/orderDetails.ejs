@@ -53,9 +53,9 @@ z-index: 0
                                 <div class="mb-4">
                                     <h3>Order Information</h3>
                                     <ul>
-                                        <li><strong>Order Number:</strong> #123456</li>
-                                        <li><strong>Order Date:</strong> January 21, 2023</li>
-                                        <li><strong>Order Time:</strong> 02:34 PM</li>
+                                        <li><strong>Order Number:</strong><%= orders._id %></li>
+                                        <li><strong>Order Date:</strong> <%= orders.orderDate.toDateString() %></li>
+                                        <li><strong>Order Time:</strong> <%= orders.orderDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) %></li>
                                     </ul>
                                 </div>
                                 
@@ -63,10 +63,10 @@ z-index: 0
                                 <div class="mb-4">
                                     <h3>Shipping Address</h3>
                                     <p>
-                                        John Doe<br>
-                                        123 Main Street<br>
-                                        City, State ZIP<br>
-                                        Country
+                                        <%= address.name %><br>
+                                        <%= address.houseName %><br>
+                                        <%= address.city %>,  <%= address.state %>  <%= address.pinCode %><br>
+                                        India
                                     </p>
                                 </div>
                                 
@@ -74,17 +74,24 @@ z-index: 0
                                 <div class="mb-4">
                                     <h3>Payment Details</h3>
                                     <p>
-                                        <strong>Payment Method:</strong> Credit Card<br>
-                                        <strong>Payment time:</strong> 02:36<br>
-                                        <strong>Payment status:</strong> $100.00
+                                        <strong>Payment Method:</strong>  <%= orders.paymentMethod %><br>
+                                        <% if( orders.paymentMethod === 'Cash on delivery') {%>
+                                        <strong>Payment time:</strong><%= orders.orderDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) %><br>
+                                        <strong>Payment status:</strong> Paid(Cash On Delivery)
+                                        <% }else{ %>
+                                            <strong>Payment time:</strong><%= orders.orderDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) %><br>
+                                            <strong>Payment status:</strong> Paid
+                                        <% } %>
                                     </p>
                                 </div>
 
                                 <!-- Order Tracking -->
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="d-flex flex-column">
-                                        <span class="lead fw-normal">Your order has been delivered</span>
-                                        <span class="text-muted small">by DHFL on January 21, 2023</span>
+                                        <span class="lead fw-normal">Your order has been  <%= orders.status %></span>
+                                        <% if(orders.status === 'Delivered') {%>
+                                            <span class="text-muted small"><%= orders.deliveryDate.toDateString() %></span>
+                                            <% } %>
                                     </div>
                                     <div>
                                         <button class="btn btn-outline-primary" type="button">Track order details</button>
@@ -95,21 +102,20 @@ z-index: 0
                                 <!-- Order Progress Tracking -->
                                 <div class="d-flex flex-row justify-content-between align-items-center align-content-center">
                                     <span class="dot"></span>
-                                    <hr class="flex-fill track-line"><span class="dot"></span>
-                                    <hr class="flex-fill track-line"><span class="dot"></span>
-                                    <hr class="flex-fill track-line"><span class="dot"></span>
-                                    <hr class="flex-fill track-line"><span class="d-flex justify-content-center align-items-center big-dot dot">
-                                        <i class="fa fa-check text-white"></i></span>
+                                    <hr class="flex-fill track-line">
+                                    <span class="big-dot dot">
+                                        <i class="fa fa-check text-white"></i>
+                                    </span>
                                 </div>
-
+                                
                                 <!-- Order Status Timeline -->
                                 <div class="d-flex flex-row justify-content-between align-items-center">
-                                    <div class="d-flex flex-column align-items-start"><span>15 Mar</span><span>Order placed</span></div>
-                                    <div class="d-flex flex-column justify-content-center"><span>15 Mar</span><span>Order placed</span></div>
-                                    <div class="d-flex flex-column justify-content-center align-items-center"><span>15 Mar</span><span>Order Dispatched</span></div>
-                                    <div class="d-flex flex-column align-items-center"><span>15 Mar</span><span>Out for delivery</span></div>
-                                    <div class="d-flex flex-column align-items-end"><span>15 Mar</span><span>Delivered</span></div>
+                                    <div class="d-flex flex-column align-items-start">
+                                        <span><%= orders.orderDate.toDateString() %></span>
+                                        <span><%= orders.status %></span>
+                                    </div>
                                 </div>
+                                
                             </div>
                         </div>
                     </div>

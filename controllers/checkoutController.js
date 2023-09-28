@@ -273,7 +273,6 @@ exports.createPayment = async (req, res) => {
       } else {
         for (let i = 0; i < payment.links.length; i++) {
           if (payment.links[i].rel === 'approval_url') {
-            // Redirect the customer to the PayPal checkout page.
             res.redirect(payment.links[i].href);
             return;
           }
@@ -286,6 +285,30 @@ exports.createPayment = async (req, res) => {
     res.status(500).json({ error: 'An error occurred while creating the PayPal payment.' });
   }
 };
+
+exports.orderPlaced =  (req, res) => {
+  try {
+    const paymentId = req.query.paymentId;
+    const payerId = req.query.PayerID;
+
+    const executePaymentJson = {
+      payer_id: payerId,
+    };
+
+    paypal.payment.execute(paymentId, executePaymentJson, function (error, payment) {
+      if (error) {
+        console.error('Error executing PayPal payment:', error);
+        res.status(400).json({ error: 'Payment execution failed.' });
+      } else {
+        res.redirect('/orderPlaced');
+      }
+    });
+  } catch (error) {
+    console.error('Error handling PayPal redirect:', error);
+    res.status(500).json({ error: 'An error occurred while processing the payment.' });
+  }
+};
+
 
 async function applyCoup(couponCode,discountedTotal, userId){
   const coupon = await Coupon.findOne({code : couponCode})
@@ -417,27 +440,6 @@ async function applyCoup(couponCode,discountedTotal, userId){
     }
   };
   
-  exports.orderPlaced = async (req, res) => {
-    try {
-      // Fetch the most recent order based on the orderDate field in descending order
-      const mostRecentOrder = await Order.findOne().sort({ orderDate: -1 })
-      .populate('address user');
-  
-      if (!mostRecentOrder) {
-        // Handle the case where no orders are found
-        return res.status(404).send('No orders found');
-      }
-      const user = await User.findById(mostRecentOrder.user)
-      console.log(user);
-      // Render the 'orderSuccess' template and pass the most recent order details as an object
-      res.render('./user/orderSuccess', { order: mostRecentOrder, user });
-    } catch (err) {
-      // Handle any errors that occur during the process
-      console.error(err);
-      res.status(500).send('Internal Server Error');
-    }
-  };
-
 exports.applyCoupon = async (req, res) => {
     try {
       const { couponCode } = req.body;
