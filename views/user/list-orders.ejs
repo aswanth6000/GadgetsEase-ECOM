@@ -138,9 +138,7 @@ z-index: 0
                           <div class="d-flex flex-row mb-4 pb-2">
                               <div class="flex-fill">
                                   <a href="/orderDetails/<%= order._id %>"><h5 class="bold"><%= items.product.name %></h5></a>
-                                  <!-- Dynamic quantity -->
                                   <p class="text-muted"> Qty: <%= items.quantity %> item</p>
-                                  <!-- Dynamic price -->
                               </div>
                               <div>
                                   <img class="align-self-center img-fluid " alt="product image"
@@ -192,7 +190,7 @@ z-index: 0
                               <div class="border-start h-100"></div>
                               <h5 class="fw-normal mb-0"><a href="#!">Track</a></h5>
                               <div class="border-start h-100"></div>
-                              <h5 class="fw-normal mb-0"><a href="#!">Pre-pay</a></h5>
+                              <h5 class="fw-normal mb-0"><a href="/generate-invoice/<%= order._id %>">Invoice</a></h5>
                               <div class="border-start h-100"></div>
                               <h5 class="fw-normal mb-0"><a href="#!" class="text-muted"><i
                                           class="fas fa-ellipsis-v"></i></a>

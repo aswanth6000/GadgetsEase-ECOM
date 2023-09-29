@@ -9,6 +9,7 @@ const nocache = require('nocache')
 const cartController = require('../../controllers/cartController')
 const checkoutController = require('../../controllers/checkoutController')
 
+
 // GET Routes
 router.get('/', userOp.getIndex) 
 router.get('/userhome',nocache(),isAuthenticated, userOp.getUserHome)
@@ -43,6 +44,9 @@ router.get('/returnOrder/:orderId',isAuthenticated,userOp.returnOrder)
 
 
 router.get('/orderDetails/:orderId', isAuthenticated, userOp.orderDetails)
+
+// INVOICE
+router.get('/generate-invoice/:orderId',isAuthenticated,userOp.generateInvoice)
 
 // SEARCH
 router.get('/search',userOp.getSearch)
