@@ -238,12 +238,33 @@ exports.updateProfile = async (req, res)=>{
   res.redirect(`/profile/${userId}`);
 }
 
-exports.getStore = async (req, res)=>{
-  const user = await User.findById(req.session.user._id);
-  const category = req.params.category;
-  const store = await Product.find({category : category})
-  res.render('./user/store', {store, user, category});
-}
+
+exports.getStore = async (req, res) => {
+  try {
+    // Retrieve the currently logged-in user
+    const user = await User.findById(req.session.user._id);
+
+    // Get the category and page parameters from the request
+    const category = req.params.category;
+    const page = req.params.page || 1; // Default to page 1 if not provided
+
+    // Set the number of items per page and calculate the skip value
+    const perPage = 20; // Adjust this based on your desired items per page
+    const skip = (page - 1) * perPage;
+
+    // Find products in the specified category with pagination
+    const store = await Product.find({ category: category })
+      .skip(skip)
+      .limit(perPage);
+
+    // Render the store page with the retrieved data
+    res.render('./user/store', { store, user, category, currentPage: page });
+  } catch (error) {
+    // Handle any errors, e.g., by rendering an error page
+    console.error('Error fetching store data:', error);
+    res.status(500).render('error', { error });
+  }
+};
 
 exports.orderDetails = async (req, res) =>{
   try{

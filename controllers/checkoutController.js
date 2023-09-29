@@ -285,30 +285,26 @@ exports.createPayment = async (req, res) => {
     res.status(500).json({ error: 'An error occurred while creating the PayPal payment.' });
   }
 };
-
-exports.orderPlaced =  (req, res) => {
+exports.orderPlaced = async (req, res) => {
   try {
-    const paymentId = req.query.paymentId;
-    const payerId = req.query.PayerID;
+    // Fetch the most recent order based on the orderDate field in descending order
+    const mostRecentOrder = await Order.findOne().sort({ orderDate: -1 })
+    .populate('address user');
 
-    const executePaymentJson = {
-      payer_id: payerId,
-    };
-
-    paypal.payment.execute(paymentId, executePaymentJson, function (error, payment) {
-      if (error) {
-        console.error('Error executing PayPal payment:', error);
-        res.status(400).json({ error: 'Payment execution failed.' });
-      } else {
-        res.redirect('/orderPlaced');
-      }
-    });
-  } catch (error) {
-    console.error('Error handling PayPal redirect:', error);
-    res.status(500).json({ error: 'An error occurred while processing the payment.' });
+    if (!mostRecentOrder) {
+      // Handle the case where no orders are found
+      return res.status(404).send('No orders found');
+    }
+    const user = await User.findById(mostRecentOrder.user)
+    console.log(user);
+    // Render the 'orderSuccess' template and pass the most recent order details as an object
+    res.render('./user/orderSuccess', { order: mostRecentOrder, user });
+  } catch (err) {
+    // Handle any errors that occur during the process
+    console.error(err);
+    res.status(500).send('Internal Server Error');
   }
 };
-
 
 async function applyCoup(couponCode,discountedTotal, userId){
   const coupon = await Coupon.findOne({code : couponCode})
@@ -336,6 +332,7 @@ async function applyCoup(couponCode,discountedTotal, userId){
       await coupon.save();
       return discountedTotal;
 }
+
 
 
   
@@ -397,7 +394,8 @@ async function applyCoup(couponCode,discountedTotal, userId){
   
     return totalPrice;
   }
-  exports.getOrderDetails = async (req, res) => {
+
+exports.getOrderDetails = async (req, res) => {
     try {
       // Assuming you have the user ID from the request params
       const userId = req.params.userId;

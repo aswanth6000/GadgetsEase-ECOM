@@ -134,40 +134,41 @@ z-index: 0
                           </div>
                       </div>
                       <div class="card-body p-4">
+                        <% order.items.forEach(items=>{ %>
                           <div class="d-flex flex-row mb-4 pb-2">
                               <div class="flex-fill">
-                                  <a href="/orderDetails/<%= order._id %>"><h5 class="bold"><%= order.items[0].product.name %></h5></a>
+                                  <a href="/orderDetails/<%= order._id %>"><h5 class="bold"><%= items.product.name %></h5></a>
                                   <!-- Dynamic quantity -->
-                                  <p class="text-muted"> Qty: <%= order.items[0].quantity %> item</p>
+                                  <p class="text-muted"> Qty: <%= items.quantity %> item</p>
                                   <!-- Dynamic price -->
-                                  <h4 class="mb-3"> ₹ <%= order.items[0].price %> <span class="small text-muted"> via (<%= order.paymentMethod %> ) </span></h4>
-                                  <!-- Add more dynamic details as needed -->
-                                  <p class="text-muted">Tracking Status: 
-                                    <span class="<%= (() => {
-                                        switch (order.status) {
-                                            case 'pending':
-                                                return 'text-pending';
-                                            case 'confirmed':
-                                                return 'text-confirmed';
-                                            case 'shipped':
-                                                return 'text-shipped';
-                                            case 'delivered':
-                                                return 'text-delivered';
-                                            case 'refund initiated':
-                                                return 'text-refund';
-                                            case 'cancelled':
-                                                return 'text-cancelled';
-                                            default:
-                                                return 'text-body';
-                                        }
-                                    })() %>"><%= order.status %></span>
-                                </p>
                               </div>
                               <div>
                                   <img class="align-self-center img-fluid " alt="product image"
-                                      src="<%= order.items[0].product.productImages[3].secure_url %> " width="150px" height="150px" style="object-fit: cover;">
+                                      src="<%= items.product.productImages[3].secure_url %> " width="150px" height="150px" style="object-fit: cover;">
                               </div>
                           </div>
+                          <% }) %>
+                          <h4 class="mb-3"> ₹ <%= order.totalAmount %> <span class="small text-muted"> via (<%= order.paymentMethod %> ) </span></h4>
+                          <p class="text-muted">Tracking Status: 
+                            <span class="<%= (() => {
+                                switch (order.status) {
+                                    case 'pending':
+                                        return 'text-pending';
+                                    case 'confirmed':
+                                        return 'text-confirmed';
+                                    case 'shipped':
+                                        return 'text-shipped';
+                                    case 'delivered':
+                                        return 'text-delivered';
+                                    case 'refund initiated':
+                                        return 'text-refund';
+                                    case 'cancelled':
+                                        return 'text-cancelled';
+                                    default:
+                                        return 'text-body';
+                                }
+                            })() %>"><%= order.status %></span>
+                        </p>
                       </div>
                       <div class="card-footer p-4">
                           <div class="d-flex justify-content-between">
