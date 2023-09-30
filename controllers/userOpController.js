@@ -342,61 +342,6 @@ exports.getSearch = async (req, res)=>{
 }
 
 
-// // Function to generate the invoice PDF
-// function generateInvoice(order, path) {
-//   const doc = new PDFDocument({ size: 'A4', margin: 50 });
-
-//   // Add your invoice content here
-  // doc
-  //   .fontSize(15)
-  //   .text('Invoice', 50, 50)
-  //   .fontSize(10)
-  //   .text(`Order Date: ${order.orderDate.toDateString()}`, 50, 80)
-  //   .text(`Delivery Date: ${order.deliveryDate ? order.deliveryDate.toDateString() : 'N/A'}`, 50, 100)
-  //   .text(`Status: ${order.status}`, 50, 120)
-  //   .text(`Payment Method: ${order.paymentMethod}`, 50, 140)
-  //   .text(`Payment Status: ${order.paymentStatus}`, 50, 160)
-  //   .text(`Total Amount: $${order.totalAmount.toFixed(2)}`, 50, 180)
-  //   .moveDown();
-
-//   // Create a table for order items
-//   doc
-//     .fontSize(12)
-//     .text('Order Items:', 50, 220);
-
-//   const tableTop = 250;
-//   const tableHeaders = ['Product', 'Quantity', 'Price', 'Subtotal'];
-//   const itemHeight = 30;
-
-//   doc
-//     .font('Helvetica-Bold')
-//     .text(tableHeaders[0], 50, tableTop)
-//     .text(tableHeaders[1], 250, tableTop)
-//     .text(tableHeaders[2], 350, tableTop)
-//     .text(tableHeaders[3], 450, tableTop);
-
-//   order.items.forEach((item, index) => {
-//     const yPos = tableTop + (index + 1) * itemHeight;
-//     doc
-//       .font('Helvetica')
-//       .text(item.product.name, 50, yPos)
-//       .text(item.quantity.toString(), 250, yPos)
-//       .text(`$${item.price.toFixed(2)}`, 350, yPos)
-//       .text(`$${(item.price * item.quantity).toFixed(2)}`, 450, yPos);
-//   });
-
-//   // Calculate and display the total
-//   const totalY = tableTop + (order.items.length + 1) * itemHeight;
-//   doc
-//     .font('Helvetica-Bold')
-//     .text('Total:', 350, totalY)
-//     .text(`$${order.totalAmount.toFixed(2)}`, 450, totalY);
-
-//   // End the document and save it to the specified path
-//   doc.end();
-//   doc.pipe(fs.createWriteStream(path));
-// }
-
 function generateHr(doc, y) {
   doc
     .strokeColor("#aaaaaa")
@@ -537,7 +482,10 @@ let position = 0;
   }
   doc
   .font("Helvetica-Bold")
-  .text("Total:", 50,position + 40)
+  .text("Total (with coupon discount):", 50,position + 40)
+  doc
+  .font("Helvetica-Bold")
+  .text(orders.totalAmount, 50,position + 40,{ align: "right" })
 
 
     doc.end()

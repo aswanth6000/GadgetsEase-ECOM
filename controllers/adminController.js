@@ -44,6 +44,7 @@ async function calculateDailyOrderCounts(startDate, endDate) {
     throw error;
   }
 }
+
 exports.adminhome = async (req, res) => {
   try {
     const today = new Date();

@@ -397,7 +397,6 @@ async function applyCoup(couponCode,discountedTotal, userId){
 
 exports.getOrderDetails = async (req, res) => {
     try {
-      // Assuming you have the user ID from the request params
       const userId = req.params.userId;
   
       // Fetch orders for the specific user
