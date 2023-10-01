@@ -8,16 +8,18 @@ const userOp = require('../../controllers/userOpController')
 const nocache = require('nocache') 
 const cartController = require('../../controllers/cartController')
 const checkoutController = require('../../controllers/checkoutController')
+const pdfController = require('../../controllers/pdfController')
+const addressController = require('../../controllers/addressController')
 
 
 // GET Routes
 router.get('/', userOp.getIndex) 
 router.get('/userhome',nocache(),isAuthenticated, userOp.getUserHome)
 router.get('/profile/:userId',isAuthenticated,userOp.getProfile)
-router.get('/manageaddress/:userId',userOp.manageAddress)
-router.get('/addaddress/:userId',userOp.getAddAddress)
+router.get('/manageaddress/:userId',addressController.manageAddress)
+router.get('/addaddress/:userId',addressController.getAddAddress)
 router.get('/error',userOp.getError)
-router.get('/editAddress/:addressId', userOp.getEditAddress)
+router.get('/editAddress/:addressId', addressController.postEditAddress)
 router.get('/viewproduct/:productId',isAuthenticated,userOp.viewproduct)
 
 // CHECKOUT
@@ -46,7 +48,7 @@ router.get('/returnOrder/:orderId',isAuthenticated,userOp.returnOrder)
 router.get('/orderDetails/:orderId', isAuthenticated, userOp.orderDetails)
 
 // INVOICE
-router.get('/generate-invoice/:orderId',isAuthenticated,userOp.generateInvoice)
+router.get('/generate-invoice/:orderId',isAuthenticated,pdfController.generateInvoice)
 
 // SEARCH
 router.get('/search',userOp.getSearch)
@@ -59,9 +61,9 @@ router.post('/updateProfile/:userId', updateProfile = multerConfig.single('profi
 
 
 // ADDRESS
-router.post('/addAddress/:userId', userOp.postAddAddress);
-router.post('/removeAddress/:addressIndex',userOp.removeAddress );
-router.post('/editAddress/:addressId', userOp.postEditAddress);
+router.post('/addAddress/:userId', );
+router.post('/removeAddress/:addressIndex',addressController.removeAddress );
+router.post('/editAddress/:addressId', addressController.postEditAddress);
 // CART
 router.post('/removeItemFromCart/:productId',cartController.deleteCart)
 router.post('/add-to-cart/:productId',isAuthenticated, cartController.addtocart);
@@ -73,7 +75,6 @@ router.post('/createPayment',isAuthenticated,checkoutController.createPayment)
 
 // COUPON
 router.post('/applyCoupon', checkoutController.applyCoupon)
-
 router.post('/withdraw/:userId',userOp.postWithdraw)
 
 // TICKET

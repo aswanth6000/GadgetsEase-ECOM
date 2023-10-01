@@ -9,9 +9,7 @@ const Banner = require('../model/banner')
 const Ticket = require('../model/ticket')
 const cloudinary = require('../config/cloudinaryConfig')
 const Coupon = require('../model/coupon')
-const { createInvoice } = require("../helpers/createInvoice");
-const PDFDocument = require('pdfkit')
-const fs = require("fs");
+
 
 
 exports.getIndex = async(req, res)=>{
@@ -72,88 +70,10 @@ exports.getProfile = async(req, res)=>{
     }
 }
 
-exports.manageAddress = async(req, res)=>{
-  try{
-    const userId = req.params.userId;
-    const user = await User.findById(userId)
-      const addresses = await Address.find({ user: userId }).sort({ createdDate: -1 }).exec();
-        res.render('./user/address', { addresses, user});
-    }catch(error){
-        console.log(error);
-    }
-  }
-
-exports.getAddAddress = async(req,res)=>{
-    const userId = req.params.userId;
-    try{
-        const user = await User.findById(userId);
-        if(!user){
-            console.log("no user found");
-        }
-        res.render('./user/address-form',{user})
-    }catch(error){
-        console.log(error);
-    }
-  }
-
-  exports.postAddAddress = async (req, res) => {
-    const userId = req.params.userId;
-    const { type, phone, houseName, name, street, city, state, pinCode } = req.body;
-
-    const addAddressResult = await userHelper.addAddress(userId, type, phone, houseName, name, street, city, state, pinCode);
-
-    if (!addAddressResult.success) {
-        return res.status(400).json({ errorMessage: addAddressResult.message });
-    }
-
-    res.redirect('/manageaddress/' + userId);
-}
-
-exports.removeAddress = async (req, res) => {
-  const userId = req.session.user._id
-    const addressIndex = req.params.addressIndex;
-
-    const removeAddressResult = await userHelper.removeAddress(addressIndex);
-
-    if (!removeAddressResult.success) {
-        return res.status(400).json({ errorMessage: removeAddressResult.message });
-    }
-
-    res.redirect('/manageaddress/' + userId);
-}
 
 exports.getError = (req,res)=>{
     res.render('./user/error')
 }
-
-exports.getEditAddress = async (req, res) => {
-  try {
-  const addressId = req.params.addressId;
-    const address = await Address.findById(addressId);
-    res.render('./user/addressEditForm', { address });
-  } catch (error) {
-    console.log("Error occurred", error);
-  }
-};
-exports.postEditAddress = async (req, res) => {
-  const addressId = req.params.addressId;
-  const user = req.session.user
-  const userId = user._id
-  const { type, phone, houseName, name, street, city, state, pinCode } = req.body;
-
-  try {
-      const result = await userHelper.editAddress( addressId, type, phone, houseName, name, street, city, state, pinCode);
-      if (result.success) {
-          res.redirect('/manageaddress/' + userId);
-      } else {
-          res.status(400).json({ message: 'Address edit failed' });
-      }
-  } catch (error) {
-      console.error('Error editing address:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
-  }
-}
-
 
 
 exports.getWithdraw = async (req,res)=>{
@@ -244,26 +164,20 @@ exports.updateProfile = async (req, res)=>{
 
 exports.getStore = async (req, res) => {
   try {
-    // Retrieve the currently logged-in user
     const user = await User.findById(req.session.user._id);
 
-    // Get the category and page parameters from the request
     const category = req.params.category;
-    const page = req.params.page || 1; // Default to page 1 if not provided
+    const page = req.params.page || 1;
 
-    // Set the number of items per page and calculate the skip value
-    const perPage = 20; // Adjust this based on your desired items per page
+    const perPage = 20;
     const skip = (page - 1) * perPage;
 
-    // Find products in the specified category with pagination
     const store = await Product.find({ category: category })
       .skip(skip)
       .limit(perPage);
 
-    // Render the store page with the retrieved data
     res.render('./user/store', { store, user, category, currentPage: page });
   } catch (error) {
-    // Handle any errors, e.g., by rendering an error page
     console.error('Error fetching store data:', error);
     res.status(500).render('error', { error });
   }
@@ -342,155 +256,3 @@ exports.getSearch = async (req, res)=>{
 }
 
 
-function generateHr(doc, y) {
-  doc
-    .strokeColor("#aaaaaa")
-    .lineWidth(1)
-    .moveTo(50, y)
-    .lineTo(550, y)
-    .stroke();
-}
-
-
-function formatDate(date) {
-  const day = date.getDate();
-  const month = date.getMonth() + 1;
-  const year = date.getFullYear();
-
-  return year + "/" + month + "/" + day;
-}
-
-function generateTableRow(
-  doc,
-  y,
-  item,
-  quantity,
-  lineTotal
-) {
-  doc
-    .fontSize(10)
-    .text(item, 50, y)
-    .text(quantity, 370, y, { width: 90, align: "right" })
-    .text(lineTotal, 0, y, { align: "right" });
-}
-
-exports.generateInvoice = async (req, res) => {
-  try {
-    const orderId = req.params.orderId;
-
-    // Fetch the order details from MongoDB
-    const orders = await Order.findById(orderId)
-    .populate('user')
-    .populate({
-      path: 'address',
-      model: 'Address',
-    })
-    .populate({
-      path: 'items.product',
-      model: 'Product',
-    })
-
-    // Create a new PDF document
-    const doc = new PDFDocument();
-
-    // Define the PDF file name
-    const fileName = `invoice_${orderId}.pdf`;
-
-    // Set content type and headers for the response
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
-
-    // Pipe the PDF document to the response stream
-    doc.pipe(res);
-
-    // Generate the invoice content
-    doc
-    .fillColor("#444444")
-    .fontSize(20)
-    .text("GadgetEase", 110, 57)
-    .fontSize(10)
-    .text("GadgetEase", 200, 50, { align: "right" })
-    .text("682301", 200, 65, { align: "right" })
-    .text("Maradu ", 200, 80, { align: "right" })
-    .moveDown();
-
-    doc
-    .fillColor("#444444")
-    .fontSize(20)
-    .text("Invoice", 50, 160);
-
-  generateHr(doc, 185);
-
-  const customerInformationTop = 200;
-
-  doc
-    .fontSize(10)
-    .text("Invoice Number:", 50, customerInformationTop)
-    .font("Helvetica-Bold")
-    .text(orders._id, 150, customerInformationTop)
-    .font("Helvetica")
-    .text("Invoice Date:", 50, customerInformationTop + 15)
-    .text(formatDate(new Date()), 150, customerInformationTop + 15)
-    .text("Total Amount :", 50, customerInformationTop + 30)
-    .text(
-      orders.totalAmount,
-      150,
-      customerInformationTop + 30
-    )
-
-    .font("Helvetica-Bold")
-    .text(orders.address.name, 300, customerInformationTop)
-    .font("Helvetica")
-    .text(orders.address.houseName, 300, customerInformationTop + 15)
-    .text(
-      orders.address.city +
-        ", " +
-        orders.address.state +
-        ", " +
-       'India',
-      300,
-      customerInformationTop + 30
-    )
-    .moveDown();
-
-  generateHr(doc, 252);
-
-  const invoiceTableTop = 330;
-
-  doc.font("Helvetica-Bold");
-  generateTableRow(
-    doc,
-    invoiceTableTop,
-    "Item",
-    "Quantity",
-    "Line Total",
-  );
-  generateHr(doc, invoiceTableTop + 20);
-  doc.font("Helvetica");
-
-let position = 0;
-  for (let i = 0; i < orders.items.length; i++) {
-    position = invoiceTableTop + (i + 1) * 30;
-    generateTableRow(
-      doc,
-      position,
-      orders.items[i].product.name,
-      orders.items[i].quantity,
-      orders.items[i].product.discountPrice,
-    );
-    generateHr(doc, position + 20)
-  }
-  doc
-  .font("Helvetica-Bold")
-  .text("Total (with coupon discount):", 50,position + 40)
-  doc
-  .font("Helvetica-Bold")
-  .text(orders.totalAmount, 50,position + 40,{ align: "right" })
-
-
-    doc.end()
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Error generating the invoice');
-  }
-}

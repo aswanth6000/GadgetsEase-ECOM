@@ -139,57 +139,24 @@
                     <div class="card-body">
                       <div class="card-title">
                         <strong>Region</strong>
-                        <a class="float-right small text-muted" href="#!">View all</a>
                       </div>
-                      <div class="map-box" style="position: relative; width: 350px; min-height: 130px; margin:0 auto;">
-                        <div id="dataMapUSA"></div>
-                      </div>
-                      <div class="row align-items-center h-100 my-2">
-                        <div class="col">
-                          <p class="mb-0">France</p>
-                          <span class="my-0 text-muted small">+10%</span>
+
+                      <div class="card-body">
+                        <p class="mb-2"><strong>Reports</strong></p>
+                        <div class="form-group">
+                          <form action="/postreport" method="post">
+                          <label for="date-input1">Date Range</label>
+                          <input type="text" name="datetimes" class="form-control datetimes" />
+                          <select class="custom-select mt-3 mb-3" name="type" id="custom-select" required>
+                            <option selected>Select a report to generate</option>
+                            <option value="sales report">Sales Report</option>
+                            <option value="cancel report">Cancel Report</option>
+                            <option value="stock report">Stock Report</option>
+                          </select>
+                          <button type="submit" class="btn mb-2 mt-3 btn-primary btn-lg btn-block">Generate Report </button>
+                        </form>
                         </div>
-                        <div class="col-auto text-right">
-                          <span>118</span><br />
-                          <div class="progress mt-2" style="height: 4px;">
-                            <div class="progress-bar" role="progressbar" style="width: 85%" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="row align-items-center my-2">
-                        <div class="col">
-                          <p class="mb-0">Netherlands</p>
-                          <span class="my-0 text-muted small">+0.6%</span>
-                        </div>
-                        <div class="col-auto text-right">
-                          <span>1008</span><br />
-                          <div class="progress mt-2" style="height: 4px;">
-                            <div class="progress-bar" role="progressbar" style="width: 85%" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="row align-items-center my-2">
-                        <div class="col">
-                          <p class="mb-0">Italy</p>
-                          <span class="my-0 text-muted small">+1.6%</span>
-                        </div>
-                        <div class="col-auto text-right">
-                          <span>67</span><br />
-                          <div class="progress mt-2" style="height: 4px;">
-                            <div class="progress-bar" role="progressbar" style="width: 85%" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="row align-items-center my-2">
-                        <div class="col">
-                          <p class="mb-0">Spain</p>
-                          <span class="my-0 text-muted small">+118%</span>
-                        </div>
-                        <div class="col-auto text-right">
-                          <span>186</span><br />
-                          <div class="progress mt-2" style="height: 4px;">
-                            <div class="progress-bar" role="progressbar" style="width: 85%" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
-                          </div>
+                      </div> <!-- /.card-body -->
                         </div>
                       </div>
                     </div>
