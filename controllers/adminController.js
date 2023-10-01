@@ -12,6 +12,8 @@ const functionHelper = require('../helpers/functionHelper')
 const Category = require('../model/category')
 const Ticket = require('../model/ticket')
 const paginate = require('mongoose-paginate-v2');
+const PDFDocument = require('pdfkit')
+const  {formatDate, generateHr, generateTableRow}  = require("../helpers/createInvoice");
 
 async function calculateDailyOrderCounts(startDate, endDate) {
   try {
@@ -628,4 +630,130 @@ exports.ticketcount = async (req, res)=>{
     {label : "open" , value: openTicket}
   ];
   res.json(ticketCounts)
+}
+
+
+exports.salesReport = async (req, res) => {
+  const { dateF, dateL, type } = req.body;
+  try {
+    const dateFirst = new Date(dateF);
+    const dateLast = new Date(dateL);
+    if(type === 'sales report'){
+      const salesData = await Order.find({
+        orderDate: {
+          $gte: dateFirst,
+          $lte: dateLast
+        }
+      })
+      .populate('user')
+      .populate({
+        path: 'address',
+        model: 'Address',
+      })
+      .populate({
+        path: 'items.product',
+        model: 'Product',
+      })
+      const salesCount = await Order.countDocuments({
+        orderDate: {
+          $gte: dateFirst,
+          $lte: dateLast
+        }
+      });
+      console.log(salesData.length);
+      const doc = new PDFDocument();
+  
+      const fileName = `Sales report on_${dateF} to ${dateL}.pdf`;
+  
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+  
+      doc.pipe(res);
+  
+      doc
+      .fillColor("#444444")
+      .fontSize(20)
+      .text("GadgetEase", 110, 57)
+      .fontSize(10)
+      .text("GadgetEase", 200, 50, { align: "right" })
+      .text("682301", 200, 65, { align: "right" })
+      .text("Maradu ", 200, 80, { align: "right" })
+      .moveDown();
+  
+      doc
+      .fillColor("#444444")
+      .fontSize(20)
+      .text("Sales Report", 50, 160);
+  
+    generateHr(doc, 185);
+  
+    const customerInformationTop = 200;
+  
+    doc
+      .fontSize(10)
+      .text("Report Type", 50, customerInformationTop)
+      .font("Helvetica-Bold")
+      .text("Sales Report", 150, customerInformationTop)
+      .font("Helvetica")
+      .text("Generated date", 50, customerInformationTop + 15)
+      .text(formatDate(new Date()), 150, customerInformationTop + 15)
+      .text("Total Sales :", 50, customerInformationTop + 30)
+      .text(
+        salesCount,
+        150,
+        customerInformationTop + 30
+      )
+      .moveDown();
+  
+    generateHr(doc, 252);
+  
+    const invoiceTableTop = 330;
+  
+    doc.font("Helvetica-Bold");
+    generateTableRow(
+      doc,
+      invoiceTableTop,
+      "Item",
+      "Quantity",
+      "User Id",
+      "Line Total",
+    );
+    generateHr(doc, invoiceTableTop + 20);
+    doc.font("Helvetica");
+  let position = 0;
+  let i = 0;
+  for (const order of salesData) {
+      for (const item of order.items) {
+      const position = invoiceTableTop + (i + 1) * 30;
+      generateTableRow(
+        doc,
+        position,
+        item.product.name,
+        item.quantity,
+        order.user.toString(), // Convert ObjectId to string
+        item.product.discountPrice,
+      );
+      generateHr(doc, position + 20);
+    }
+    i++;
+    }
+    doc
+    .font("Helvetica-Bold")
+    .text("Total (with coupon discount):", 50,position + 40)
+    doc
+    .font("Helvetica-Bold")
+    .text("22222", 50,position + 40,{ align: "right" })
+  
+  
+      doc.end()
+    }else if(type === 'cancel report'){
+      console.log("cancel Report");
+    }else{
+      console.log("stock report");
+    }
+    
+    res.redirect('/adminhome');
+  } catch (err) {
+    console.log("Error while creating sales report", err);
+  }
 }

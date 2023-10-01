@@ -145,11 +145,13 @@
                         <p class="mb-2"><strong>Reports</strong></p>
                         <div class="form-group">
                           <form action="/postreport" method="post">
-                          <label for="date-input1">Date Range</label>
-                          <input type="text" name="datetimes" class="form-control datetimes" />
-                          <select class="custom-select mt-3 mb-3" name="type" id="custom-select" required>
-                            <option selected>Select a report to generate</option>
-                            <option value="sales report">Sales Report</option>
+                          <label for="date-input1">Date Range (From)</label>
+                          <input type="date" class="custom-select  mb-3"  id="date-input1" required name="dateF"  min="2023-09-01">
+                          <label for="date-input1">Date Range (To)</label>
+                          <input type="date" class="custom-select  mb-3"  id="date-input2" required name="dateL">
+                          <label for="custom-select">Custom Select</label>
+                          <select class="custom-select" name="type" required id="custom-select">
+                            <option selected value="sales report">Sales Report</option>
                             <option value="cancel report">Cancel Report</option>
                             <option value="stock report">Stock Report</option>
                           </select>
@@ -533,6 +535,10 @@ const piechart = new Chart(piectx, {
   },
 });
 
+    </script>
+    <script>
+        const today = new Date().toISOString().split('T')[0];
+    document.getElementById('date-input2').max = today;
     </script>
   </body>
 </html>

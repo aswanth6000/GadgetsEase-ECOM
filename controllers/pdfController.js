@@ -12,7 +12,7 @@ exports.generateInvoice = async (req, res) => {
       const orders = await Order.findById(orderId)
       .populate('user')
       .populate({
-        path: 'address',
+        path: 'address', 
         model: 'Address',
       })
       .populate({

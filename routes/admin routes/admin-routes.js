@@ -61,3 +61,6 @@ router.post('/deletebanner/:bannerId',isAdminLoggedIn,bannerController.deleteban
 // TICKETS
 router.post('/editTicketStatus', isAdminLoggedIn, adminController.editTicketStatus)
 module.exports = router
+
+// REPORT
+router.post('/postreport', isAdminLoggedIn, adminController.salesReport)

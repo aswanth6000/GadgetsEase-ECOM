@@ -90,10 +90,3 @@ exports.manageAddress = async(req, res)=>{
     }
   }
   
-exports.salesReport = async (req, res)=>{
-  try{
-    
-  }catch(err){
-    console.log("Error while creating sales report", err);
-  }
-}
