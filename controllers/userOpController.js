@@ -9,6 +9,7 @@ const Banner = require('../model/banner')
 const Ticket = require('../model/ticket')
 const cloudinary = require('../config/cloudinaryConfig')
 const Coupon = require('../model/coupon')
+const Category = require('../model/category')
 
 
 
@@ -50,7 +51,8 @@ exports.getUserHome = async(req, res)=>{
         const products = await Product.find();
         const banner = await Banner.find()
         const topSelling = await Product.find().sort({ quantity : -1 }).limit(10)
-        res.render('./user/index',{user,products,banner, topSelling})
+        const categoryPo = await Category.find()
+        res.render('./user/index',{user,products,banner, topSelling, categoryPo})
     }catch(error){
         console.log("Error while fetching products",error);
     }
@@ -165,14 +167,14 @@ exports.updateProfile = async (req, res)=>{
 exports.getStore = async (req, res) => {
   try {
     const user = await User.findById(req.session.user._id);
-
+    const categoryPo = await Category.find()
     const category = req.params.category;
     const page = req.params.page || 1;
 
     const perPage = 20;
     const skip = (page - 1) * perPage;
 
-    const store = await Product.find({ category: category })
+    const store = await Product.find({ category: category, categoryPo })
       .skip(skip)
       .limit(perPage);
 

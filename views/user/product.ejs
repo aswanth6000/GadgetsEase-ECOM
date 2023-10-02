@@ -373,8 +373,8 @@
 						<% relatedProducts.forEach((relatedProduct) => { %>
 						  <div class="col-md-3 col-xs-6">
 							<div class="product">
-							  <div class="product-img">
-								<img src="<%= relatedProduct.productImages[3].secure_url %>" alt="">
+							  <div class="product-img" style="display: flex;justify-content: center;align-items: center;">
+								<img src="<%= relatedProduct.productImages[3].secure_url %>" style="width: 49px;    width: 36%;" alt="">
 								<div class="product-label">
 								  <% const discountPercentage = ((relatedProduct.price - relatedProduct.discountPrice) / relatedProduct.price) * 100; %>
 								  <span class="sale">-<%= discountPercentage.toFixed(0) %>%</span>
