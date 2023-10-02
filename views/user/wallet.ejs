@@ -47,7 +47,9 @@
                             <% transaction.forEach(transaction => { %>
                             <li class="list-group-item">
                                 <strong>Transaction ID:</strong> <%= transaction._id %><br>
-                                <strong>Description:</strong> <%= transaction.description %>
+                                <strong>Description:</strong> <%= transaction.description %><br>
+                                <strong>Date:</strong> <%= transaction.date.toDateString()%>
+                                <strong>Time:</strong> <%= transaction.date.toLocaleTimeString()%>
                                 <% if (transaction.type === 'credit') { %>
                                 <span class="badge badge-success float-right">₹<%= transaction.amount.toFixed(2) %></span>
                                 <% } else if (transaction.type === 'debit') { %>

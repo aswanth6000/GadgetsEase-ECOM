@@ -87,7 +87,7 @@ exports.getWallet = async (req, res)=>{
 try{
   const userId = req.params.userId;
   const user = await User.findById(userId);
-  const transaction = await Transaction.find({user : userId});
+  const transaction = await Transaction.find({user : userId}).sort({date : -1});
   res.render('./user/wallet', {user, transaction});
 }catch(error){
   console.log("Error happend", error);

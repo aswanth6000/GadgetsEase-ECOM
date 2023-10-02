@@ -72,7 +72,101 @@ exports.postCheckout = async (req, res) => {
   session.startTransaction();
 
   const userId = req.session.user._id;
-  const {address, payment, couponCode} = req.body
+  const {address, payment, couponCode, coupon} = req.body
+  if(coupon === "walletBalance"){
+    try {
+      const user = await User.findById(userId);
+      const cart = await Cart.findOne({ user: userId }).populate({
+          path: 'items.product',
+          model: 'Product',
+      });
+
+      if (!user || !cart) {
+          throw new Error('User or cart not found.');
+      }
+
+      const cartItems = cart.items || [];
+      let totalAmount = 0;
+
+      for (const cartItem of cartItems) {
+          const product = cartItem.product;
+
+          if (!product) {
+              throw new Error('Product not found.');
+          }
+
+          if (product.quantity < cartItem.quantity) {
+              throw new Error('Not enough quantity in stock.');
+          }
+
+          product.quantity -= cartItem.quantity;
+
+          const shippingCost = 100;
+          const itemTotal = product.discountPrice * cartItem.quantity + shippingCost;
+          totalAmount += itemTotal;
+
+          await product.save();
+      }
+      // if(couponCode){
+      //   totalAmount = await applyCoup(couponCode,totalAmount, userId)
+      // }
+      user.walletBalance -= totalAmount;
+      await user.save();
+
+
+
+      const order = new Order({
+          user: userId,
+          address: address,
+          orderDate: new Date(),
+          status: 'Pending',
+          paymentMethod: "Paid using Wallet balance",
+          totalAmount: totalAmount,
+          items: cartItems.map(cartItem => ({
+              product: cartItem.product._id,
+              quantity: cartItem.quantity,
+              price: cartItem.product.discountPrice, 
+          })),
+      });
+
+      await order.save();
+
+      const transactiondebit = new Transaction({
+        user: userId,
+        amount : totalAmount,
+        type: 'debit', 
+        description : `Debited from wallet for order : ${order._id}`
+      });
+      await transactiondebit.save();
+
+      await Cart.deleteOne({ user: userId })
+      const orderItems = cartItems.map((cartItem) => ({
+        name: cartItem.product.name, 
+        quantity: cartItem.quantity,
+        price: cartItem.product.discountPrice,
+      }));
+
+      const userEmail = user.email;
+      const userName = user.username;
+      const orderId = order._id;
+      const ordertotalAmount = totalAmount
+      functionHelper.sendOrderConfirmationEmail(userEmail, userName, orderId, orderItems, ordertotalAmount);
+
+      await session.commitTransaction();
+      session.endSession();
+
+      res.redirect('/orderPlaced')
+  } catch (error) {
+      console.error('Error placing the order:', error);
+
+      if (session) {
+          await session.abortTransaction();
+          session.endSession();
+      }
+
+      res.status(500).json({ error: 'An error occurred while placing the order.' });
+  }
+  }
   if(payment === "Cash on delivery"){
   
     try {
