@@ -33,8 +33,27 @@ function generateTableRow(
     .text(lineTotal, 0, y, { align: "right" });
 }
 
+function generateTableRowSales(
+  doc,
+  y,
+  item,
+  quantity,
+  userid,
+  date,
+  lineTotal
+) {
+  doc
+    .fontSize(6)
+    .text(item, 50, y)
+    .text(quantity, 150, y,{ width: 90, align: "right" })
+    .text(userid, 225, y, { width: 90, align: "right" })
+    .text(date, 325, y, { width: 90, align: "right" })
+    .text(lineTotal, 0, y, { align: "right" });
+}
+
 module.exports = {
   formatDate,
   generateHr,
-  generateTableRow
+  generateTableRow,
+  generateTableRowSales
 }
