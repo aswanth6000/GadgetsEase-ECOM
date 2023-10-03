@@ -150,9 +150,7 @@
 							<!-- product tab nav -->
 							<ul class="tab-nav">
 								<li class="active"><a data-toggle="tab" href="#tab1">Description</a></li>
-								<% if(ordereItem){ %>
 									<li><a data-toggle="tab" href="#tab3">Reviews (3)</a></li>
-									<% } %>
 							</ul>
 							<!-- /product tab nav -->
 
@@ -323,11 +321,10 @@
 										<!-- Review Form -->
 										<div class="col-md-3">
 											<div id="review-form">
-												<form class="review-form">
-													<input class="input" type="text" placeholder="Your Name">
-													<input class="input" type="email" placeholder="Your Email">
-													<textarea class="input" placeholder="Your Review"></textarea>
-													<div class="input-rating">
+												<% if(ordereItem){ %>
+												<form class="review-form" id="review-form" method="post" action="/postReview" >
+													<textarea class="input" placeholder="Your Review" name="description" maxlength="123"></textarea>
+													<div class="input-rating">  
 														<span>Your Rating: </span>
 														<div class="stars">
 															<input id="star5" name="rating" value="5" type="radio"><label for="star5"></label>
@@ -339,6 +336,7 @@
 													</div>
 													<button class="primary-btn">Submit</button>
 												</form>
+												<% } %>
 											</div>
 										</div>
 										<!-- /Review Form -->
@@ -419,6 +417,33 @@
 		<script src="/js/nouislider.min.js"></script>
 		<script src="/js/jquery.zoom.min.js"></script>
 		<script src="/js/main.js"></script>
+		<script>
+			document.addEventListener("DOMContentLoaded", function () {
+			  const form = document.getElementById("review-form");
+		  
+			  form.addEventListener("submit", async function (event) {
+				event.preventDefault(); 
+		  
+				const formData = new FormData(form); 
+		  
+				try {
+				  const response = await fetch("/postReview", {
+					method: "POST",
+					body: formData,
+				  });
+		  
+				  if (response.ok) {
+					console.log("Review submitted successfully!");
+				  } else {
+					console.error("Error submitting review:", response.statusText);
+				  }
+				} catch (error) {
+				  console.error("An error occurred:", error);
+				}
+			  })
+			});
+		  </script>
+		  
 		<script>
 			document.getElementById("shareFacebook").addEventListener("click", function () {
         const productName = "Product Name";

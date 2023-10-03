@@ -80,5 +80,8 @@ router.post('/withdraw/:userId',userOp.postWithdraw)
 // TICKET
 router.post('/create-ticket', isAuthenticated, userOp.postTicket);
 
+//REVIEW
+router.post('/postReview', isAuthenticated, userOp.postReview)
+
 
 module.exports = router

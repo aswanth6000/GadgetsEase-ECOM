@@ -269,7 +269,7 @@
 		
 
 	<script>
-		 document.addEventListener('DOMContentLoaded', function () {
+		document.addEventListener('DOMContentLoaded', function () {
         const addToCartForms = document.querySelectorAll('.add-to-cart-form');
 
         addToCartForms.forEach(function (form) {
@@ -283,7 +283,6 @@
         });
 
         function addToCart(productId) {
-            // You can use a library like Axios or the native fetch API for the AJAX request
             fetch(`/add-to-cart/${productId}`, {
                 method: 'POST',
                 body: JSON.stringify({ qty: 1 }), // You can adjust this to send the desired quantity
@@ -293,8 +292,6 @@
             })
             .then(response => response.json())
             .then(data => {
-                // Handle the response from the server (e.g., show a success message or update the cart icon)
-                // You can also update the cart total or perform other actions as needed
                 console.log('Product added to cart:', data);
             })
             .catch(error => {

@@ -10,6 +10,7 @@ const Ticket = require('../model/ticket')
 const cloudinary = require('../config/cloudinaryConfig')
 const Coupon = require('../model/coupon')
 const Category = require('../model/category')
+const Review  = require('../model/review')
 
 
 
@@ -24,38 +25,39 @@ exports.getIndex = async(req, res)=>{
         console.log("Error",error);
     }
 }
+exports.viewproduct = async (req, res) => {
+  try {
+    const user = req.session.user;
+    const productId = req.params.productId;
+    const orders = await Order.find(); // Get all orders
 
-exports.viewproduct = async (req,res)=>{
-    try {
-        const user = req.session.user;
-        const productId = req.params.productId;
-        const order = await Order.find()
-        const product = await Product.findById(productId);
-        const categoryPo = await Category.find()
-        let ordereItem = false;
-        if (
-          order.some(orderObj => orderObj.user.toString() === user._id.toString()) &&
-          order.some(orderObj => 
-            orderObj.items.some(item => item.product.toString() === productId)
-          )
-        ) {
-          // Both conditions are satisfied
-          ordereItem = true;
-        }
-    
-        const relatedProductsPromise = Product.find({
-          _id: { $ne: productId },
-          category: product.category,
-        }).exec();
-    
-        const relatedProducts = await relatedProductsPromise;
-    
-        res.render('./user/product', { user, product, relatedProducts, categoryPo, ordereItem });
-      } catch (error) {
-        console.log("error fetching details ", error);
-      }
-    };
-    
+    const product = await Product.findById(productId);
+    const categoryPo = await Category.find();
+    let ordereItem = false;
+
+    // Check if the user has ordered the product
+    if (
+      orders.some((orderObj) => 
+        orderObj.user.toString() === user._id.toString() &&
+        orderObj.items.some((item) => item.product.toString() === productId)
+      )
+    ) {
+      ordereItem = true;
+    }
+
+    const relatedProductsPromise = Product.find({
+      _id: { $ne: productId },
+      category: product.category,
+    }).exec();
+
+    const relatedProducts = await relatedProductsPromise;
+
+    res.render('./user/product', { user, product, relatedProducts, categoryPo, ordereItem });
+  } catch (error) {
+    console.log("error fetching details ", error);
+  }
+};
+  
 
 exports.getUserHome = async(req, res)=>{
     try{
@@ -269,4 +271,10 @@ exports.getSearch = async (req, res)=>{
   }
 }
 
+exports.postReview = async (req, res)=>{
+  const reviewText = req.body.review; // Replace 'review' with the name attribute of your textarea
+  const rating = req.body.rating; // Assuming 'rating' is the name attribute of your radio buttons
 
+  console.log('Review Text:', reviewText);
+  console.log('Rating:', rating);
+}
