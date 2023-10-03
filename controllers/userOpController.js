@@ -29,7 +29,19 @@ exports.viewproduct = async (req,res)=>{
     try {
         const user = req.session.user;
         const productId = req.params.productId;
+        const order = await Order.find()
         const product = await Product.findById(productId);
+        const categoryPo = await Category.find()
+        let ordereItem = false;
+        if (
+          order.some(orderObj => orderObj.user.toString() === user._id.toString()) &&
+          order.some(orderObj => 
+            orderObj.items.some(item => item.product.toString() === productId)
+          )
+        ) {
+          // Both conditions are satisfied
+          ordereItem = true;
+        }
     
         const relatedProductsPromise = Product.find({
           _id: { $ne: productId },
@@ -38,7 +50,7 @@ exports.viewproduct = async (req,res)=>{
     
         const relatedProducts = await relatedProductsPromise;
     
-        res.render('./user/product', { user, product, relatedProducts });
+        res.render('./user/product', { user, product, relatedProducts, categoryPo, ordereItem });
       } catch (error) {
         console.log("error fetching details ", error);
       }
@@ -174,11 +186,11 @@ exports.getStore = async (req, res) => {
     const perPage = 20;
     const skip = (page - 1) * perPage;
 
-    const store = await Product.find({ category: category, categoryPo })
+    const store = await Product.find({ category: category })
       .skip(skip)
       .limit(perPage);
 
-    res.render('./user/store', { store, user, category, currentPage: page });
+    res.render('./user/store', { store, user, category, currentPage: page, categoryPo });
   } catch (error) {
     console.error('Error fetching store data:', error);
     res.status(500).render('error', { error });
