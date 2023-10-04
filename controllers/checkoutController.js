@@ -13,7 +13,7 @@ const Coupon = require('../model/coupon')
 const Cart = require('../model/cart')
 
 paypal.configure({
-  'mode':  PAYPAL_MODE, //sandbox or live
+  'mode':  "sandbox", //sandbox or live
   'client_id':PAYPAL_CLIENT_KEY ,
   'client_secret': PAYPAL_SECRET_KEY
 });
