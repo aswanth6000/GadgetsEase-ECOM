@@ -25,17 +25,35 @@ exports.getIndex = async(req, res)=>{
         console.log("Error",error);
     }
 }
+
 exports.viewproduct = async (req, res) => {
   try {
     const user = req.session.user;
     const productId = req.params.productId;
-    const orders = await Order.find(); // Get all orders
+    const orders = await Order.find(); 
+    const reviews = await Review.find().populate('userId'); 
+    const userReviewed = await Review.find({userId : user._id})
 
     const product = await Product.findById(productId);
     const categoryPo = await Category.find();
     let ordereItem = false;
+    reviews.forEach((review) => {
+      review.formattedDate = new Date(review.date).toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true,
+      });
+    });
+    let userReview = false;
+    reviews.forEach((review) => { 
+      if (review.userId._id.toString() === user._id.toString()) {
+        userReview = true;
+      }
+    });
 
-    // Check if the user has ordered the product
     if (
       orders.some((orderObj) => 
         orderObj.user.toString() === user._id.toString() &&
@@ -51,8 +69,9 @@ exports.viewproduct = async (req, res) => {
     }).exec();
 
     const relatedProducts = await relatedProductsPromise;
+    console.log(userReviewed);
 
-    res.render('./user/product', { user, product, relatedProducts, categoryPo, ordereItem });
+    res.render('./user/product', { user, product, relatedProducts, categoryPo, ordereItem, reviews,userReview, userReviewed });
   } catch (error) {
     console.log("error fetching details ", error);
   }
@@ -227,7 +246,6 @@ exports.getRaiseTicketForm = (req, res)=>{
 exports.postTicket = async (req, res)=>{
   const userId = req.session.user._id
   const {title, description, priority} = req.body;
-  console.log(title, description, priority, userId);
   try{
     const ticket = new Ticket({
       user : userId,
@@ -272,9 +290,35 @@ exports.getSearch = async (req, res)=>{
 }
 
 exports.postReview = async (req, res)=>{
-  const reviewText = req.body.review; // Replace 'review' with the name attribute of your textarea
-  const rating = req.body.rating; // Assuming 'rating' is the name attribute of your radio buttons
+  const reviewText = req.body.description;
+  const productId  =req.body.productId
+  const rating = req.body.rating;
+  const userId = req.session.user._id;
+  try{
+    const existingReview = await Review.findOne({
+      productId: productId,
+      userId: userId,
+    });
 
-  console.log('Review Text:', reviewText);
-  console.log('Rating:', rating);
+    if (existingReview) {
+      // If an existing review is found, update it
+      existingReview.starRating = rating;
+      existingReview.description = reviewText;
+      existingReview.date = Date.now();
+
+      await existingReview.save();
+    }else{
+      const review = new Review({
+        productId : productId,
+        userId : userId,
+        starRating : rating,
+        description : reviewText,
+        date : Date.now()
+      })
+      await review.save()
+    }
+    res.redirect('/viewproduct/' + productId)
+  }catch(err){
+    console.log("Error occoured while posting review : ", err);
+  }
 }
