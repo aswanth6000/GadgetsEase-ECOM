@@ -658,7 +658,7 @@ exports.salesReport = async (req, res) => {
         orderDate: {
           $gte: dateFirst,
           $lte: dateLast,
-        },
+        }
       });
       console.log(salesData.length);
       const doc = new PDFDocument();
@@ -729,7 +729,7 @@ exports.salesReport = async (req, res) => {
           if (position >= 700) {
             doc.addPage(); // Add a new page when the content exceeds the current page
             position = invoiceTableTop;
-            generateTableRow(
+            generateTableRowSales(
               doc,
               position,
               "Item",
@@ -764,12 +764,264 @@ exports.salesReport = async (req, res) => {
 
       doc.end();
       console.log("pdf generated");
-    } else if (type === 'cancel report') {
-      console.log("cancel Report");
+    } 
+    //---------------------------------------------------------------------------------------------------
+    else if (type === 'cancel report') {
+      const salesData = await Order.find({
+        orderDate: {
+          $gte: dateFirst,
+          $lte: dateLast,
+        },
+        status: 'cancelled',
+      })
+        .populate('user')
+        .populate({
+          path: 'address',
+          model: 'Address',
+        })
+        .populate({
+          path: 'items.product',
+          model: 'Product',
+        });
+      const salesCount = await Order.countDocuments({
+        orderDate: {
+          $gte: dateFirst,
+          $lte: dateLast,
+        },
+        status: 'cancelled',
+      });
+      console.log(salesData.length);
+      const doc = new PDFDocument();
+
+      const fileName = `Cancel report on_${dateF} to ${dateL}.pdf`;
+
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+
+      doc.pipe(res);
+
+      doc
+        .fillColor("#444444")
+        .fontSize(20)
+        .text("GadgetEase", 110, 57)
+        .fontSize(10)
+        .text("GadgetEase", 200, 50, { align: "right" })
+        .text("682301", 200, 65, { align: "right" })
+        .text("Maradu ", 200, 80, { align: "right" })
+        .moveDown();
+
+      doc
+        .fillColor("#444444")
+        .fontSize(20)
+        .text("Cancel Report", 50, 160);
+
+      generateHr(doc, 185);
+
+      const customerInformationTop = 200;
+
+      doc
+        .fontSize(10)
+        .text("Report Type", 50, customerInformationTop)
+        .font("Helvetica-Bold")
+        .text("Sales Report", 150, customerInformationTop)
+        .font("Helvetica")
+        .text("Generated date", 50, customerInformationTop + 15)
+        .text(formatDate(new Date()), 150, customerInformationTop + 15)
+        .text("Total Cancel :", 50, customerInformationTop + 30)
+        .text(
+          salesCount,
+          150,
+          customerInformationTop + 30
+        )
+        .moveDown();
+
+      generateHr(doc, 252);
+
+      const invoiceTableTop = 330;
+
+      doc.font("Helvetica-Bold");
+      generateTableRowSales(
+        doc,
+        invoiceTableTop,
+        "Item",
+        "Quantity",
+        "User Id",
+        "Purchase date",
+        "Line Total",
+      );
+      generateHr(doc, invoiceTableTop + 20);
+      doc.font("Helvetica");
+
+      let position = invoiceTableTop;
+
+      for (let i = 0; i < salesData.length; i++) {
+        for (const item of salesData[i].items) {
+          if (position >= 700) {
+            doc.addPage(); // Add a new page when the content exceeds the current page
+            position = invoiceTableTop;
+            generateTableRow(
+              doc,
+              position,
+              "Item",
+              "Quantity",
+              "User Id",
+              "Purchase date",
+              "Line Total",
+            );
+            generateHr(doc, position + 20);
+            doc.font("Helvetica");
+          }
+          position += 30;
+          generateTableRowSales(
+            doc,
+            position,
+            item.product.name,
+            item.quantity,
+            salesData[i].user.username,
+            salesData[i].orderDate.toLocaleDateString(),
+            item.product.discountPrice,
+          );
+          generateHr(doc, position + 20);
+        }
+      }
+
+
+      doc.end();
+      console.log("pdf generated");
     } else {
-      console.log("stock report");
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      const salesData = await Order.find({
+        orderDate: {
+          $gte: dateFirst,
+          $lte: dateLast,
+        },  
+        deliveryDate: {
+          $lt: sevenDaysAgo,
+        },
+      })
+        .populate('user')
+        .populate({
+          path: 'address',
+          model: 'Address',
+        })
+        .populate({
+          path: 'items.product',
+          model: 'Product',
+        });
+      const salesCount = await Order.countDocuments({
+        orderDate: {
+          $gte: dateFirst,
+          $lte: dateLast,
+        }
+      });
+      console.log(salesData.length);
+      const doc = new PDFDocument();
+
+      const fileName = `Sales report on_${dateF} to ${dateL}.pdf`;
+
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+
+      doc.pipe(res);
+
+      doc
+        .fillColor("#444444")
+        .fontSize(20)
+        .text("GadgetEase", 110, 57)
+        .fontSize(10)
+        .text("GadgetEase", 200, 50, { align: "right" })
+        .text("682301", 200, 65, { align: "right" })
+        .text("Maradu ", 200, 80, { align: "right" })
+        .moveDown();
+
+      doc
+        .fillColor("#444444")
+        .fontSize(20)
+        .text("Sales Report", 50, 160);
+
+      generateHr(doc, 185);
+
+      const customerInformationTop = 200;
+
+      doc
+        .fontSize(10)
+        .text("Report Type", 50, customerInformationTop)
+        .font("Helvetica-Bold")
+        .text("Sales Report", 150, customerInformationTop)
+        .font("Helvetica")
+        .text("Generated date", 50, customerInformationTop + 15)
+        .text(formatDate(new Date()), 150, customerInformationTop + 15)
+        .text("Total revenue :", 50, customerInformationTop + 30)
+        .text(
+          salesCount,
+          150,
+          customerInformationTop + 30
+        )
+        .moveDown();
+
+      generateHr(doc, 252);
+
+      const invoiceTableTop = 330;
+
+      doc.font("Helvetica-Bold");
+      generateTableRow(
+        doc,
+        invoiceTableTop,
+        "Item",
+        "Quantity",
+        "User Id",
+        "Purchase date",
+        "Line Total",
+      );
+      generateHr(doc, invoiceTableTop + 20);
+      doc.font("Helvetica");
+
+      let position = invoiceTableTop;
+      let totalRevenue = 0;
+      for (let i = 0; i < salesData.length; i++) {
+        for (const item of salesData[i].items) {
+          if (position >= 700) {
+            doc.addPage(); // Add a new page when the content exceeds the current page
+            position = invoiceTableTop;
+            generateTableRowSales(
+              doc,
+              position,
+              "Item",
+              "Quantity",
+              "User Id",
+              "Purchase date",
+              "Line Total",
+            );
+            generateHr(doc, position + 20);
+            doc.font("Helvetica");
+          }
+          position += 30;
+          generateTableRowSales(
+            doc,
+            position,
+            item.product.name,
+            item.quantity,
+            salesData[i].user.username,
+            salesData[i].orderDate.toLocaleDateString(),
+            item.product.discountPrice,
+          );
+          generateHr(doc, position + 20);
+          totalRevenue += item.product.discountPrice;
+        }
+      }
+
+      doc
+        .font("Helvetica-Bold")
+        .text("Total (with coupon discount):", 50, position + 40);
+      doc
+        .font("Helvetica-Bold")
+        .text("totalRevenue", 50, position + 40, { align: "right" });
+
+      doc.end();
+      console.log("pdf generated");
     }
   } catch (err) {
-    console.log("Error while creating sales report", err);
+    console.log("Error while creating report", err);
   }
 }

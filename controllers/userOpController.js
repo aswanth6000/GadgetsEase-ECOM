@@ -280,7 +280,6 @@ exports.getAvailableCoupons = async (req, res)=>{
 exports.getSearch = async (req, res)=>{
   const searchInput = req.query.searchInput;
   const user = req.session.user
-  console.log(searchInput)
   try{
     const store = await Product.find({ name: { $regex: searchInput, $options: 'i' } })
     res.render('./user/searchStore', {store, user})
@@ -301,7 +300,6 @@ exports.postReview = async (req, res)=>{
     });
 
     if (existingReview) {
-      // If an existing review is found, update it
       existingReview.starRating = rating;
       existingReview.description = reviewText;
       existingReview.date = Date.now();
