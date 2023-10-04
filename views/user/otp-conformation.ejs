@@ -9,23 +9,22 @@
 </head>
 <body>
   <nav><div class="nav"><h2>GadgetEase</h2></div></nav>
-    <section class="main">
-      <div class="col-6 col-md-3">
-        <h5>Enter phone number to continue </h5><h1 style="color: #56B280;">GadgetEase</h1>
-
-      </div>
-      <div class="col-6 col-md-3">
-        <form id="myForm" method="post" action="/otpAuth" >
-          <h5>We need your phone number for verification<br> Please enter it to continue:</h5>
+  <div class="container mt-5">
+    <div class="row">
+      <div class="col-md-6 col-lg-4 offset-md-3 offset-lg-4">
+        <h5>Enter phone number to continue</h5>
+        <h1 class="text-success">GadgetEase</h1>
+        <form id="myForm" method="post" action="/otpAuth">
+          <h5>We need your phone number for verification. Please enter it to continue:</h5>
           <div class="form-outline mb-4">
             <div class="input-group"> 
               <input type="phone" id="phone" class="form-control" name="phone" placeholder="Phone number" required/>
               <button type="submit" id="send-otp-button" class="btn btn-primary">Get OTP</button>
             </div>
-          </form>
+          </div>
+        </form>
       </div>
-    </section>
-    
+    </div>
+  </div>
 </body>
-
-</html> 
+</html>

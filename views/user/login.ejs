@@ -9,38 +9,34 @@
 </head>
 <body>
   <nav><div class="nav"><h2>GadgetEase</h2></div></nav>
-    <section class="main">
-      <div class="col-6 col-md-3">
-        <h5>If you don’t have an account </h5><h5>you can <a href="/otpAuth">Register</a> </h5><h1 style="color: #56B280;">GadgetEase</h1>
-
+  <div class="container mt-5">
+    <div class="row">
+      <div class="col-md-6 col-lg-4 offset-md-3 offset-lg-4">
+        <h5>If you don’t have an account, you can <a href="/otpAuth">Register</a></h5>
+        <h1 class="text-success">GadgetEase</h1>
+        <form id="myForm" method="post" action="/login" style="    display: flex;
+        justify-content: center;
+        align-content: center;
+        flex-direction: column;">
+          <div class="form-group">
+            <input type="email" id="name" placeholder="Email" class="form-control" name="email" style="margin-bottom: 3%;" required/>
+          </div>
+          <div class="form-group">
+            <input type="password" placeholder="Password" id="pass" class="form-control" name="password" required />
+          </div>
+          <div class="text-center">
+            <% if (errorMessage) { %>
+              <p style="color: rgb(255, 0, 0);"><%= errorMessage %></p>
+            <% } %>
+          </div>
+          <div class="text-center mb-4">
+            <a href="/otpvalidation" class="create">Forgot password ?</a>
+          </div>
+          <button type="submit" class="btn btn-success btn-block">Sign in</button>
+        </form>
       </div>
-      <div class="col-6 col-md-3">
-
-        <form id="myForm" method="post" action="/login">
-              <div class="form-outline mb-4">
-                <input type="email" id="name" placeholder="Email" class="form-control" name="email" required/>
-              </div>
-            
-              <div class="form-outline mb-4">
-                <input type="password" placeholder="Password" id="pass" class="form-control" name="password" required />
-              </div>
-            
-              <div class="col d-flex justify-content-center">
-                <% if (errorMessage) { %>
-                  <p style="color: rgb(255, 0, 0);"><%= errorMessage %></p>
-              <% } %>
-              </div>
-              <div class="row mb-4">
-                <div class="col d-flex flex-column justify-content-center">
-                  <a href="/otpvalidation" class="create">Forgot password ?</a><br>
-                </div>
-            
-              <button type="submit" class="btn btn-success shadow btn-block mb-4" >Sign in</button>
-            
-            </form>
-      </div>
-    </section>
-    
+    </div>
+  </div>
 </body>
 <script src="/js/validation.js"></script>
-</html> 
+</html>

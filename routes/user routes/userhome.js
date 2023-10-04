@@ -61,7 +61,7 @@ router.post('/updateProfile/:userId', updateProfile = multerConfig.single('profi
 
 
 // ADDRESS
-router.post('/addAddress/:userId', );
+router.post('/addAddress/:userId',addressController.postAddAddress );
 router.post('/removeAddress/:addressIndex',addressController.removeAddress );
 router.post('/editAddress/:addressId', addressController.postEditAddress);
 // CART

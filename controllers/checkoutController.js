@@ -11,9 +11,10 @@ const {PAYPAL_CLIENT_KEY, PAYPAL_SECRET_KEY, PAYPAL_MODE} = process.env;
 const session = require('express-session')
 const Coupon = require('../model/coupon')
 const Cart = require('../model/cart')
+const Category = require('../model/category')
 
 paypal.configure({
-  'mode':  "sandbox", //sandbox or live
+  'mode': "sandbox", //sandbox or live
   'client_id':PAYPAL_CLIENT_KEY ,
   'client_secret': PAYPAL_SECRET_KEY
 });
@@ -30,6 +31,8 @@ exports.getCheckout = async (req, res) => {
     const userId = req.session.user._id;
     try {
         const user = await User.findById(userId).exec();
+        const categoryPo = await Category.find()
+
         if (!user) {
             return res.status(404).json({ error: 'User not found.' });
         }
@@ -59,7 +62,8 @@ exports.getCheckout = async (req, res) => {
             subtotalWithShipping,
             addresses,
             outOfStockError,
-            maxQuantityErr
+            maxQuantityErr,
+            categoryPo
         });
     } catch (err) {
         console.error('Error fetching user data and addresses:', err);

@@ -9,26 +9,25 @@
 </head>
 <body>
   <nav><div class="nav"><h2>GadgetEase</h2></div></nav>
-    <section class="main">
-      <div class="col-6 col-md-3">
-        <h5>Enter OTP for continue to</h5><h1 style="color: #56B280;">GadgetEase</h1>
-
-      </div>
-      <div class="col-6 col-md-3">
-        <form id="myForm" method="post" action="/otpAuthentication" >
+  <div class="container mt-5">
+    <div class="row">
+      <div class="col-md-6 col-lg-4 offset-md-3 offset-lg-4">
+        <h5>Enter OTP to continue</h5>
+        <h1 class="text-success">GadgetEase</h1>
+        <form id="myForm" method="post" action="/otpAuthentication">
           <h5>We've sent an OTP to your Phone number ending <span style="color:rgb(34, 149, 51);">***<%=phone%></span><br> Please enter it to continue:</h5>
-          <div class="form-outline mb-4"  id="otp-section" >
+          <div class="form-outline mb-4" id="otp-section">
             <label class="form-label" for="otp"></label>
-            <input type="text" id="otp"  class="form-control" name="otp" placeholder="Enter the OTP" maxlength="6" required/>
+            <input type="text" id="otp" class="form-control" name="otp" placeholder="Enter the OTP" maxlength="6" required/>
             <div style="color: red;" class="error-message" id="email-error"></div>
           </div>
-          <button type="submit" class="btn btn-success shadow btn-block mb-4"id="submit-otp-button">Sign Up</button>
-          <button type="button" id="resend-otp-button" disabled class="btn btn-success shadow btn-block mb-4" >resend OTP</button>
+          <button type="submit" class="btn btn-success shadow btn-block mb-4" id="submit-otp-button">Sign Up</button>
+          <button type="button" id="resend-otp-button" disabled class="btn btn-success shadow btn-block mb-4" >Resend OTP</button>
           <span id="countdown" ></span>
-          </form>
+        </form>
       </div>
-    </section>
-    
+    </div>
+  </div>
 </body>
 <script>
   document.addEventListener("DOMContentLoaded", () => {
@@ -65,6 +64,4 @@
       countdownInterval = setInterval(updateCountdown, 1000);
   });
 </script>
-
-
-</html> 
+</html>
