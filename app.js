@@ -49,7 +49,7 @@ server.listen(PORT, () => {
 // Database
 const dbUrl = `mongodb://localhost:27017/GadgetsEaseUser`; 
 // process.env.DB_URL ?? 
-mongoose.connect(dbUrl, {
+mongoose.connect(process.env.DB_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });

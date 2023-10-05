@@ -43,7 +43,7 @@
 					<div class="col-md-4 col-xs-6">
 						<div class="shop">
 							<div class="shop-img">
-								<img src="https://res.cloudinary.com/dihrwghx2/image/upload/v1696445197/GadgetEaseUploads/fleba5tp3lqxvqv8uxtf.png" alt="">
+								<img src="https://res.cloudinary.com/dihrwghx2/image/upload/v1696482357/GadgetEaseUploads/iydnlbutvr1wxilx3ghh.jpg" alt="">
 							</div>
 							<div class="shop-body">
 								<h3>Apple<br>Collection</h3>
@@ -57,7 +57,7 @@
 					<div class="col-md-4 col-xs-6">
 						<div class="shop">
 							<div class="shop-img">
-								<img src="https://res.cloudinary.com/dihrwghx2/image/upload/v1696445384/GadgetEaseUploads/olife45pnsadbeuq10ln.jpg" alt="">
+								<img src="https://res.cloudinary.com/dihrwghx2/image/upload/v1696482357/GadgetEaseUploads/fikx7ilkbhns6hdaoc0e.jpg" alt="">
 							</div>
 							<div class="shop-body">
 								<h3>Google<br>Collection</h3>
@@ -71,7 +71,7 @@
 					<div class="col-md-4 col-xs-6">
 						<div class="shop">
 							<div class="shop-img">
-								<img src="https://res.cloudinary.com/dihrwghx2/image/upload/v1696445485/GadgetEaseUploads/ficxt4mbsisvboduzkzm.jpg" alt="">
+								<img src="https://res.cloudinary.com/dihrwghx2/image/upload/v1696482357/GadgetEaseUploads/qhefl0nehnbnzyq78pgo.jpg" alt="">
 							</div>
 							<div class="shop-body">
 								<h3>Nothing<br>Collection</h3>
@@ -136,9 +136,8 @@
 													<i class="fa fa-star"></i>
 												</div>
 												<div class="product-btns">
-													<button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">add to wishlist</span></button>
-													<button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to compare</span></button>
-													<a style="text-decoration: none; outline: none;" href="/viewproduct/<%=product._id%>" class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp"></span></a>
+													<!-- <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">add to wishlist</span></button> -->
+													<button><a style="text-decoration: none; outline: none;" href="/viewproduct/<%=product._id%>" class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">View Product</span></a></button>
 												</div>
 											</div>
 											<div class="add-to-cart">
@@ -192,7 +191,13 @@
 						</div>
 					</div>
 					<!-- /section title -->
-
+					<div id="cartNotification" class="alert alert-success" role="alert" style="display: none; position: fixed;
+					top: 12%;
+					right: 4%;
+					width: 39%;
+					z-index: 999;">
+						Product added to cart!
+					</div>
 					<!-- Products tab & slick -->
 					<div class="col-md-12">
 						<div class="row">
@@ -224,9 +229,9 @@
 														<i class="fa fa-star"></i>
 													</div>
 													<div class="product-btns">
-														<button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">add to wishlist</span></button>
-														<button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to compare</span></button>
-														<a style="text-decoration: none; outline: none;" href="/viewproduct/<%=product._id%>" class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp"></span></a>
+														<!-- <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">add to wishlist</span></button> -->
+														<!-- <button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to compare</span></button> -->
+														<button><a style="text-decoration: none; outline: none;" href="/viewproduct/<%=product._id%>" class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">View Product</span></a></button>
 													</div>
 												</div>
 												<div class="add-to-cart">
@@ -271,6 +276,7 @@
 	<script>
 		document.addEventListener('DOMContentLoaded', function () {
         const addToCartForms = document.querySelectorAll('.add-to-cart-form');
+		const cartNotification = document.getElementById('cartNotification');
 
         addToCartForms.forEach(function (form) {
             form.addEventListener('submit', function (e) {
@@ -279,6 +285,7 @@
 
                 // Send an AJAX request to add the product to the cart
                 addToCart(productId);
+				showCartNotification();
             });
         });
 
@@ -297,6 +304,13 @@
             .catch(error => {
                 console.error('Error adding product to cart:', error);
             });
+        }
+		function showCartNotification() {
+            // Display the cart notification and hide it after a few seconds
+            cartNotification.style.display = 'block';
+            setTimeout(function () {
+                cartNotification.style.display = 'none';
+            }, 3000); // Adjust the duration (in milliseconds) as needed
         }
     });
 	</script>
