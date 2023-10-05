@@ -135,7 +135,6 @@ exports.getCartLength = (req, res)=>{
         cartLength : cartSize
     }
     res.json(cartData);
-    console.log(cartData);
 
 }
 

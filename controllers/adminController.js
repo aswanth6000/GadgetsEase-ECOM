@@ -790,7 +790,6 @@ exports.salesReport = async (req, res) => {
         },
         status: 'cancelled',
       });
-      console.log(salesData.length);
       const doc = new PDFDocument();
 
       const fileName = `Cancel report on_${dateF} to ${dateL}.pdf`;
@@ -915,7 +914,6 @@ exports.salesReport = async (req, res) => {
           $lte: dateLast,
         }
       });
-      console.log(salesData.length);
       const doc = new PDFDocument();
 
       const fileName = `Sales report on_${dateF} to ${dateL}.pdf`;

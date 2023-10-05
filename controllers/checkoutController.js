@@ -394,7 +394,6 @@ exports.orderPlaced = async (req, res) => {
       return res.status(404).send('No orders found');
     }
     const user = await User.findById(mostRecentOrder.user)
-    console.log(user);
     // Render the 'orderSuccess' template and pass the most recent order details as an object
     res.render('./user/orderSuccess', { order: mostRecentOrder, user });
   } catch (err) {

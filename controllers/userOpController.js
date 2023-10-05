@@ -69,7 +69,6 @@ exports.viewproduct = async (req, res) => {
     }).exec();
 
     const relatedProducts = await relatedProductsPromise;
-    console.log(userReviewed);
 
     res.render('./user/product', { user, product, relatedProducts, categoryPo, ordereItem, reviews,userReview, userReviewed });
   } catch (error) {
@@ -280,9 +279,10 @@ exports.getAvailableCoupons = async (req, res)=>{
 exports.getSearch = async (req, res)=>{
   const searchInput = req.query.searchInput;
   const user = req.session.user
+  const categoryPo = await Category.find()
   try{
     const store = await Product.find({ name: { $regex: searchInput, $options: 'i' } })
-    res.render('./user/searchStore', {store, user})
+    res.render('./user/searchStore', {store, user, categoryPo})
   }catch(err){
     console.log("Search error", err);
   }
