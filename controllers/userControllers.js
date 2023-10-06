@@ -35,8 +35,6 @@ async function postOtpAuth  (req, res){
         if (user) {
             return res.send({ errorMessage: "Phone number already taken" });
         } else {
-            const otp = gotp.generateOtp();
-            req.session.otp = otp;
             req.session.phone = phone;
             try {
                 const message = await client.verify.v2.services(serviceSid)
