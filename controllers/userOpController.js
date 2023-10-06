@@ -11,6 +11,7 @@ const cloudinary = require('../config/cloudinaryConfig')
 const Coupon = require('../model/coupon')
 const Category = require('../model/category')
 const Review  = require('../model/review')
+const user = require('../model/user')
 
 
 
@@ -31,8 +32,8 @@ exports.viewproduct = async (req, res) => {
     const user = req.session.user;
     const productId = req.params.productId;
     const orders = await Order.find(); 
-    const reviews = await Review.find().populate('userId'); 
-    const userReviewed = await Review.find({userId : user._id})
+    const reviews = await Review.find({userId : user._id, productId : productId}).populate('userId'); 
+    const userReviewed = await Review.find({userId : user._id, productId : productId})
 
     const product = await Product.findById(productId);
     const categoryPo = await Category.find();
@@ -318,5 +319,39 @@ exports.postReview = async (req, res)=>{
     res.redirect('/viewproduct/' + productId)
   }catch(err){
     console.log("Error occoured while posting review : ", err);
+  }
+}
+
+
+exports.viewrating = async (req, res) => {
+  try {
+    const user = req.session.user;
+    const productId = req.params.productId;
+    const reviews = await Review.find({userId : user._id}).populate('productId'); 
+    const categoryPo = await Category.find();
+    reviews.forEach((review) => {
+      review.formattedDate = new Date(review.date).toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true,
+      });
+    });
+
+    res.render('./user/viewRatingReview', { reviews, user, categoryPo});
+  } catch (error) {
+    console.log("error fetching details ", error);
+  }
+};
+  
+exports.deleteReview = async (req, res)=>{
+  try{
+    const reviewId = req.params.reviewId;
+    const rev = await Review.findByIdAndDelete(reviewId)
+    res.redirect('/viewratings')
+  }catch(err){
+    console.log("Error occoured while deleting review",err);
   }
 }

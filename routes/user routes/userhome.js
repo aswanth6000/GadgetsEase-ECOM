@@ -29,6 +29,9 @@ router.get('/cancelOrder/:orderId',checkoutController.cancelOrder)
 router.get('/orderPlaced',isAuthenticated,checkoutController.orderDone)
 router.get('/viewOrders/:userId',isAuthenticated, checkoutController.getOrderDetails)
 
+//REVIEW AND RATINGS
+router.get('/viewratings', isAuthenticated, userOp.viewrating)
+
 // CART
 router.get('/cart',isAuthenticated,cartController.getcart)
 router.get('/cartLength',isAuthenticated,cartController.getCartLength)
@@ -82,6 +85,7 @@ router.post('/create-ticket', isAuthenticated, userOp.postTicket);
 
 //REVIEW
 router.post('/postReview', isAuthenticated, userOp.postReview)
+router.get('/deleteReview/:reviewId', isAuthenticated, userOp.deleteReview)
 
 
 module.exports = router

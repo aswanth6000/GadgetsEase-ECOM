@@ -72,7 +72,7 @@
 				<div class="col-md-5">
 					<div class="product-details">
 						<h2 class="product-name"><%=product.name%></h2>
-						<div>
+						<!-- <div>
 							<div class="product-rating">
 								<i class="fa fa-star"></i>
 								<i class="fa fa-star"></i>
@@ -81,7 +81,7 @@
 								<i class="fa fa-star-o"></i>
 							</div>
 							<a class="review-link" href="#">10 Review(s) | Add your review</a>
-						</div>
+						</div> -->
 						<div>
 							<h3 class="product-price">₹<%=product.discountPrice%><del
 									class="product-old-price">₹<%=product.price%></del></h3>
@@ -181,6 +181,7 @@
 								<!-- Rating -->
 								<div class="col-md-3">
 									<div id="rating">
+											<% if(reviews){ %>
 										<!-- Calculate the average star rating -->
 										<% const totalRatings = reviews.length; %>
 										<% let totalStars = 0; %>
@@ -194,36 +195,37 @@
 											<div class="rating-stars">
 												<!-- Display average star rating using a loop -->
 												<% for (let i = 0; i < 5; i++) { %>
-												<% if (i < averageRating) { %>
-												<i class="fa fa-star"></i>
+													<% if (i < averageRating) { %>
+														<i class="fa fa-star"></i>
 												<% } else { %>
-												<i class="fa fa-star-o"></i>
-												<% } %>
-												<% } %>
-											</div>
-										</div>
-
-										<ul class="rating">
-											<!-- Display the breakdown of star ratings -->
-											<% for (let i = 5; i >= 1; i--) { %>
-											<% const count = reviews.filter((review) => review.starRating === i).length; %>
-											<li>
-												<div class="rating-stars">
-													<% for (let j = 0; j < 5; j++) { %>
-													<% if (j < i) { %>
-													<i class="fa fa-star"></i>
-													<% } else { %>
 													<i class="fa fa-star-o"></i>
 													<% } %>
 													<% } %>
 												</div>
-												<div class="rating-progress">
-													<div style="width: <%= (count / totalRatings) * 100 %>%"></div>
+											</div>
+											
+											<ul class="rating">
+												<!-- Display the breakdown of star ratings -->
+												<% for (let i = 5; i >= 1; i--) { %>
+													<% const count = reviews.filter((review) => review.starRating === i).length; %>
+													<li>
+														<div class="rating-stars">
+															<% for (let j = 0; j < 5; j++) { %>
+																<% if (j < i) { %>
+																	<i class="fa fa-star"></i>
+																	<% } else { %>
+																		<i class="fa fa-star-o"></i>
+																		<% } %>
+																		<% } %>
+																	</div>
+																	<div class="rating-progress">
+																		<div style="width: <%= (count / totalRatings) * 100 %>%"></div>
 												</div>
 												<span class="sum"><%= count %></span>
 											</li>
 											<% } %>
 										</ul>
+										<% } %>
 									</div>
 								</div>
 

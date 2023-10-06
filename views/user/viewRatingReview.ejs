@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+	<title>User Review</title>
+	<!-- Google font -->
+	<link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700" rel="stylesheet">
+
+	<!-- Bootstrap -->
+	<link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css" />
+
+	<!-- Slick -->
+	<link type="text/css" rel="stylesheet" href="/css/slick.css" />
+	<link type="text/css" rel="stylesheet" href="/css/slick-theme.css" />
+
+	<!-- nouislider -->
+	<link type="text/css" rel="stylesheet" href="/css/nouislider.min.css" />
+
+	<!-- Font Awesome Icon -->
+	<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+	<!-- Custom stlylesheet -->
+	<link type="text/css" rel="stylesheet" href="/css/style.css" />
+
+</head>
+<%- include('../partials/navigation') %>
+
+<body style="margin-top: 7%;">
+
+						<div id="tab3" class="tab-pane fade in">
+							<div class="row">
+								<!-- Rating -->
+								<div class="col-md-3">
+									<div id="rating">
+											<% if(reviews){ %>
+										<!-- Calculate the average star rating -->
+										<% const totalRatings = reviews.length; %>
+										<% let totalStars = 0; %>
+										<% reviews.forEach((review) => { %>
+										<% totalStars += review.starRating; %>
+										<% }); %>
+										<% const averageRating = totalStars / totalRatings; %>
+											
+
+										<% } %>
+									</div>
+								</div>
+
+								<!-- /Rating -->
+
+								<!-- Reviews -->
+								<div class="col-md-6">
+									<div id="reviews">
+										<ul class="reviews">
+											<% const reviewsPerPage = 3; %>
+											<% const totalPages = Math.ceil(reviews.length / reviewsPerPage); %>
+											<% for (let page = 1; page <= totalPages; page++) { %>
+											<ul class="reviews-page <%= page === 1 ? 'active' : '' %>"
+												data-page="<%= page %>">
+												<% const startIndex = (page - 1) * reviewsPerPage; %>
+												<% const endIndex = startIndex + reviewsPerPage; %>
+												<% const pageReviews = reviews.slice(startIndex, endIndex); %>
+												<% pageReviews.forEach((review) => { %>
+												<li>
+													<div class="review-heading">
+														<a href="/viewproduct/<%= review.productId._id %>"><h5 class="name"><%= review.productId.name %></h5></a> 
+														<p class="date"><%= review.formattedDate %></p>
+														<div class="review-rating">
+															<!-- Generate star icons based on the rating -->
+															<% for (let i = 0; i < review.starRating; i++) { %>
+															<i class="fa fa-star"></i>
+															<% } %>
+															<!-- Generate empty star icons for remaining stars -->
+															<% for (let i = review.starRating; i < 5; i++) { %>
+															<i class="fa fa-star-o empty"></i>
+															<% } %>
+														</div>
+													</div>
+													<div class="review-body">
+														<p><%= review.description %></p>
+													</div>
+												</li>
+												<a href="/deleteReview/<%= review._id %>"><button onclick="return confirm('Are you sure to delete the review');" class="btn btn-danger">delete</button></a>
+												<% }); %>
+											</ul>
+											<% } %>
+										</ul>
+										<ul class="reviews-pagination">
+											<% for (let page = 1; page <= totalPages; page++) { %>
+											<li class="<%= page === 1 ? 'active' : '' %>"><a href="#"
+													data-page="<%= page %>"><%= page %></a></li>
+											<% } %>
+										</ul>
+									</div>
+								</div>
+								<!-- /Reviews -->
+
+								<!-- Review Form -->
+								<div class="col-md-3">
+									<div id="review-form">
+
+									</div>
+								</div>
+								<!-- /Review Form -->
+							</div>
+						</div>
+						<!-- /tab3  -->
+					</div>
+					<!-- /product tab content  -->
+				</div>
+			</div>
+			<!-- /product tab -->
+		</div>
+		<!-- /row -->
+	</div>
+	<!-- /container -->
+	</div>
+
+
+	<%- include('../partials/footer') %>
+
+	<!-- jQuery Plugins -->
+	<script src="/js/jquery.min.js"></script>
+	<script src="/js/bootstrap.min.js"></script>
+	<script src="/js/slick.min.js"></script>
+	<script src="/js/nouislider.min.js"></script>
+	<script src="/js/jquery.zoom.min.js"></script>
+	<script src="/js/main.js"></script>
+	<script>
+		// JavaScript code to handle pagination clicks
+		document.addEventListener("DOMContentLoaded", function () {
+			const reviewsContainer = document.getElementById("reviews");
+			const paginationLinks = reviewsContainer.querySelectorAll(".reviews-pagination a");
+			const reviewPages = reviewsContainer.querySelectorAll(".reviews-page");
+
+			paginationLinks.forEach((link) => {
+				link.addEventListener("click", function (e) {
+					e.preventDefault();
+					const page = parseInt(this.getAttribute("data-page"), 10);
+
+					// Hide all review pages
+					reviewPages.forEach((page) => {
+						page.classList.remove("active");
+					});
+
+					// Show the selected review page
+					reviewPages[page - 1].classList.add("active");
+				});
+			});
+		});
+	</script>
+</body>
+
+</html>
