@@ -185,6 +185,22 @@
 		<script src="/js/main.js"></script>
 		<script src="/js/validation.js"></script>
 		<script>
+			function handlePaymentSelection() {
+  const walletCheckbox = document.getElementById("wallet");
+  const cashOnDeliveryRadio = document.getElementById("cod"); // Updated ID
+  const onlinePaymentRadio = document.getElementById("payment-3");
+
+  if (walletCheckbox.checked) {
+    // Disable the "Cash on Delivery" and "Online Payment" radio buttons
+    cashOnDeliveryRadio.disabled = true;
+    onlinePaymentRadio.disabled = true;
+  } else {
+    // Enable the "Cash on Delivery" and "Online Payment" radio buttons
+    cashOnDeliveryRadio.disabled = false;
+    onlinePaymentRadio.disabled = false;
+  }
+}
+ handlePaymentSelection()
 		document.addEventListener('DOMContentLoaded', async function () {
 			const applyCouponButton = document.getElementById('applyCouponButton');
 			const couponCodeInput = document.getElementById('couponCodeInput');

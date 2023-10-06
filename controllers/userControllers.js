@@ -2,8 +2,8 @@ const twilio = require('twilio')
 const userHelper = require('../helpers/userHelper')
 const User = require('../model/user')
 require('dotenv').config();
-const gotp = require('../helpers/functionHelper')
-const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID,process.env.TWILIO_AUTH_TOKEN)
+const client = twilio(process.env.TWILIO_ACCOUNT_SID,process.env.TWILIO_AUTH_TOKEN)
+const serviceSid = 'VA1acc6d6a816d61e10a43402cb46bbd9e'
 require('dotenv').config();
 
 function getSignupPage(req,res){
@@ -39,10 +39,11 @@ async function postOtpAuth  (req, res){
             req.session.otp = otp;
             req.session.phone = phone;
             try {
-                const message = await twilioClient.messages.create({
-                    body: `Your otp to sign up to GadgetEase is : ${otp}`,
-                    from: `(618) 893-5202`,
-                    to: '+91' + phone
+                const message = await client.verify.v2.services(serviceSid)
+                .verifications
+                .create({
+                  to: '+91' + phone,
+                  channel: 'sms',
                 });
                 console.log('OTP sent successfully', message.sid);
                 res.redirect('/otpAuthentication');
@@ -56,11 +57,17 @@ async function postOtpAuth  (req, res){
     }
 }
 
-function postOtpAuthentication(req,res){
+async function postOtpAuthentication(req,res){
     const phone = req.session.phone;
     const {otp} = req.body;
-    if(otp === req.session.otp){
-        res.render('./user/signup',{phone})
+    const verifiedresponse = await client.verify.v2.services(serviceSid)
+    .verificationChecks
+    .create({
+      to:'+91' + phone,
+      code:otp,
+    });
+    if(verifiedresponse.status=== 'approved'){
+        res.render('./user/signup',{phone})   
     }else{
         res.send.json({error: "OTP Missmatch"})
     }
@@ -69,12 +76,11 @@ function postOtpAuthentication(req,res){
 async function resendOtp (req,res){
     const phone = req.session.phone;
     try{
-        const otp = gotp.generateOtp();
-         req.session.otp = otp;
-         twilioClient.messages.create({
-            body : `Your otp to sign up to GadgetEase is : ${otp}`,
-            from : `(618) 893-5202`,
-            to : '+91'+phone
+        const message = await client.verify.v2.services(serviceSid)
+        .verifications
+        .create({
+          to: '+91' + phone,
+          channel: 'sms',
         })
         .then(message=>{
             console.log('OTP sent successfully', message.sid);
@@ -163,10 +169,11 @@ async function postForgotPassotp(req, res) {
         req.session.otp = otp;
         req.session.phone = phone;
         try {
-            const message = await twilioClient.messages.create({
-                body: `Your otp to sign up to GadgetEase is : ${otp}`,
-                from: `(618) 893-5202`,
-                to: '+91' + phone
+            const message = await client.verify.v2.services(serviceSid)
+            .verifications
+            .create({
+              to: '+91' + phone,
+              channel: 'sms',
             });
             console.log('OTP sent successfully', message.sid);
             res.redirect('/forgotPassAuth');

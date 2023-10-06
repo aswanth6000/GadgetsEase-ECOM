@@ -188,7 +188,7 @@ z-index: 0
                                             <a href="/cancelOrder/<%= order._id %>" onclick="return confirm('Are you sure you want to Cancel <%= order.items[0].product.name  %>');">Cancel</a>
                                             </h5>
                               <div class="border-start h-100"></div>
-                              <h5 class="fw-normal mb-0"><a href="#!">Track</a></h5>
+                              <h5 class="fw-normal mb-0"><a href="/orderDetails/<%= order._id %>">Track</a></h5>
                               <div class="border-start h-100"></div>
                               <h5 class="fw-normal mb-0"><a href="/generate-invoice/<%= order._id %>">Invoice</a></h5>
                               <div class="border-start h-100"></div>

@@ -26,16 +26,16 @@ app.use(require('./routes/user routes/userhome'))
 app.use(require('./routes/admin routes/admin-routes'))
 app.use(require('./routes/user routes/userAuthRoutes'))
 
-// app.use((req, res, next) => {
-//     const error = new Error('Not Found');
-//     error.status = 404;
-//     next(error);
-// });
+app.use((req, res, next) => {
+    const error = new Error('Not Found');
+    error.status = 404;
+    next(error); 
+});
 
-// app.use((error, req, res, next) => {
-//     res.status(error.status || 500);
-//     res.render('./user/error')
-// });
+app.use((error, req, res, next) => {
+    res.status(error.status || 500);
+    res.render('./user/error')
+});
 
 
 

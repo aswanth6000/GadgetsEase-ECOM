@@ -4,16 +4,7 @@ const transporter = require('../config/emailConfig');
 const emailTemplates = require('../helpers/emailTemplate')
 
 const multer = require('multer');
-function generateOtp(){
-    const length = 6; 
-    const charset = '1234567890';
-    let otp = '';
-    for(let i = 0; i < length; i++){
-        const randomIndex = Math.floor(Math.random() * charset.length);
-        otp+= charset[randomIndex]
-    }
-    return otp; 
-}
+
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
@@ -57,7 +48,6 @@ const sendOrderStatusEmail = (userName, orderId, newStatus, userEmail) => {
   };
 
 module.exports = {
-    generateOtp,
     upload,
     storage,
     sendOrderConfirmationEmail,
