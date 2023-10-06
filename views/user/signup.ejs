@@ -8,54 +8,54 @@
     <title>Signup</title>
 </head>
 <body>
-  <nav><div class="nav"><h2>GadgetEase</h2></div></nav>
-    <section class="main">
-      <div class="col-6 col-md-3">
-        <h5>Already have an account ? </h5><h5>you can <a href="/login">login</a> </h5><h1 style="color: #56B280;">GadgetEase</h1>
-
-      </div>
-      <div class="col-6 col-md-6" >
-
-        <form id="myForm" method="post" action="/signup" >
-          <h2>Sign up to</h2><h1 style="color: #56B280;">GadgetEase</h1>
-            <div class="form-outline mb-4">
-              <label class="form-label" for="name">User name</label>
-              <input type="text" id="name" class="form-control" name="username" required/>
-              <div style="color: red;" class="error-message" id="name-error"></div>
+    <nav>
+        <div class="nav">
+            <h2>GadgetEase</h2>
+        </div>
+    </nav>
+    <section class="main container-fluid">
+        <div class="row">
+            <div class="col-md-6 offset-md-3 col-lg-4 offset-lg-4">
+                <h5>Already have an account? You can <a href="/login">login</a></h5>
+                <h1 style="color: #56B280;">GadgetEase</h1>
+                <form id="myForm" method="post" action="/signup">
+                    <h2>Sign up to</h2>
+                    <h1 style="color: #56B280;">GadgetEase</h1>
+                    <div class="mb-3">
+                        <label class="form-label" for="name">User name</label>
+                        <input type="text" id="name" class="form-control" name="username" required/>
+                        <div style="color: red;" class="error-message" id="name-error"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="phone_num">Phone number</label>
+                        <input type="number" id="phone_num" pattern="[0-9]{10}" class="form-control" value="<%= phone %>" name="phone" required/>
+                        <div style="color: red;" class="error-message" id="phone-error"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="email">Email</label>
+                        <input type="email" id="email" class="form-control" name="email" required/>
+                        <div style="color: red;" class="error-message" id="email-error"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="password">Password</label>
+                        <input type="password" id="password" class="form-control" name="password" required />
+                        <div style="color: red;" class="error-message" id="password-error"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" class="form-control" name="confirmPassword" required />
+                        <div style="color: red;" class="error-message" id="confirmPassword-error"></div>
+                    </div>
+                    <div class="mb-3 text-center">
+                        <a href="/" class="create">Login?</a>
+                    </div>
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-success btn-block">Sign Up</button>
+                    </div>
+                </form>
             </div>
-            <div class="form-outline mb-4">
-              <label class="form-label" for="phone_num">Phone number</label>
-              <input type="number" id="phone_num" pattern="[0-9]{10}" class="form-control" value="<%= phone %>" name="phone" required/>
-              <div style="color: red;" class="error-message" id="phone-error"></div>
-            </div>
-            <div class="form-outline mb-4">
-              <label class="form-label" for="email">Email</label>
-              <input type="email" id="email"  class="form-control" name="email" required/>
-              <div style="color: red;" class="error-message" id="email-error"></div>
-            </div>
-            <div class="form-outline mb-4">
-              <label class="form-label" for="pass">Password</label>
-              <input type="password" id="password" class="form-control" name="password" required />
-              <div style="color: red;" class="error-message" id="password-error"></div>
-            </div>
-            <div class="form-outline mb-4">
-              <label class="form-label" for="confirmPassword">Confirm Password</label>
-              <input type="password" id="confirmPassword" class="form-control" name="confirmPassword" required />
-              <div style="color: red;" class="error-message" id="confirmPassword-error"></div>
-            </div>
-          
-            <div class="row mb-4">
-              <div class="col d-flex justify-content-center">
-
-                <a href="/" class="create">Login ?</a>
-              </div>
-          
-            <button type="submit" class="btn btn-success shadow btn-block mb-4" >Sign Up</button>
-          
-          </form>
-      </div>
+        </div>
     </section>
-    
 </body>
 <script src="/js/validation.js"></script>
-</html> 
+</html>
