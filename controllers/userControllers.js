@@ -145,9 +145,16 @@ function forgotPassAuth(req,res){
     res.render('./user/forgotPassOtpConfirm',{phone : lastDigits})
 }
 
-function postForgotOtpAuthentication(req,res){
+async function postForgotOtpAuthentication(req,res){
     const {otp} = req.body;
-    if(otp === req.session.otp){
+    const phone = req.session.phone;
+    const verifiedresponse = await client.verify.v2.services(serviceSid)
+    .verificationChecks
+    .create({
+      to:'+91' + phone,
+      code:otp,
+    });
+    if(verifiedresponse.status=== 'approved'){
         res.redirect('/resetPassword')
     }else{
         res.send.json({error: "OTP Missmatch"})
@@ -163,8 +170,6 @@ async function postForgotPassotp(req, res) {
             return res.send({ errorMessage: "No user found with this phone number" });
         }
 
-        const otp = gotp.generateOtp();
-        req.session.otp = otp;
         req.session.phone = phone;
         try {
             const message = await client.verify.v2.services(serviceSid)

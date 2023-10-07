@@ -355,3 +355,34 @@ exports.deleteReview = async (req, res)=>{
     console.log("Error occoured while deleting review",err);
   }
 }
+
+exports.storeFilter = async (req, res)=>{
+  const {price, colors, brand} = req.body;
+  console.log(price, colors, brand);
+  try{
+    const user = await User.findById(req.session.user._id);
+    const categoryPo = await Category.find()
+    const page = req.params.page || 1;
+    
+    const perPage = 20;
+    const skip = (page - 1) * perPage;
+    if(price === '0'){
+      const category = brand;
+      const store = await Product.find({ category: brand, color : colors  })
+      .skip(skip)
+      .limit(perPage)
+      .sort({ price: -1 })
+      res.render('./user/store', { store, user, category, currentPage: page, categoryPo });
+    }else{
+      const store = await Product.find({ category: brand, color : colors })
+      .skip(skip)
+      .limit(perPage)
+      .sort({ price: 1 })
+      res.render('./user/store', { store, user, category, currentPage: page, categoryPo });
+    }
+
+
+  }catch(err){
+    console.log(err);
+  }
+}

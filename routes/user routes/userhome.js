@@ -87,5 +87,8 @@ router.post('/create-ticket', isAuthenticated, userOp.postTicket);
 router.post('/postReview', isAuthenticated, userOp.postReview)
 router.get('/deleteReview/:reviewId', isAuthenticated, userOp.deleteReview)
 
+//STORE FILTER
+router.post('/storefilter',isAuthenticated, userOp.storeFilter)
+
 
 module.exports = router
